@@ -1,0 +1,18 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>nope test</title>
+
+  </head>
+  <body>
+    <script src="mock.js"></script>
+    <script>
+      np.html()
+        .spawn('head')
+          .spawn('link').att('rel', 'stylesheet').att('href', 'styles.css').up()
+        .up()
+        .spawn('body').att('class', 'blablubb')
+        .compile(np.pre());
+    </script>
+  </body>
+</body>
