@@ -1,3 +1,7 @@
+/**
+ * @namespace np
+ */
+
 (function(np) {
 	np.inherits = inherits;
 	np.Element = Element;
@@ -13,10 +17,6 @@
 	function Element(type) {
 		this.type = type;
 	};
-	Element.prototype.append = function(el) {
-		Array.prototype.forEach.call(arguments,)
-	};
-	//Element.prototype.append_ = func
 
 
 

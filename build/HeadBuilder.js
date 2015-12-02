@@ -2,6 +2,10 @@
 	'use strict';
 
 	var Base = np.ElementBuilder;
+
+	/**
+	 * @name np.HeadBuilder
+	 */
 	var HeadBuilder = np.inherits(Base, function() {
 		Base.call(this, null, new np.Element('head'));
 		this.head_ = new np.HeadBuilder(this);
@@ -9,21 +13,32 @@
 
 		this.charset_ = np.MetaBuilder().charset('utf-8');
 	});
-	HtmlBuilder.prototype.up = function() { return this; };
-	HtmlBuilder.prototype.head = function() { return this.head_; };
-	HtmlBuilder.prototype.body = function() { return this.body_; };
-	HtmlBuilder.prototype.charset = function(charset) {
-		this.head_.charset(charset);
+
+	/**
+	  * Sets this document's charset.
+		* @param {string} charset='utf-8' - the charset (e.g. 'utf-8')
+		* @return {HtmlBuilder} this instance
+		*/
+	HeadBuilder.prototype.charset = function(charset) {
+		this.charset_.charset(charset);
 		return this;
 	};
-	HtmlBuilder.prototype.httpEquiv = function(equiv) {
+	/**
+	  * Adds or sets a meta element with html-equiv attribute.
+		* @param {string} equiv - one of the http-equivs allowed in HTML (i.e.
+		* 'refresh', 'default-style' and 'content-type')
+		* @return {HtmlBuilder} this instance
+		*/
+	HeadBuilder.prototype.httpEquiv = function(equiv, content) {
 		this.head_.httpEquiv(equiv);
 		return this;
 	};
-	HtmlBuilder.prototype.meta = function(name, content) {
+	HeadBuilder.prototype.meta = function(name, content) {
 		this.head_.meta(name, content);
 		return this;
 	};
 
-	np.HtmlBuilder = HtmlBuilder;
+
+
+	np.HeadBuilder = HeadBuilder;
 }(this.np));

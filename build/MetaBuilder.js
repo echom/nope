@@ -10,8 +10,9 @@
 		this.attr('charset', charset);
 		return this;
 	};
-	MetaBuilder.prototype.httpEquiv = function(httpEquiv) {
+	MetaBuilder.prototype.httpEquiv = function(httpEquiv, content) {
 		this.attr('http-equiv', httpEquiv);
+		this.attr('content', content);
 		return this;
 	};
 	MetaBuilder.prototype.name = function(name, content) {
