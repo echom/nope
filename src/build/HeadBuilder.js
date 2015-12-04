@@ -5,6 +5,8 @@
 
 	/**
 	 * @name np.HeadBuilder
+	 * @constructor
+	 * @augments np.ElementBuilder
 	 */
 	var HeadBuilder = np.inherits(Base, function() {
 		Base.call(this, null, new np.Element('head'));
@@ -12,12 +14,14 @@
 		this.body_ = new np.BodyBuilder(this);
 
 		this.charset_ = np.MetaBuilder().charset('utf-8');
+		this.equivs_ = {};
+		this.metas_ = {};
 	});
 
 	/**
 	  * Sets this document's charset.
 		* @param {string} charset='utf-8' - the charset (e.g. 'utf-8')
-		* @return {HtmlBuilder} this instance
+		* @return HeadBuilder this instance
 		*/
 	HeadBuilder.prototype.charset = function(charset) {
 		this.charset_.charset(charset);
@@ -27,14 +31,23 @@
 	  * Adds or sets a meta element with html-equiv attribute.
 		* @param {string} equiv - one of the http-equivs allowed in HTML (i.e.
 		* 'refresh', 'default-style' and 'content-type')
-		* @return {HtmlBuilder} this instance
+		* @param {string} content - the content of the meta element
+		* @return HeadBuilder this instance
 		*/
 	HeadBuilder.prototype.httpEquiv = function(equiv, content) {
-		this.head_.httpEquiv(equiv);
+		var builder = this.equivs_[equiv] || (this.equivs_ = np.MetaBuilder());
+		builder.httpEquiv(equiv, content);
 		return this;
 	};
+	/**
+	  * Adds or sets a meta element with a name attribute.
+		* @param {string} name - the name of this meta element
+		* @param {string} content - the content of this meta element
+		* @return HeadBuilder this instance
+		*/
 	HeadBuilder.prototype.meta = function(name, content) {
-		this.head_.meta(name, content);
+		var builder = this.metas_[equiv] || (this.metas_ = np.MetaBuilder());
+		builder.meta(name, content);
 		return this;
 	};
 

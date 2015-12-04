@@ -8,10 +8,10 @@ var gulp = require('gulp'),
 var paths = {
 	src: [
 		'nope.js',
-		'build/ElementBuilder.js',
-		'build/MetaBuilder.js',
-		'build/HeadBuilder.js',
-		'build/HtmlBuilder.js'
+		'src/build/ElementBuilder.js',
+		'src/build/MetaBuilder.js',
+		'src/build/HeadBuilder.js',
+		'src/build/HtmlBuilder.js'
 	]
 };
 
@@ -24,7 +24,11 @@ gulp.task('build', function() {
 });
 gulp.task('document', function() {
 	return gulp.src(paths.src)
-		.pipe(jsdoc('dist/docs'));
+		.pipe(jsdoc.parser())
+		.pipe(jsdoc.generator('dist/docs', { path: 'tools/jsdoc' }, {
+			showPrivate: false,
+			outputSourceFiles: false
+		}));
 });
 
 gulp.task('default', ['build']);
