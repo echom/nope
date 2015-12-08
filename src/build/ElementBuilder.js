@@ -42,7 +42,7 @@
 	 * @return np.ElementBuilder this builder instance
 	 */
 	ElementBuilder.prototype.attr = function(name, value) {
-		this.el.attr(name, value);
+		this.element.attributes['' + name] =  '' + value;
 		return this;
 	};
 	ElementBuilder.prototype.compile = function(target) {

@@ -67,5 +67,5 @@
 
 	np.HtmlBuilder = HtmlBuilder;
 
-	np.html = function() { return new np.HtmlBuilder; }
+	np.html = function() { return new np.HtmlBuilder(); };
 }(this.np));

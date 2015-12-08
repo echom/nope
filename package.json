@@ -21,8 +21,9 @@
     "gulp-concat": "^2.6.0",
     "gulp-jsdoc": "^0.1.5",
     "gulp-jshint": "^2.0.0",
+    "gulp-rename": "^1.2.2",
     "gulp-uglify": "^1.5.1",
     "gulp-util": "^3.0.7",
-    "xmlbuilder": "^4.1.0"
+    "karma": "^0.13.15"
   }
 }
