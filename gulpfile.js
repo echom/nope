@@ -30,15 +30,28 @@ gulp.task('build', function() {
 		.pipe(gulp.dest('dist'));
 });
 
-gulp.task('unit', ['build'], function(done) {
+gulp.task('build:mocks', function() {
+	return gulp.src('src/**/*_mock.js')
+	.pipe(jshint())
+	.pipe(jshint.reporter('default'))
+	.pipe(concat('nope-mocks.js'))
+	.pipe(gulp.dest('dist'));
+});
+
+gulp.task('unit', ['build', 'build:mocks'], function(done) {
   new karma.Server({
-    configFile: __dirname + '/karma.conf.js',
+		browsers: ['PhantomJS'],
+    frameworks: ['jasmine'],
+    files: [
+      'dist/nope.js',
+			'dist/nope-mocks.js',
+      'src/**/*_spec.js'
+    ],
     singleRun: true
   }, done).start();
 });
 
-});
-gulp.task('document', function() {
+gulp.task('document', ['build'], function() {
 	return gulp.src(paths.src)
 		.pipe(jsdoc.parser())
 		.pipe(jsdoc.generator('dist/docs', null, {

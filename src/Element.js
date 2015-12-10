@@ -6,6 +6,8 @@
    * @param {string} type the element's type
    */
   var Element = function(type) {
+    if(!type) throw new Error(np.message.argumentEmpty('type'));
+    if(this.validateType) this.validateType(type);
     this.type = type;
   };
 
@@ -25,21 +27,27 @@
   };
 
   /**
-   * @method np.Element.append
+   * Appends an element to this element.
+   * @method np.Element#append
+   * @param {np.Element} element the element to append
    * @return np.Element this element instance
    */
   Element.prototype.append = function(element) {
-    var children = this.children || (this.children = []);
+    var children = this.children || (this.children = []),
+        index;
+
+    if(!element) {
+      throw new Error(np.message.argumentEmpty('element'));
+    } else if(element === this) {
+      throw new Error(np.message.invalidOperation('append', 'trying to append to self'));
+    }
+
+    if((index = children.indexOf(element)) >= 0) {
+      children.splice(index, 1);
+    }
     children.push(element);
     return this;
   };
-  /*Element.prototype.prepend = function(element, indexElement) {
-    var children = this.children || (this.children = []),
-        index = children.indexOf(indexElement);
-    if(index >= 0) {
-      children.splice
-    }
-  };*/
 
   np.Element = Element;
 }(this.np));

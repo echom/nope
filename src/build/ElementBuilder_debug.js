@@ -1,7 +1,8 @@
 (function(np) {
 	'use strict';
 
-	var Base = np.ElementBuilder;
+	np.ElementBuilder.prototype
+
 
 	var ElementBuilderDebug = function(parentBuilder, element) {
 		Base.call(this, parentBuilder, element);
