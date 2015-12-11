@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/echom/nope",
   "devDependencies": {
+    "fs-extra": "^0.26.2",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
     "gulp-jsdoc": "^0.1.5",
