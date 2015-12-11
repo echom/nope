@@ -7,7 +7,10 @@
    */
   var Element = function(type) {
     if(!type) throw new Error(np.message.argumentEmpty('type'));
-    if(this.validateType) this.validateType(type);
+
+    /**
+     * @member {string} np.Element#type
+     */
     this.type = type;
   };
 
@@ -46,6 +49,7 @@
       children.splice(index, 1);
     }
     children.push(element);
+    element.parent = this;
     return this;
   };
 

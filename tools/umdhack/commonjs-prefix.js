@@ -1,0 +1,2 @@
+(function() {
+  module.exports = (function() {

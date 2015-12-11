@@ -51,7 +51,7 @@
 		return this;
 	};
 
-
+	
 
 	np.HeadBuilder = HeadBuilder;
 }(this.np));

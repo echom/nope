@@ -33,7 +33,7 @@
 	 * @private
 	 */
 	np.message.invalidArgument = function(name, message) {
-		return 'ArgumentError: "' + name + '" - ' + message;
+		return 'InvalidArgument: "' + name + '" - ' + message;
 	};
 
 	/**
@@ -43,7 +43,7 @@
 	 * @private
 	 */
 	np.message.argumentEmpty = function(name) {
-		return np.error.arg(name, 'was not supplied');
+		return np.message.invalidArgument(name, 'was not supplied');
 	};
 
 	/**
@@ -54,7 +54,7 @@
 	 */
 
 	np.message.invalidOperation = function(operation, message) {
-		return 'OperationError: "' + operation + '" - ' + message;
+		return 'InvalidOperation: "' + operation + '" - ' + message;
 	};
 
 }(this.np || (this.np = {})));

@@ -8,10 +8,18 @@
 	 *    to
 	 */
 	var ElementBuilder = function(parentBuilder, element) {
+		if(!element) {
+			throw new Error(np.message.argumentEmpty('element'));
+		}
+
 		/**
 		 * @member {np.ElementBuilder} np.ElementBuilder#parent
 		 */
 		this.parent = parentBuilder;
+
+		/**
+		 * @member {np.Element} np.ElementBuilder#element
+		 */
 		this.element = element;
 
 		if(this.parent) {

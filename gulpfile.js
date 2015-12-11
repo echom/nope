@@ -16,7 +16,10 @@ var paths = {
 		'src/build/HeadBuilder.js',
 		'src/build/HtmlBuilder.js'
 	],
-	unit: 'src/**/*_spec.js'
+	min: 'dist/nope.min.js',
+	max: 'dist/nope.js',
+	mocks: 'src/**/*_mock.js',
+	specs: 'src/**/*_spec.js'
 };
 
 gulp.task('build', function() {
@@ -31,14 +34,14 @@ gulp.task('build', function() {
 });
 
 gulp.task('build:mocks', function() {
-	return gulp.src('src/**/*_mock.js')
+	return gulp.src(paths.mocks)
 	.pipe(jshint())
 	.pipe(jshint.reporter('default'))
 	.pipe(concat('nope-mocks.js'))
 	.pipe(gulp.dest('dist'));
 });
 
-gulp.task('unit', ['build', 'build:mocks'], function(done) {
+gulp.task('unit:dist', ['build', 'build:mocks'], function(done) {
   new karma.Server({
 		browsers: ['PhantomJS'],
     frameworks: ['jasmine'],
@@ -51,13 +54,35 @@ gulp.task('unit', ['build', 'build:mocks'], function(done) {
   }, done).start();
 });
 
+gulp.task('unit:live', function(done) {
+  new karma.Server({
+		browsers: ['Chrome'],
+    frameworks: ['jasmine'],
+    files: paths.src.concat([paths.mocks, paths.specs])
+  }, done).start();
+});
+
 gulp.task('document', ['build'], function() {
 	return gulp.src(paths.src)
 		.pipe(jsdoc.parser())
-		.pipe(jsdoc.generator('dist/docs', null, {
+		.pipe(jsdoc.generator('dist/docs', {
+			path: 'tools/jsdoc',
+		}, {
 			showPrivate: false,
 			outputSourceFiles: false
 		}));
 });
 
-gulp.task('default', ['build']);
+gulp.task('umdhack:commonjs', function() {
+	return gulp.src([
+			'tools/umdhack/commonjs-prefix.js',
+			'dist/nope.min.js',
+			'tools/umdhack/commonjs-suffix.js'
+		])
+		.pipe(concat('nope.commonjs.min.js'))
+		.pipe(gulp.dest('dist'));
+});
+
+
+
+gulp.task('default', ['build', 'unit:dist', 'document', 'umdhack:commonjs']);
