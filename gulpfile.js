@@ -65,8 +65,10 @@ gulp.task('unit:live', function(done) {
 gulp.task('document', ['build'], function() {
 	return gulp.src(paths.src)
 		.pipe(jsdoc.parser())
+		// .pipe(gulp.dest('dist/docs'));
 		.pipe(jsdoc.generator('dist/docs', {
 			path: 'tools/jsdoc',
+			title: '{nope.js} - Documentation'
 		}, {
 			showPrivate: false,
 			outputSourceFiles: false

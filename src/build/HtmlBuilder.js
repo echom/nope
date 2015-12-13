@@ -19,14 +19,14 @@
 	HtmlBuilder.prototype.up = function() { return this; };
 
 	/**
-	 * Returns the @link{np.HeadBuilder} of this HtmlBuilder instance.
+	 * Returns the {@link np.HeadBuilder} of this HtmlBuilder instance.
 	 * @method np.HtmlBuilder#head
 	 * @return np.HeadBuilder
 	 */
 	HtmlBuilder.prototype.head = function() { return this.head_; };
 
 	/**
-	 * Returns the @link{np.BodyBuilder} of this HtmlBuilder instance.
+	 * Returns the {@link np.BodyBuilder} of this HtmlBuilder instance.
 	 * @method np.HtmlBuilder#body
 	 * @return np.BodyBuilder
 	 */

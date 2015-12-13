@@ -16,14 +16,14 @@
 
   /**
    * @method np.Element#up
-   * @return np.Element this element's parent
+   * @return {np.Element} this element's parent
    */
   Element.prototype.up = function() {
     if(this.parent) return this.parent;
   };
   /**
    * @method np.Element#root
-   * @return np.Element returns the root element of this tree.
+   * @return {np.Element} returns the root element of this tree.
    */
   Element.prototype.root = function() {
     return this.parent ? this.parent.root() : this;
@@ -33,7 +33,7 @@
    * Appends an element to this element.
    * @method np.Element#append
    * @param {np.Element} element the element to append
-   * @return np.Element this element instance
+   * @return {np.Element} this element instance
    */
   Element.prototype.append = function(element) {
     var children = this.children || (this.children = []),

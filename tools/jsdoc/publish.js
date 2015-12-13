@@ -1,19 +1,18 @@
 (function() {
   var fs = require('fs-extra'),
       path = require('path'),
-      xmlbuilder = require('xmlbuilder');
+      xmlbuilder = require('xmlbuilder'),
+      traverse = require('./traverse.js');
 
   exports.publish = publish;
 
-  function publish(data, opts) {
-    // PREPARE DATA
-    data({ undocumented: true }).remove();
-    data({ ignore: true }).remove();
+  var index,
+      parent;
 
-    //filter the root symbols (but not 'package' which is a built in symbol)
-    var stack = data(function() {
-      return !('memberof' in this) && this.kind !== 'package';
-    }).get();
+  function publish(data, opts) {
+    var conf = env.conf.templates;
+    conf.title = conf.title || 'Documentation';
+
 
     // PREPARE DOCUMENT
     var doc = xmlbuilder.create('html').dec().dtd().root(),
@@ -21,20 +20,19 @@
         body,
         header,
         left,
-        right,
-        index,
-        parent;
+        right;
 
     head = doc.ele('head');
-    head.ele('title').txt('Hello World');
+    head.ele('title').txt(conf.title);
+    head.ele('meta').att('charset', 'utf-8');
     head.ele('link')
       .att('rel', 'stylesheet')
-      .att('href', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.css');
+      .att('href', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css');
 
     body = doc.ele('body');
     header = body
               .ele('div').att('class', 'container-fluid')
-              .ele('div').att('class', 'col-sm-12').ele('h1').txt('Hello World');
+              .ele('div').att('class', 'col-xs-12').ele('h1').txt(conf.title);
     left = header.up()
               .ele('div').att('class', 'col-md-4 col-lg-3');
 
@@ -43,73 +41,78 @@
 
 
 
-    index = left.ele('div').att('class', 'list-group');
-    parent = right.ele('section');
+    index = left.ele('h3').txt('Contents').up()
+                .ele('div').att('class', 'list-group')
+    parent = right;
 
-    var state = {
-      symbol: null,
-      symbols: data,
-      stack: stack,
-      index: index,
-      parent: parent
-    };
+    traverse(data, processSymbol, { private: opts.private });
 
+    write(doc, opts.destination);
+  }
 
-    while(stack.length) {
-      state.symbol = stack.shift();
+  function processSymbol(symbol) {
+    symbol.toplevel && indexSymbol(symbol);
 
-      process(state);
+    parent = parent.ele('section');
+    summarizeSymbol(symbol);
+    describeSymbol(symbol);
 
-      state.symbols({ memberof: state.symbol.longname })
-        .each(function(sym) { stack.push(sym); });
+    parent = parent.up();
+  }
+
+  function summarizeSymbol(symbol) {
+    if(symbol.toplevel) {
+      parent.ele('a').att('id', 'sum-' + symbol.id).txt(' ').up()
+            .ele('h3').txt(symbol.name).up()
+            .ele('small')
+              .att('style', 'display: block; margin: -0.5em 0 1em;')
+              .ele('span', symbol.access + ' ').att('style', 'color: #777').up()
+              .txt(symbol.longname).up()
+            .ele('hr');
+    } else {
+      parent.ele('a').att('id', 'sum-' + symbol.id).txt(' ').up()
+            .ele('h4').txt(symbol.name).txt(symbol.signature).up()
+            .ele('small')
+              .att('style', 'display: block; margin: -0.5em 0 1em;')
+              .ele('span', symbol.access + ' ').att('style', 'color: #777').up()
+              .ele('span', symbol.scope == 'static' ? 'static ' : ' ').att('style', 'color: #777').up()
+              .txt(symbol.longname)
+              .txt(symbol.longsignature).up();
     }
-
-    finishOutput(doc, opts.destination);
   }
 
-  function process(state) {
-    var symbol = state.symbol;
-
-    symbol.id = makeId(symbol.longname);
-
-    index(state);
-  }
-
-  function makeId(longname) {
-    return longname
-            .replace(/#/g, ':')
-            .replace(/[^a-zA-Z\d\.-]/g, '_');
-  }
-  function summaryAnchor(id) { return '#sum-' + id; }
-  function descriptionAnchor(id) { return '#dsc-' + id; }
-  function shouldIndex(symbol) {
-    return symbol.kind === 'namespace' || symbol.kind === 'class';
-  }
-  function iconForKind(kind) {
-    switch(kind) {
-      case 'namespace': return 'glyphicon-folder-open';
-      default: return 'glyphicon-asterisk';
+  function describeSymbol(symbol) {
+    var desc =parent.ele('div').att('id', 'dsc-' + symbol.id);
+    desc.ele('p').txt(symbol.description || ' ');
+    if(symbol.returns) {
+      desc.ele('p').txt('Returns ' + symbol.returns[0].description);
     }
-  };
+  }
 
-  function index(state) {
-    var symbol = state.symbol,
-        index = state.index;
-    if(!shouldIndex(symbol)) return;
-
+  function indexSymbol(symbol) {
     index
       .ele('a')
         .att('class', 'list-group-item')
-        .att('href', '#sum-' + symbol.longname)
-        .ele('i').att('class', 'glyphicon ' + iconForKind(symbol.kind)).txt(' ').up()
-        .raw('&nbsp;')
-        .txt(symbol.longname);
-
+        .att('href', '#sum-' + symbol.id)
+        //.ele('i').att('class', iconForKind(symbol.kind)).txt(' ').up()
+        .ele('span').att('class', 'label label-default').txt(symbol.kind == 'namespace' ? '{} ' : 'f* ').up()
+        .ele('span').raw('&nbsp;').txt(symbol.longname);
   }
-  function summarize(state) {}
-  function describe(state) {}
 
-  function finishOutput(doc, destination) {
+  function iconForKind(kind) {
+    switch(kind) {
+      case 'namespace': return 'glyphicon glyphicon-folder-open';
+      case 'class': return 'glyphicon glyphicon-plus-sign';
+    }
+  }
+  function iconForAccess(access) {
+    switch(access) {
+      case 'private': return 'glyphicon glyphicon-minus';
+      default: return 'glyphicon glyphicon-plus'
+    }
+  }
+
+  function write(doc, destination) {
     var contents = doc
           .end({ pretty: true, indent: '  ', newline: '\n' })
           .replace('<?xml version="1.0"?>\n','');
