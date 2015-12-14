@@ -28,13 +28,26 @@
     head.ele('link')
       .att('rel', 'stylesheet')
       .att('href', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css');
+    head.ele('script')
+      .raw('\nfunction expandSymbol(id) {' +
+           'document.getElementById(id).className = "symbol container-fluid expanded";' +
+           '}\n' +
+           'function collapseSymbol(id) {' +
+           'document.getElementById(id).className = "symbol container-fluid";' +
+           '}\n'
+         );
 
     head.ele('style').raw('\n' +
     '.symbol { transition: all 0.5s; }\n' +
     '.symbol-dsc { transition: max-height 0.5s; overflow: hidden; }\n' +
-    '.symbol:hover { background: #f5f5f5; }\n' +
+    '.symbol.expanded { background: #f5f5f5; }\n' +
     '.symbol > .symbol-dsc { max-height: 0; }\n' +
-    '.symbol:hover > .symbol-dsc { max-height: 1000px; }\n' +
+    '.symbol.expanded > .symbol-dsc { max-height: 1000px; }\n' +
+    '.symbol button.expand { display: block; }\n' +
+    '.symbol.expanded button.expand { display: none; }\n' +
+    '.symbol button.collapse { display: none; }\n' +
+    '.symbol.expanded button.collapse { display: block; }\n' +
+    '.bottom-padding { height: 100px; }\n' +
     '\n');
 
     body = doc.ele('body');
@@ -55,13 +68,17 @@
 
     traverse(data, processSymbol, { private: opts.private });
 
+    right.ele('div').att('class', 'bottom-padding');
+
     write(doc, opts.destination);
   }
 
   function processSymbol(symbol) {
     symbol.toplevel && indexSymbol(symbol);
 
-    parent = parent.ele('section').att('class', 'symbol container-fluid');
+    parent = parent.ele('section')
+        .att('class', 'symbol container-fluid')
+        .att('id', 'sym-' + symbol.id);
 
     summarizeSymbol(symbol);
     describeSymbol(symbol);
@@ -72,17 +89,37 @@
   function summarizeSymbol(symbol) {
     if(symbol.toplevel) {
       parent.ele('a').att('id', 'sum-' + symbol.id).txt(' ').up()
+            .ele('button')
+              .att('class', 'expand btn btn-link pull-right')
+              .att('onclick', 'expandSymbol("sym-' + symbol.id + '")')
+              .ele('i').att('class', 'glyphicon glyphicon-chevron-down').txt(' ').up()
+            .up()
+            .ele('button')
+              .att('class', 'collapse btn btn-link pull-right')
+              .att('onclick', 'collapseSymbol("sym-' + symbol.id + '")')
+              .ele('i').att('class', 'glyphicon glyphicon-chevron-up').txt(' ').up()
+            .up()
             .ele('h3').txt(symbol.name).txt(symbol.signature).up()
             .ele('small')
               .att('style', 'display: block; margin: -0.5em 0 1em;')
               .ele('span', symbol.modifiers).att('style', 'color: #777').up()
               .txt(symbol.longname)
               .txt(symbol.longsignature).up()
-            .ele('p').txt(symbol.classdesc || ' ')
+            .ele('p').txt((symbol.kind === 'class' ? symbol.classdesc : symbol.description) || ' ')
             .ele('hr');
     } else {
       parent.ele('a').att('id', 'sum-' + symbol.id).txt(' ').up()
             .ele('h4').txt(symbol.name).txt(symbol.signature).up()
+            .ele('button')
+              .att('class', 'expand btn btn-link pull-right')
+              .att('onclick', 'expandSymbol("sym-' + symbol.id + '")')
+              .ele('i').att('class', 'glyphicon glyphicon-chevron-down').txt(' ').up()
+            .up()
+            .ele('button')
+              .att('class', 'collapse btn btn-link pull-right')
+              .att('onclick', 'collapseSymbol("sym-' + symbol.id + '")')
+              .ele('i').att('class', 'glyphicon glyphicon-chevron-up').txt(' ').up()
+            .up()
             .ele('small')
               .att('style', 'display: block; margin: -0.5em 0 1em;')
               .ele('span', symbol.modifiers).att('style', 'color: #777').up()
@@ -93,7 +130,9 @@
   }
 
   function describeSymbol(symbol) {
-    var desc = parent.ele('div').att('class', 'symbol-dsc').att('id', 'dsc-' + symbol.id),
+    var desc = parent.ele('div')
+            .att('class', 'symbol-dsc col-xs-11 .col-xs-offset-1')
+            .att('id', 'dsc-' + symbol.id),
         para,
         err;
 
@@ -105,8 +144,8 @@
       desc.ele('h5').txt('Parameters:');
       para = desc.ele('p');
       symbol.params.forEach(function(param) {
-        para.ele('span').txt(param.name).up()
-            .ele('span').txt(': ' + param.description).up()
+        para.ele('code').txt(param.name).up()
+            .ele('span').txt('- ' + param.description).up()
             .ele('span').att('style', 'color: #777').txt('(' + fuseTypes(param) + ')').up()
             .ele('br');
       });

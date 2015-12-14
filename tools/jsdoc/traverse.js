@@ -108,7 +108,6 @@
 
 	module.exports = function(data, onSymbol, opts) {
 		opts = opts || {};
-		console.log(opts);
 
 		// prepare data
 		if(!opts.undocumented) { data({ undocumented: true }).remove(); }
