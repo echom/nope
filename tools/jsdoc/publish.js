@@ -29,6 +29,14 @@
       .att('rel', 'stylesheet')
       .att('href', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css');
 
+    head.ele('style').raw('\n' +
+    '.symbol { transition: all 0.5s; }\n' +
+    '.symbol-dsc { transition: max-height 0.5s; overflow: hidden; }\n' +
+    '.symbol:hover { background: #f5f5f5; }\n' +
+    '.symbol > .symbol-dsc { max-height: 0; }\n' +
+    '.symbol:hover > .symbol-dsc { max-height: 1000px; }\n' +
+    '\n');
+
     body = doc.ele('body');
     header = body
               .ele('div').att('class', 'container-fluid')
@@ -53,7 +61,8 @@
   function processSymbol(symbol) {
     symbol.toplevel && indexSymbol(symbol);
 
-    parent = parent.ele('section');
+    parent = parent.ele('section').att('class', 'symbol container-fluid');
+
     summarizeSymbol(symbol);
     describeSymbol(symbol);
 
@@ -63,29 +72,64 @@
   function summarizeSymbol(symbol) {
     if(symbol.toplevel) {
       parent.ele('a').att('id', 'sum-' + symbol.id).txt(' ').up()
-            .ele('h3').txt(symbol.name).up()
+            .ele('h3').txt(symbol.name).txt(symbol.signature).up()
             .ele('small')
               .att('style', 'display: block; margin: -0.5em 0 1em;')
-              .ele('span', symbol.access + ' ').att('style', 'color: #777').up()
-              .txt(symbol.longname).up()
+              .ele('span', symbol.modifiers).att('style', 'color: #777').up()
+              .txt(symbol.longname)
+              .txt(symbol.longsignature).up()
+            .ele('p').txt(symbol.classdesc || ' ')
             .ele('hr');
     } else {
       parent.ele('a').att('id', 'sum-' + symbol.id).txt(' ').up()
             .ele('h4').txt(symbol.name).txt(symbol.signature).up()
             .ele('small')
               .att('style', 'display: block; margin: -0.5em 0 1em;')
-              .ele('span', symbol.access + ' ').att('style', 'color: #777').up()
-              .ele('span', symbol.scope == 'static' ? 'static ' : ' ').att('style', 'color: #777').up()
+              .ele('span', symbol.modifiers).att('style', 'color: #777').up()
               .txt(symbol.longname)
-              .txt(symbol.longsignature).up();
+              .txt(symbol.longsignature).up()
+            .ele('p').txt(symbol.description || ' ');
     }
   }
 
   function describeSymbol(symbol) {
-    var desc =parent.ele('div').att('id', 'dsc-' + symbol.id);
-    desc.ele('p').txt(symbol.description || ' ');
+    var desc = parent.ele('div').att('class', 'symbol-dsc').att('id', 'dsc-' + symbol.id),
+        para,
+        err;
+
+    if(symbol.kind === 'class') {
+      desc.ele('p').txt(symbol.description || ' ');
+    }
+
+    if(symbol.params) {
+      desc.ele('h5').txt('Parameters:');
+      para = desc.ele('p');
+      symbol.params.forEach(function(param) {
+        para.ele('span').txt(param.name).up()
+            .ele('span').txt(': ' + param.description).up()
+            .ele('span').att('style', 'color: #777').txt('(' + fuseTypes(param) + ')').up()
+            .ele('br');
+      });
+    }
+
     if(symbol.returns) {
-      desc.ele('p').txt('Returns ' + symbol.returns[0].description);
+      desc.ele('h5').txt('Returns:');
+      desc.ele('p')
+          .ele('span')
+            .txt(symbol.returns[0].description).up()
+          .ele('span')
+            .att('style', 'color: #777')
+            .txt('(' + fuseTypes(symbol.returns[0]) + ')').up()
+          .ele('br');
+    }
+    if(symbol.exceptions) {
+      desc.ele('h5').txt('Throws errors:');
+      err = desc.ele('p');
+      symbol.exceptions.forEach(function(exc) {
+        err.ele('span').txt(exc.description).up()
+           .ele('span').att('style', 'color: #777').txt('(' + fuseTypes(exc) + ')').up()
+           .ele('br');
+      });
     }
   }
 
@@ -95,7 +139,10 @@
         .att('class', 'list-group-item')
         .att('href', '#sum-' + symbol.id)
         //.ele('i').att('class', iconForKind(symbol.kind)).txt(' ').up()
-        .ele('span').att('class', 'label label-default').txt(symbol.kind == 'namespace' ? '{} ' : 'f* ').up()
+        .ele('span')
+          .raw(symbol.kind == 'namespace' ? '{ } ' : '&nbsp;f*')
+          .att('title', symbol.kind == 'namespace' ? 'Namespace' : 'Constructor')
+          .up()
         .ele('span').raw('&nbsp;').txt(symbol.longname);
   }
 
@@ -111,6 +158,10 @@
       default: return 'glyphicon glyphicon-plus'
     }
   }
+
+  function fuseTypes(part) {
+    return part.type && part.type.names ? part.type.names.join('|') : '*';
+  };
 
   function write(doc, destination) {
     var contents = doc

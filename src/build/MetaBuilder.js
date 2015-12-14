@@ -2,6 +2,12 @@
 	'use strict';
 
 	var Base = np.ElementBuilder;
+
+	/**
+	 * @constructor np.MetaBuilder
+	 * @param {np.HeadBuilder} parentBuilder this builder's parent
+	 * @augments np.ElementBuilder
+	 */
 	var MetaBuilder = np.inherits(Base, function(parentBuilder) {
 		Base.call(this, parentBuilder, new np.Element('meta'));
 	});

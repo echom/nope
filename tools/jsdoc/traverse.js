@@ -7,7 +7,8 @@
 	[
 		'kind', 'name', 'longname', 'memberof',
 		'scope', 'description', 'meta', 'comment',
-		'params', 'returns'
+		'params', 'returns', 'exceptions', 'readonly',
+		'classdesc', 'type'
 	].forEach(function(prop) {
 		Object.defineProperty(Symbol.prototype, prop, {
 			get: function() { return this.symbol_[prop]; }
@@ -17,14 +18,32 @@
 	Object.defineProperty(Symbol.prototype, 'toplevel', {
 		get: function() { return this.kind === 'namespace' || this.kind === 'class'; }
 	});
+	Object.defineProperty(Symbol.prototype, 'member', {
+		get: function() {
+			return (this.kind === 'member' || this.kind === 'function' || this.kind === 'event' || this.kind === 'property');
+		}
+	});
+
 	Object.defineProperty(Symbol.prototype, 'prefix', {
 		get: function() {
 			return this.longname.substr(0, (this.longname.length - this.name.length)); }
 	});
+
+	Object.defineProperty(Symbol.prototype, 'modifiers', {
+		get: function() {
+			var modifiers = this.access + ' ';
+			if(this.member) {
+				modifiers += this.scope === 'static' ? 'static ' : '';
+				modifiers += this.readonly ? 'readonly ' : '';
+				modifiers += this.constant ? 'constant' : '';
+			}
+			return modifiers;
+		}
+	});
 	Object.defineProperty(Symbol.prototype, 'signature', {
 		get: function() {
 			var signature;
-			if(this.kind == 'function') {
+			if(this.kind == 'function' || this.kind == 'class') {
 				if(!this.signature_) {
 					signature = '(';
 					if(this.params) {
@@ -36,7 +55,8 @@
 				}
 
 				return this.signature_
-			} else {
+			}
+			else {
 				return ' ';
 			}
 		}
@@ -44,7 +64,7 @@
 	Object.defineProperty(Symbol.prototype, 'longsignature', {
 		get: function() {
 			var signature;
-			if(this.kind == 'function') {
+			if(this.kind == 'function' || this.kind == 'class') {
 				if(!this.longsignature_) {
 					signature = '(';
 					if(this.params) {
@@ -56,7 +76,7 @@
 
 					if(this.returns && this.returns[0].type) {
 						signature += ' : ' + this.returns[0].type.names.join('|');
-					} else {
+					} else if(this.kind == 'function') {
 						signature += ' : void';
 					}
 
@@ -64,6 +84,8 @@
 				}
 
 				return this.longsignature_
+			} else if(this.kind === 'member') {
+				return ': ' + (this.type && this.type.names ?  this.type.names.join('|') : '*');
 			} else {
 				return ' ';
 			}

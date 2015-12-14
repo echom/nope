@@ -4,14 +4,12 @@
 	var Base = np.ElementBuilder;
 
 	/**
-	 * @name np.HeadBuilder
-	 * @constructor
+	 * @constructor np.HeadBuilder
+	 * @param {np.HtmlBuilder} parentBuilder this builder's parent
 	 * @augments np.ElementBuilder
 	 */
-	var HeadBuilder = np.inherits(Base, function() {
-		Base.call(this, null, new np.Element('head'));
-		this.head_ = new np.HeadBuilder(this);
-		this.body_ = new np.BodyBuilder(this);
+	var HeadBuilder = np.inherits(Base, function(parentBuilder) {
+		Base.call(this, parentBuilder, new np.Element('head'));
 
 		this.charset_ = np.MetaBuilder().charset('utf-8');
 		this.equivs_ = {};
@@ -51,7 +49,7 @@
 		return this;
 	};
 
-	
+
 
 	np.HeadBuilder = HeadBuilder;
 }(this.np));

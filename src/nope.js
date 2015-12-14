@@ -9,6 +9,9 @@
 	 * @method np.inherits
 	 * @param {function} ctor - the constructor function
 	 * @param {function} base - the base class constructor function
+	 * @return {function} the constructor function now inheriting from the base
+	 *  constructor
+	 * @private
 	 */
 	np.inherits = function(ctor, base) {
 		var f = function() {};
@@ -30,6 +33,7 @@
 	 * @method np.message.invalidArgument
 	 * @param {string} name - the argument's name
 	 * @param {string} message - the message
+	 * @return {string} the formatted error message
 	 * @private
 	 */
 	np.message.invalidArgument = function(name, message) {
@@ -37,9 +41,10 @@
 	};
 
 	/**
-	 * Formats an error message when an argument is not supplied.
+	 * Formats an error message for a missing argument.
 	 * @method np.message.argumentEmpty
 	 * @param {string} name - the argument's name
+	 * @return {string} the formatted error message
 	 * @private
 	 */
 	np.message.argumentEmpty = function(name) {
@@ -47,10 +52,24 @@
 	};
 
 	/**
+	 * Formats a error message for arguments of the wrong type.
+	 * @method np.message.argumentType
+	 * @param {string} name - the argument's name
+	 * @param {string} type - the expected type
+	 * @return {string} the formatted error message
+	 * @private
+	 */
+	np.message.argumentType = function(name, type) {
+		return np.message.invalidArgument(name, 'must be of type ' + type);
+	};
+
+	/**
 	 * Formats an error message for invalid operations.
 	 * @method np.message.invalidOperation
 	 * @param {string} operation - the operation which failed
 	 * @param {string} message - the message
+	 * @return {string} the formatted error message
+	 * @private
 	 */
 
 	np.message.invalidOperation = function(operation, message) {

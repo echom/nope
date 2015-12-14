@@ -75,7 +75,7 @@ gulp.task('document', ['build'], function() {
 			path: 'tools/jsdoc',
 			title: '{nope.js} - Documentation'
 		}, {
-			showPrivate: false,
+			showPrivate: true,
 			outputSourceFiles: false
 		}));
 });
