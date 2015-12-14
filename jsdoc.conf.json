@@ -1,0 +1,23 @@
+{
+	"source": {
+		"include": [
+			"src/nope.js",
+			"src/Attributes.js",
+			"src/Element.js",
+			"src/build/ElementBuilder.js",
+			"src/build/MetaBuilder.js",
+			"src/build/HeadBuilder.js",
+			"src/build/HtmlBuilder.js"
+		]
+	},
+	"plugins": [],
+	"templates": {
+		"title": "{nope.js} - Documentation"
+	},
+	"opts": {
+		"template": "tools/jsdoc",
+		"encoding": "utf8",
+		"destination": "dist/docs",
+		"private": true
+	}
+}

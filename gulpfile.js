@@ -3,13 +3,14 @@ var gulp = require('gulp'),
 		rename = require('gulp-rename'),
 		jshint = require('gulp-jshint'),
 		uglify = require('gulp-uglify'),
-		jsdoc = require('gulp-jsdoc'),
+		shell = require('gulp-shell'),
 		gutil = require('gulp-util'),
 		karma = require('karma');
 
 var paths = {
 	src: [
 		'src/nope.js',
+		'src/Attributes.js',
 		'src/Element.js',
 		'src/build/ElementBuilder.js',
 		'src/build/MetaBuilder.js',
@@ -50,7 +51,8 @@ gulp.task('unit:dist', ['build', 'build:mocks'], function(done) {
 			'dist/nope-mocks.js',
       'src/**/*_spec.js'
     ],
-    reporters: ['progress', 'coverage'],
+		logLevel: 'warn',
+    reporters: ['dots', 'coverage'],
     preprocessors: {
       'dist/nope.js': ['coverage']
     },
@@ -60,25 +62,15 @@ gulp.task('unit:dist', ['build', 'build:mocks'], function(done) {
 });
 
 gulp.task('unit:live', function(done) {
-  new karma.Server({
+	new karma.Server({
 		browsers: ['Chrome'],
     frameworks: ['jasmine'],
+		reporters: ['dots'],
     files: paths.src.concat([paths.mocks, paths.specs])
   }, done).start();
 });
 
-gulp.task('document', ['build'], function() {
-	return gulp.src(paths.src)
-		.pipe(jsdoc.parser())
-		// .pipe(gulp.dest('dist/docs'));
-		.pipe(jsdoc.generator('dist/docs', {
-			path: 'tools/jsdoc',
-			title: '{nope.js} - Documentation'
-		}, {
-			showPrivate: true,
-			outputSourceFiles: false
-		}));
-});
+gulp.task('document', shell.task(['node_modules/.bin/jsdoc -c jsdoc.conf.json']));
 
 gulp.task('umdhack:commonjs', function() {
 	return gulp.src([

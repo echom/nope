@@ -18,6 +18,7 @@
 	Object.defineProperty(Symbol.prototype, 'toplevel', {
 		get: function() { return this.kind === 'namespace' || this.kind === 'class'; }
 	});
+
 	Object.defineProperty(Symbol.prototype, 'member', {
 		get: function() {
 			return (this.kind === 'member' || this.kind === 'function' || this.kind === 'event' || this.kind === 'property');
@@ -40,6 +41,7 @@
 			return modifiers;
 		}
 	});
+
 	Object.defineProperty(Symbol.prototype, 'signature', {
 		get: function() {
 			var signature;
@@ -61,6 +63,7 @@
 			}
 		}
 	});
+
 	Object.defineProperty(Symbol.prototype, 'longsignature', {
 		get: function() {
 			var signature;
@@ -91,6 +94,7 @@
 			}
 		}
 	});
+
 	Object.defineProperty(Symbol.prototype, 'id', {
 		get: function() {
 			if(!this.id_) {
@@ -101,9 +105,26 @@
 			return this.id_;
 		}
 	});
+
 	Object.defineProperty(Symbol.prototype, 'access', {
 		get: function() { return this.symbol_.access || 'public'; }
 	});
+
+
+	function process(symbolData, data, onEnterSymbol, onExitSymbol) {
+		var symbol = new Symbol(symbolData),
+				recurse = function(s) { process(s, data, onEnterSymbol, onExitSymbol); };
+
+		onEnterSymbol && onEnterSymbol(symbol);
+
+		data({ memberof: symbol.longname, kind: 'class' }).each(recurse);
+		data({ memberof: symbol.longname, kind: 'namespace' }).each(recurse);
+		data({ memberof: symbol.longname, kind: 'event' }).each(recurse);
+		data({ memberof: symbol.longname, kind: 'function' }).each(recurse);
+		data({ memberof: symbol.longname, kind: 'member' }).each(recurse);
+
+		onExitSymbol && onExitSymbol(symbol);
+	}
 
 
 	module.exports = function(data, onSymbol, opts) {
@@ -115,19 +136,9 @@
 		if(!opts.private) { data({ access: 'private' }).remove(); }
 
     // filter the root symbols (except 'package' which is a built in symbol)
-    var stack = data(function() {
+		// and process
+    data(function() {
       return !('memberof' in this) && this.kind !== 'package';
-    }).get();
-
-		while(stack.length) {
-			var sym = stack.pop();
-
-      onSymbol(new Symbol(sym));
-
-			data({ memberof: sym.longname, kind: 'class' }).each(function(s) { stack.push(s); });
-			data({ memberof: sym.longname, kind: 'namespace' }).each(function(s) { stack.push(s); });
-			data({ memberof: sym.longname, kind: 'function' }).each(function(s) { stack.push(s); });
-			data({ memberof: sym.longname, kind: 'member' }).each(function(s) { stack.push(s); });
-    }
+    }).get().forEach(function(symbol) { process(symbol, data, onSymbol)});
 	};
 }());

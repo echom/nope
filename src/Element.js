@@ -39,12 +39,20 @@
   };
 
   /**
+   * Returns this element's attribute collection.
+   * @return {np.Attributes} this element's attributes
+   */
+  Element.prototype.attributes = function() {
+    return this.attributes_ || (this.attributes_ = new np.Attributes());
+  };
+
+  /**
    * Appends an element to this element.
    * @method np.Element#append
    * @param {np.Element} element the element to append
    * @return {np.Element} this element instance
    * @throws {Error} when the 'element' argument is not defined
-   * @throws {TypeError} when the argument is not an {@link np.Element}
+   * @throws {TypeError} when the 'element' argument is not an {@link np.Element}
    * @throws {Error} when the 'element' argument is itself
    */
   Element.prototype.append = function(element) {

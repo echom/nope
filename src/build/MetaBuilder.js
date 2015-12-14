@@ -8,9 +8,9 @@
 	 * @param {np.HeadBuilder} parentBuilder this builder's parent
 	 * @augments np.ElementBuilder
 	 */
-	var MetaBuilder = np.inherits(Base, function(parentBuilder) {
+	var MetaBuilder = np.inherits(function(parentBuilder) {
 		Base.call(this, parentBuilder, new np.Element('meta'));
-	});
+	}, Base);
 
 	MetaBuilder.prototype.charset = function(charset) {
 		this.attr('charset', charset);

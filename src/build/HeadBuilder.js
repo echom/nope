@@ -8,13 +8,13 @@
 	 * @param {np.HtmlBuilder} parentBuilder this builder's parent
 	 * @augments np.ElementBuilder
 	 */
-	var HeadBuilder = np.inherits(Base, function(parentBuilder) {
+	var HeadBuilder = np.inherits(function(parentBuilder) {
 		Base.call(this, parentBuilder, new np.Element('head'));
 
 		this.charset_ = np.MetaBuilder().charset('utf-8');
 		this.equivs_ = {};
 		this.metas_ = {};
-	});
+	}, Base);
 
 	/**
 	  * Sets this document's charset.

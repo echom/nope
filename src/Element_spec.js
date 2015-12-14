@@ -63,6 +63,13 @@ describe('np.Element', function() {
       expect(toThrow).toThrowError(/InvalidOperation/);
     });
 
+    it('expects the "element" argument to be an np.Element', function() {
+      var el1 = new np.Element('html'),
+          toThrow = function() { el1.append({}); };
+
+      expect(toThrow).toThrowError(/InvalidArgument/);
+    });
+
     it('expects an argument to be supplied', function() {
       var el1 = new np.Element('html'),
           toThrow = function() { el1.append(); };
@@ -72,7 +79,7 @@ describe('np.Element', function() {
 
   });
 
-  describe('root', function() {
+  describe('#root', function() {
     it('returns the root element of the tree', function() {
       var el1 = new np.Element('html'),
           el2 = new np.Element('head'),
@@ -84,7 +91,7 @@ describe('np.Element', function() {
       expect(el3.root()).toBe(el3);
     });
   });
-  
+
   describe('#up', function() {
 
     it('returns the parent element', function() {

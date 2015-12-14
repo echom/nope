@@ -7,11 +7,11 @@
 	 * @constructor np.HtmlBuilder
 	 * @augments np.ElementBuilder
 	 */
-	var HtmlBuilder = np.inherits(Base, function() {
+	var HtmlBuilder = np.inherits(function() {
 		Base.call(this, null, new np.Element('html'));
 		this.head_ = new np.HeadBuilder(this);
 		this.body_ = new np.BodyBuilder(this);
-	});
+	}, Base);
 
 	/**
 	 * @override
