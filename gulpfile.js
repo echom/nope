@@ -50,6 +50,11 @@ gulp.task('unit:dist', ['build', 'build:mocks'], function(done) {
 			'dist/nope-mocks.js',
       'src/**/*_spec.js'
     ],
+    reporters: ['progress', 'coverage'],
+    preprocessors: {
+      'dist/nope.js': ['coverage']
+    },
+    coverageReporter: { type : 'html', dir : 'dist/coverage' },
     singleRun: true
   }, done).start();
 });
