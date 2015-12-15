@@ -29,7 +29,7 @@
 	 * @return {boolean} true if the attribute exist, otherwise false
 	 */
 	Attributes.prototype.has = function(name) {
-		return name in this.attributes_;
+		return !!name && name in this.attributes_;
 	};
 
 	/**

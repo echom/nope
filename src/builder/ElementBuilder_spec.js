@@ -69,4 +69,16 @@ describe('np.ElementBuilder', function() {
       expect(attributes.set).toHaveBeenCalledWith('name', 'value');
     });
   });
+
+  describe('#compile', function() {
+    it('calls the provided compiler', function() {
+      var element = np.mocks.Element(),
+          compilerMock = { compile: jasmine.createSpy('compile') },
+          builder = new np.ElementBuilder(null, element);
+
+      builder.compile(compilerMock);
+
+      expect(compilerMock.compile).toHaveBeenCalledWith(element);
+    });
+  });
 });

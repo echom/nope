@@ -105,4 +105,13 @@ describe('np.Element', function() {
 
   });
 
+  describe('#attributes', function() {
+    it('returns an attributes collection', function() {
+      var el = new np.Element('html'),
+          attribs = el.attributes();
+
+      expect(attribs).not.toBe(undefined);
+      expect(attribs instanceof np.Attributes).toBe(true);
+    });
+  });
 });
