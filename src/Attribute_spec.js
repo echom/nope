@@ -14,6 +14,12 @@ describe('np.Attribute', function() {
 			expect(att.get('name')).toBe('value');
 			expect(att.get('other')).toBe(undefined);
 		});
+		it('expect a "name" argument', function() {
+			var att = new np.Attributes(),
+					toThrow = function() { return att.get(); };
+
+			expect(toThrow).toThrowError(/InvalidArgument/);
+		});
 	});
 
 	describe('set', function() {
@@ -31,6 +37,19 @@ describe('np.Attribute', function() {
 			att.set('name', 'value');
 
       //expect(att.raw()).toBe(jasmine.objectContaining({ name: 'value' }));
+    });
+	});
+	describe('has', function() {
+		it('returns true if the attribute exists', function() {
+      var att = new np.Attributes();
+			att.set('name', 'value');
+
+      expect(att.has('name')).toBe(true);
+    });
+		it('returns false if the attribute exists', function() {
+      var att = new np.Attributes();
+
+      expect(att.has('name')).toBe(false);
     });
 	});
 });

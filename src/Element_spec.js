@@ -14,7 +14,7 @@ describe('np.Element', function() {
 
     it('fails when no type is passed in as 1st argument', function(){
       var toThrow = function() { new np.Element(); };
-      expect(toThrow).toThrow();
+      expect(toThrow).toThrowError(/InvalidArgument/);
     });
 
   });

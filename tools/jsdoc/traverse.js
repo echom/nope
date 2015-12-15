@@ -117,11 +117,11 @@
 
 		onEnterSymbol && onEnterSymbol(symbol);
 
-		data({ memberof: symbol.longname, kind: 'class' }).each(recurse);
-		data({ memberof: symbol.longname, kind: 'namespace' }).each(recurse);
-		data({ memberof: symbol.longname, kind: 'event' }).each(recurse);
-		data({ memberof: symbol.longname, kind: 'function' }).each(recurse);
 		data({ memberof: symbol.longname, kind: 'member' }).each(recurse);
+		data({ memberof: symbol.longname, kind: 'function' }).each(recurse);
+		data({ memberof: symbol.longname, kind: 'event' }).each(recurse);
+		data({ memberof: symbol.longname, kind: 'namespace' }).each(recurse);
+		data({ memberof: symbol.longname, kind: 'class' }).each(recurse);
 
 		onExitSymbol && onExitSymbol(symbol);
 	}

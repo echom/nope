@@ -6,25 +6,30 @@ describe('np.ElementBuilder', function() {
   });
 
   describe('#ctor', function() {
-    it('should create an instance of ElementBuilder', function() {
+    it('creates an instance of ElementBuilder', function() {
       var builder = new np.ElementBuilder(null, mockElement);
 
       expect(builder instanceof np.ElementBuilder).toBe(true);
     });
-    it('should set its parent builder', function() {
+    it('sets its parent builder', function() {
       var builder1 = new np.ElementBuilder(null, mockElement),
           builder2 = new np.ElementBuilder(builder1, np.mocks.Element());
 
       expect(builder2.parent).toBe(builder1);
     });
-    it('should set its element', function() {
+    it('sets its element', function() {
       var builder = new np.ElementBuilder(null, mockElement);
       expect(builder.element).toBe(mockElement);
     });
-    it('should append its element to the parent\'s element', function() {
+    it('appends its element to the parent\'s element', function() {
       var parent = { element: np.mocks.Element() },
           builder = new np.ElementBuilder(parent, mockElement);
       expect(parent.element.append).toHaveBeenCalledWith(mockElement);
+    });
+
+    it('should require an element', function() {
+      var toThrow = function() { return new np.ElementBuilder(null, null); };
+      expect(toThrow).toThrowError(/InvalidArgument/);
     });
   });
 
@@ -50,5 +55,18 @@ describe('np.ElementBuilder', function() {
     });
   });
 
-  describe('#attrib')
+  describe('#attrib', function() {
+    it('sets and attribute on the element', function() {
+      var element = np.mocks.Element(),
+          attributes = np.mocks.Attributes(),
+          builder = new np.ElementBuilder(null, element);
+
+      element.attributes.and.returnValue(attributes);
+
+      builder.attrib('name', 'value');
+
+      expect(element.attributes).toHaveBeenCalled();
+      expect(attributes.set).toHaveBeenCalledWith('name', 'value');
+    });
+  });
 });

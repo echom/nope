@@ -12,10 +12,10 @@ var paths = {
 		'src/nope.js',
 		'src/Attributes.js',
 		'src/Element.js',
-		'src/build/ElementBuilder.js',
-		'src/build/MetaBuilder.js',
-		'src/build/HeadBuilder.js',
-		'src/build/HtmlBuilder.js'
+		'src/builder/ElementBuilder.js',
+		'src/builder/MetaBuilder.js',
+		'src/builder/HeadBuilder.js',
+		'src/builder/HtmlBuilder.js'
 	],
 	min: 'dist/nope.min.js',
 	max: 'dist/nope.js',
@@ -62,12 +62,21 @@ gulp.task('unit:dist', ['build', 'build:mocks'], function(done) {
 });
 
 gulp.task('unit:live', function(done) {
-	new karma.Server({
+	var config = {
 		browsers: ['Chrome'],
     frameworks: ['jasmine'],
-		reporters: ['dots'],
+		reporters: ['dots', 'coverage'],
+    preprocessors: {},
+    coverageReporter: { type : 'text' },
+
     files: paths.src.concat([paths.mocks, paths.specs])
-  }, done).start();
+  };
+
+	paths.src.forEach(function(p) {
+		config.preprocessors[p] = ['coverage'];
+	});
+
+	new karma.Server(config, done).start();
 });
 
 gulp.task('document', shell.task(['node_modules/.bin/jsdoc -c jsdoc.conf.json']));

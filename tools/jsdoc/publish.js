@@ -43,9 +43,9 @@
     '.symbol.expanded { background: #f5f5f5; }\n' +
     '.symbol > .symbol-dsc { max-height: 0; }\n' +
     '.symbol.expanded > .symbol-dsc { max-height: 1000px; }\n' +
-    '.symbol button.expand { display: block; }\n' +
+    '.symbol button.expand { display: block; margin-top: 10px; }\n' +
     '.symbol.expanded button.expand { display: none; }\n' +
-    '.symbol button.collapse { display: none; }\n' +
+    '.symbol button.collapse { display: none; margin-top: 10px; }\n' +
     '.symbol.expanded button.collapse { display: block; }\n' +
     '.bottom-padding { height: 100px; }\n' +
     '\n');
@@ -177,6 +177,7 @@
       .ele('a')
         .att('class', 'list-group-item')
         .att('href', '#sum-' + symbol.id)
+        .att('onclick', 'expandSymbol("sym-' + symbol.id + '")')
         //.ele('i').att('class', iconForKind(symbol.kind)).txt(' ').up()
         .ele('span')
           .raw(symbol.kind == 'namespace' ? '{ } ' : '&nbsp;f*')

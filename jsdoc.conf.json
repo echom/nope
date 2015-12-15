@@ -4,10 +4,10 @@
 			"src/nope.js",
 			"src/Attributes.js",
 			"src/Element.js",
-			"src/build/ElementBuilder.js",
-			"src/build/MetaBuilder.js",
-			"src/build/HeadBuilder.js",
-			"src/build/HtmlBuilder.js"
+			"src/builder/ElementBuilder.js",
+			"src/builder/MetaBuilder.js",
+			"src/builder/HeadBuilder.js",
+			"src/builder/HtmlBuilder.js"
 		]
 	},
 	"plugins": [],

@@ -57,7 +57,7 @@
 	 * @return np.ElementBuilder this builder instance
 	 */
 	ElementBuilder.prototype.attrib = function(name, value) {
-		this.element.attributes.set('' + name, '' + value);
+		this.element.attributes().set('' + name, '' + value);
 		return this;
 	};
 
