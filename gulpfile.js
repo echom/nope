@@ -35,27 +35,32 @@ gulp.task('build', function() {
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('build:mocks', function() {
-  return gulp.src(paths.mocks)
-    .pipe(jshint())
-    .pipe(jshint.reporter('default'))
-    .pipe(concat('nope-mocks.js'))
-    .pipe(gulp.dest('dist'));
-});
+// gulp.task('build:mocks', function() {
+//   return gulp.src(paths.mocks)
+//     .pipe(jshint())
+//     .pipe(jshint.reporter('default'))
+//     .pipe(concat('nope-mocks.js'))
+//     .pipe(gulp.dest('dist'));
+// });
 
-gulp.task('unit:dist', ['build', 'build:mocks'], function(done) {
+gulp.task('unit:dist', ['unit:coverage', 'build'], function(done) {
   new karma.Server(karmaConfigure({
     browsers: ['PhantomJS'],
-    reporters: ['dots', 'coverage'],
-    coverageReporter: {
-			type: 'html',
-			dir: 'dist/coverage',
-			/*check: {
-        global: { statements: 90, lines: 90, functions: 90, branches: 90 }
-      }*/
-		},
-		src: paths.max,
-		mocks: 'dist/nope-mocks.js',
+    reporters: ['dots'],
+		src: paths.min,
+		mocks: paths.mocks,
+		specs: paths.specs,
+    singleRun: true
+  }), done).start();
+});
+
+gulp.task('unit:coverage', function(done) {
+  new karma.Server(karmaConfigure({
+    browsers: ['PhantomJS'],
+    reporters: ['coverage'],
+    coverageReporter: { type: 'html', dir: 'dist/coverage' },
+		src: paths.src,
+		mocks: paths.mocks,
 		specs: paths.specs,
     singleRun: true
   }), done).start();
