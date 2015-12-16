@@ -13,17 +13,17 @@
 	}, Base);
 
 	MetaBuilder.prototype.charset = function(charset) {
-		this.attr('charset', charset);
+		this.attrib('charset', charset);
 		return this;
 	};
 	MetaBuilder.prototype.httpEquiv = function(httpEquiv, content) {
-		this.attr('http-equiv', httpEquiv);
-		this.attr('content', content);
+		this.attrib('http-equiv', httpEquiv);
+		this.attrib('content', content);
 		return this;
 	};
 	MetaBuilder.prototype.name = function(name, content) {
-		this.attr('name', name);
-		this.attr('content', content);
+		this.attrib('name', name);
+		this.attrib('content', content);
 		return this;
 	};
 

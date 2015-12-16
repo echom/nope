@@ -4,7 +4,7 @@ module.exports = function(baseConf) {
     frameworks: ['jasmine'],
     logLevel: 'warn',
     preprocessors: baseConf.preprocessors || {},
-    reporters: baseConf.reporters,
+    reporters: baseConf.reporters || [],
     coverageReporter: baseConf.coverageReporter,
     singleRun: baseConf.singleRun,
 

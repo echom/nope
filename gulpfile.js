@@ -16,6 +16,7 @@ var paths = {
     'src/builder/ElementBuilder.js',
     'src/builder/MetaBuilder.js',
     'src/builder/HeadBuilder.js',
+    'src/builder/BodyBuilder.js',
     'src/builder/HtmlBuilder.js'
   ],
   min: 'dist/nope.min.js',
@@ -71,6 +72,15 @@ gulp.task('unit:live', function(done) {
     browsers: ['Chrome'],
     reporters: ['dots', 'coverage'],
     coverageReporter: { type: 'text' },
+		src: paths.src,
+		mocks: paths.mocks,
+		specs: paths.specs
+  }), done).start();
+});
+
+gulp.task('unit:debug', function(done) {
+  new karma.Server(karmaConfigure({
+    browsers: ['Chrome'],
 		src: paths.src,
 		mocks: paths.mocks,
 		specs: paths.specs
