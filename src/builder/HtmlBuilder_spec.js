@@ -45,12 +45,14 @@ describe('np.ElementBuilder', function() {
   });
 
   describe('#meta', function() {
-    var html = new np.HtmlBuilder(),
-        head = html.head();
-    spyOn(head, 'meta');
+    it('delegates to the HeadBuilder', function() {
+      var html = new np.HtmlBuilder(),
+          head = html.head();
+      spyOn(head, 'meta');
 
-    html.meta('a', 'b');
+      html.meta('a', 'b');
 
-    expect(head.meta).toHaveBeenCalledWith('a');
+      expect(head.meta).toHaveBeenCalledWith('a', 'b');
+    });
   });
 });

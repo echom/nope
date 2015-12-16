@@ -1,12 +1,13 @@
 var gulp = require('gulp'),
-  concat = require('gulp-concat'),
-  rename = require('gulp-rename'),
-  jshint = require('gulp-jshint'),
-  uglify = require('gulp-uglify'),
-  shell = require('gulp-shell'),
-  gutil = require('gulp-util'),
-  karma = require('karma'),
-	karmaConfigure = require('./tools/karma-configure');
+    exec = require('child_process').exec,
+    karma = require('karma'),
+    gutil = require('gulp-util'),
+    concat = require('gulp-concat'),
+    rename = require('gulp-rename'),
+    jshint = require('gulp-jshint'),
+    uglify = require('gulp-uglify'),
+    karmaConfigure = require('./tools/karma-configure'),
+    jsdocConfigure = require('./tools/jsdoc-configure');
 
 var paths = {
   src: [
@@ -87,7 +88,20 @@ gulp.task('unit:debug', function(done) {
   }), done).start();
 });
 
-gulp.task('document', shell.task(['node_modules/.bin/jsdoc -c jsdoc.conf.json']));
+gulp.task('document', function(done) {
+  var conf = jsdocConfigure({
+    src: paths.src,
+    template: {
+      path: 'tools/jsdoc',
+      title: '{nope} - Documentation'
+    },
+    destination: 'dist/docs'
+  });
+
+  exec('node_modules/.bin/jsdoc -c ' + conf, function(err) {
+    done(err);
+  });
+});
 
 gulp.task('umdhack:commonjs', function() {
   return gulp.src([
