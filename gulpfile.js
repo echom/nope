@@ -90,7 +90,7 @@ gulp.task('unit:debug', function(done) {
 
 gulp.task('document', function(done) {
   var conf = jsdocConfigure({
-    src: paths.src,
+    src: paths.src.concat(['package.json']),
     template: {
       path: 'tools/jsdoc',
       title: '{nope} - Documentation'
@@ -98,7 +98,9 @@ gulp.task('document', function(done) {
     destination: 'dist/docs'
   });
 
-  exec('node_modules/.bin/jsdoc -c ' + conf, function(err) {
+  exec('node_modules/.bin/jsdoc -c ' + conf, function(err, stdout, stderr) {
+    stdout && console.log(stdout);
+    stderr && console.log(stderr);
     done(err);
   });
 });

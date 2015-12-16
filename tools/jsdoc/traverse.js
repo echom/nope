@@ -130,6 +130,8 @@
 	module.exports = function(data, onSymbol, opts) {
 		opts = opts || {};
 
+		onSymbol(data({kind: 'package'}).first());
+
 		// prepare data
 		if(!opts.undocumented) { data({ undocumented: true }).remove(); }
 		if(!opts.ignored) { data({ ignore: true }).remove(); }

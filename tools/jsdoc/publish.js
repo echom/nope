@@ -6,24 +6,24 @@
 
   exports.publish = publish;
 
-  var index,
+  var title,
+      header,
+      index,
       parent;
 
   function publish(data, opts) {
     var conf = env.conf.templates;
     conf.title = conf.title || 'Documentation';
 
-
     // PREPARE DOCUMENT
     var doc = xmlbuilder.create('html').dec().dtd().root(),
         head,
         body,
-        header,
         left,
         right;
 
     head = doc.ele('head');
-    head.ele('title').txt(conf.title);
+    title = head.ele('title');
     head.ele('meta').att('charset', 'utf-8');
     head.ele('link')
       .att('rel', 'stylesheet')
@@ -53,7 +53,7 @@
     body = doc.ele('body');
     header = body
               .ele('div').att('class', 'container-fluid')
-              .ele('div').att('class', 'col-xs-12').ele('h1').txt(conf.title);
+              .ele('div').att('class', 'page-header').ele('h1');
     left = header.up()
               .ele('div').att('class', 'col-md-4 col-lg-3');
 
@@ -74,16 +74,21 @@
   }
 
   function processSymbol(symbol) {
-    symbol.toplevel && indexSymbol(symbol);
+    if(symbol.kind === 'package') {
+      title.txt(symbol.name).txt(' - ').txt(symbol.description);
+      header.txt(symbol.name).ele('small').txt(symbol.description);
+    } else {
+      symbol.toplevel && indexSymbol(symbol);
 
-    parent = parent.ele('section')
-        .att('class', 'symbol container-fluid')
-        .att('id', 'sym-' + symbol.id);
+      parent = parent.ele('section')
+          .att('class', 'symbol container-fluid')
+          .att('id', 'sym-' + symbol.id);
 
-    summarizeSymbol(symbol);
-    describeSymbol(symbol);
+      summarizeSymbol(symbol);
+      describeSymbol(symbol);
 
-    parent = parent.up();
+      parent = parent.up();
+    }
   }
 
   function summarizeSymbol(symbol) {
