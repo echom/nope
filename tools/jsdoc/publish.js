@@ -38,6 +38,7 @@
          );
 
     head.ele('style').raw('\n' +
+    'html, body { height: 100%; }\n' +
     '.symbol { transition: all 0.5s; }\n' +
     '.symbol-dsc { transition: max-height 0.5s; overflow: hidden; }\n' +
     '.symbol.expanded { background: #f5f5f5; }\n' +
@@ -48,17 +49,21 @@
     '.symbol button.collapse { display: none; margin-top: 10px; }\n' +
     '.symbol.expanded button.collapse { display: block; }\n' +
     '.bottom-padding { height: 100px; }\n' +
+    '.hbox { display: flex; flex-direction: row; align-items: stretch; }\n' +
+    '.vbox { display: flex; flex-direction: column; align-items: stretch; }\n' +
+    '.vbox > *, .hbox > * { padding: 0 10px; }\n' +
     '\n');
 
     body = doc.ele('body');
     header = body
-              .ele('div').att('class', 'container-fluid')
-              .ele('div').att('class', 'page-header').ele('h1');
+              .ele('div').att('class', 'vbox').att('style', 'height: 100%;')
+              .ele('div').att('style', 'flex: 0')
     left = header.up()
-              .ele('div').att('class', 'col-md-4 col-lg-3');
+              .ele('div').att('class', 'hbox').att('style', 'flex: 1; min-height: 0;')
+              .ele('div').att('style', 'flex: 0 0 350px; overflow-y: auto; min-height: 0;');
 
     right = left.up()
-              .ele('div').att('class', 'col-md-8 col-lg-9');
+              .ele('div').att('style', 'flex: 1; overflow-y: auto; ');
 
 
 
@@ -76,7 +81,8 @@
   function processSymbol(symbol) {
     if(symbol.kind === 'package') {
       title.txt(symbol.name).txt(' - ').txt(symbol.description);
-      header.txt(symbol.name).ele('small').txt(symbol.description);
+      header.ele('h1').txt(symbol.name).up()
+            .ele('p').att('class', 'lead').txt(symbol.description);
     } else {
       symbol.toplevel && indexSymbol(symbol);
 

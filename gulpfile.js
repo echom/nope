@@ -1,6 +1,7 @@
-var gulp = require('gulp'),
+var fs = require('fs');
     exec = require('child_process').exec,
     karma = require('karma'),
+    gulp = require('gulp'),
     gutil = require('gulp-util'),
     concat = require('gulp-concat'),
     rename = require('gulp-rename'),
@@ -101,6 +102,7 @@ gulp.task('document', function(done) {
   exec('node_modules/.bin/jsdoc -c ' + conf, function(err, stdout, stderr) {
     stdout && console.log(stdout);
     stderr && console.log(stderr);
+    fs.unlink(conf);
     done(err);
   });
 });

@@ -32,27 +32,21 @@ describe('np.ElementBuilder', function() {
     });
   });
 
-  describe('#charset', function() {
+  describe('#charset, #meta, #httpEquiv', function() {
     it('delegates to the HeadBuilder', function() {
       var html = new np.HtmlBuilder(),
           head = html.head();
       spyOn(head, 'charset');
+      spyOn(head, 'meta');
+      spyOn(head, 'httpEquiv');
 
       html.charset('a');
+      html.meta('b', 'c');
+      html.httpEquiv('d', 'e');
 
       expect(head.charset).toHaveBeenCalledWith('a');
-    });
-  });
-
-  describe('#meta', function() {
-    it('delegates to the HeadBuilder', function() {
-      var html = new np.HtmlBuilder(),
-          head = html.head();
-      spyOn(head, 'meta');
-
-      html.meta('a', 'b');
-
-      expect(head.meta).toHaveBeenCalledWith('a', 'b');
+      expect(head.meta).toHaveBeenCalledWith('b', 'c');
+      expect(head.httpEquiv).toHaveBeenCalledWith('d', 'e');
     });
   });
 });
