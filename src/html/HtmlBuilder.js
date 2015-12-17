@@ -4,6 +4,8 @@
 	var Base = np.ElementBuilder;
 
 	/**
+	 * Creates a new HtmlBuilder instance.
+	 * @classdesc The HtmlBuilder represents the root builder of an HTML document.
 	 * @constructor np.HtmlBuilder
 	 * @augments np.ElementBuilder
 	 */

@@ -5,6 +5,8 @@
 
 	/**
 	 * @constructor np.HeadBuilder
+	 * @classdesc The HeadBuilder wraps a HTML <head> element and provides
+	 * methods to add common child elements.
 	 * @param {np.HtmlBuilder} parentBuilder this builder's parent
 	 * @augments np.ElementBuilder
 	 */
@@ -53,6 +55,7 @@
 		builder.httpEquiv(equiv, content);
 		return this;
 	};
+
 
 
 	np.HeadBuilder = HeadBuilder;

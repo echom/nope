@@ -7,7 +7,7 @@
    * @classdesc The Attributes class represents a collection of HTML attributes.
 	 * It provides methods for retrieving, modifying and deleting attributes.
    */
-  var Attributes = function() {
+  var Attributes = function(conf) {
     this.attributes_ = {};
   };
 

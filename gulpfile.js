@@ -13,13 +13,14 @@ var fs = require('fs');
 var paths = {
   src: [
     'src/nope.js',
-    'src/Attributes.js',
-    'src/Element.js',
-    'src/builder/ElementBuilder.js',
-    'src/builder/MetaBuilder.js',
-    'src/builder/HeadBuilder.js',
-    'src/builder/BodyBuilder.js',
-    'src/builder/HtmlBuilder.js'
+    'src/element/Attributes.js',
+    'src/element/Element.js',
+    'src/element/ElementBuilder.js',
+    'src/html/MetaBuilder.js',
+    'src/html/BaseBuilder.js',
+    'src/html/HeadBuilder.js',
+    'src/html/BodyBuilder.js',
+    'src/html/HtmlBuilder.js'
   ],
   min: 'dist/nope.min.js',
   max: 'dist/nope.js',
