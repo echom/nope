@@ -99,18 +99,22 @@
 
   function summarizeSymbol(symbol) {
     if(symbol.toplevel) {
-      parent.ele('a').att('id', 'sum-' + symbol.id).txt(' ').up()
-            .ele('button')
-              .att('class', 'expand btn btn-link pull-right')
-              .att('onclick', 'expandSymbol("sym-' + symbol.id + '")')
-              .ele('i').att('class', 'glyphicon glyphicon-chevron-down').txt(' ').up()
-            .up()
-            .ele('button')
-              .att('class', 'collapse btn btn-link pull-right')
-              .att('onclick', 'collapseSymbol("sym-' + symbol.id + '")')
-              .ele('i').att('class', 'glyphicon glyphicon-chevron-up').txt(' ').up()
-            .up()
-            .ele('h3').txt(symbol.name).txt(symbol.signature).up()
+      parent.ele('a').att('id', 'sum-' + symbol.id).txt(' ').up();
+
+      if(hasDetails(symbol)) {
+        parent.ele('button')
+                .att('class', 'expand btn btn-link pull-right')
+                .att('onclick', 'expandSymbol("sym-' + symbol.id + '")')
+                .ele('i').att('class', 'glyphicon glyphicon-chevron-down').txt(' ').up()
+              .up()
+              .ele('button')
+                .att('class', 'collapse btn btn-link pull-right')
+                .att('onclick', 'collapseSymbol("sym-' + symbol.id + '")')
+                .ele('i').att('class', 'glyphicon glyphicon-chevron-up').txt(' ').up()
+              .up();
+      }
+
+      parent.ele('h3').txt(symbol.name).txt(symbol.signature).up()
             .ele('small')
               .att('style', 'display: block; margin: -0.5em 0 1em;')
               .ele('span', symbol.modifiers).att('style', 'color: #777').up()
@@ -119,18 +123,22 @@
             .ele('p').txt((symbol.kind === 'class' ? symbol.classdesc : symbol.description) || ' ')
             .ele('hr');
     } else {
-      parent.ele('a').att('id', 'sum-' + symbol.id).txt(' ').up()
-            .ele('h4').txt(symbol.name).txt(symbol.signature).up()
-            .ele('button')
-              .att('class', 'expand btn btn-link pull-right')
-              .att('onclick', 'expandSymbol("sym-' + symbol.id + '")')
-              .ele('i').att('class', 'glyphicon glyphicon-chevron-down').txt(' ').up()
-            .up()
-            .ele('button')
-              .att('class', 'collapse btn btn-link pull-right')
-              .att('onclick', 'collapseSymbol("sym-' + symbol.id + '")')
-              .ele('i').att('class', 'glyphicon glyphicon-chevron-up').txt(' ').up()
-            .up()
+      parent.ele('a').att('id', 'sum-' + symbol.id).txt(' ').up();
+
+      if(hasDetails(symbol)) {
+        parent.ele('button')
+                .att('class', 'expand btn btn-link pull-right')
+                .att('onclick', 'expandSymbol("sym-' + symbol.id + '")')
+                .ele('i').att('class', 'glyphicon glyphicon-chevron-down').txt(' ').up()
+              .up()
+              .ele('button')
+                .att('class', 'collapse btn btn-link pull-right')
+                .att('onclick', 'collapseSymbol("sym-' + symbol.id + '")')
+                .ele('i').att('class', 'glyphicon glyphicon-chevron-up').txt(' ').up()
+              .up()
+      }
+
+      parent.ele('h4').txt(symbol.name).txt(symbol.signature).up()
             .ele('small')
               .att('style', 'display: block; margin: -0.5em 0 1em;')
               .ele('span', symbol.modifiers).att('style', 'color: #777').up()
@@ -146,10 +154,6 @@
             .att('id', 'dsc-' + symbol.id),
         para,
         err;
-
-    if(symbol.kind === 'class') {
-      desc.ele('p').txt(symbol.description || ' ');
-    }
 
     if(symbol.params) {
       desc.ele('h5').txt('Parameters:');
@@ -209,6 +213,12 @@
       default: return 'glyphicon glyphicon-plus'
     }
   }
+
+  function hasDetails(symbol) {
+    if(symbol.kind == 'function') return true;
+    if(symbol.kind == 'class' && (symbol.params || symbol.exceptions)) return true;
+    return false;
+  };
 
   function fuseTypes(part) {
     return part.type && part.type.names ? part.type.names.join('|') : '*';
