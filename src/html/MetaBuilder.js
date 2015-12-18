@@ -5,6 +5,8 @@
 
 	/**
 	 * @constructor np.MetaBuilder
+	 * @classdesc The MetaBuilder wraps a <meta> element and provides methods
+	 * to set common attribute configurations.
 	 * @param {np.HeadBuilder} parentBuilder this builder's parent
 	 * @augments np.ElementBuilder
 	 */
@@ -16,7 +18,7 @@
 		this.attrib('charset', charset);
 		return this;
 	};
-	MetaBuilder.prototype.httpEquiv = function(httpEquiv, content) {
+	MetaBuilder.prototype.http = function(http, content) {
 		this.attrib('http-equiv', httpEquiv);
 		this.attrib('content', content);
 		return this;

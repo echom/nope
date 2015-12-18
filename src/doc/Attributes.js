@@ -51,6 +51,7 @@
 	 * if it does not yet exist.
 	 * @method np.Attributes#set
 	 * @param {string} name - the attribute's name
+   * @param {*} value - the attribute's value (will be converted to string)
 	 * @return {string} the attribute's new value
 	 */
 	Attributes.prototype.set = function(name, value) {

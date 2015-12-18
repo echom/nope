@@ -22,6 +22,22 @@
 	};
 
 	/**
+	 * Checks whether the object passed as first argument is either of the type
+	 * (if type is a string) or an instance of the type (if type is a function).
+	 * @method np.isA
+	 * @param {*} obj - the object to be checked
+	 * @param {string|function} type - the type string or constructor function to
+	 *  check against
+	 * @return {boolean} true if the type check passes, false otherwise.
+	 * @private
+	 */
+	np.isA = function(obj, type) {
+		return (typeof(type) == 'string') ?
+							(typeof(obj) == type) :
+							((typeof(type) == 'function') ? (obj instanceof type) : false);
+	};
+
+	/**
 	 * This namespace contains functions for formatting messages.
 	 * @namespace np.message
 	 * @private

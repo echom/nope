@@ -1,4 +1,4 @@
-describe('np.ElementBuilder', function() {
+describe('np.HtmlBuilder', function() {
   describe('#ctor', function() {
     it('creates an instance of HtmlBuilder', function() {
       var html = new np.HtmlBuilder();

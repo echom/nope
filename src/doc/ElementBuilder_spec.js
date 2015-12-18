@@ -70,6 +70,17 @@ describe('np.ElementBuilder', function() {
     });
   });
 
+  describe('#text', function() {
+    it('appends a text node to this element', function() {
+      var element = np.mocks.Element(),
+          builder = new np.ElementBuilder(null, element);
+
+      builder.text('Hello world');
+
+      expect(element.append).toHaveBeenCalledWith(jasmine.any(np.Text));
+    });
+  });
+
   describe('#compile', function() {
     it('calls the provided compiler', function() {
       var element = np.mocks.Element(),

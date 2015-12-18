@@ -19,6 +19,16 @@ describe('np.Element', function() {
 
   });
 
+  describe('#attributes', function() {
+    it('returns an attributes collection', function() {
+      var el = new np.Element('html'),
+          attribs = el.attributes();
+
+      expect(attribs).not.toBe(undefined);
+      expect(attribs instanceof np.Attributes).toBe(true);
+    });
+  });
+
   describe('#append', function() {
 
     it('adds an element to another element\'s child collection', function() {
@@ -77,41 +87,5 @@ describe('np.Element', function() {
       expect(toThrow).toThrowError(/InvalidArgument/);
     });
 
-  });
-
-  describe('#root', function() {
-    it('returns the root element of the tree', function() {
-      var el1 = new np.Element('html'),
-          el2 = new np.Element('head'),
-          el3 = new np.Element('body');
-      el1.append(el2);
-
-      expect(el1.root()).toBe(el1);
-      expect(el2.root()).toBe(el1);
-      expect(el3.root()).toBe(el3);
-    });
-  });
-
-  describe('#up', function() {
-
-    it('returns the parent element', function() {
-      var el1 = new np.Element('html'),
-          el2 = new np.Element('head');
-      el1.append(el2);
-
-      expect(el2.up()).toBe(el1);
-      expect(el1.up()).toBeUndefined();
-    });
-
-  });
-
-  describe('#attributes', function() {
-    it('returns an attributes collection', function() {
-      var el = new np.Element('html'),
-          attribs = el.attributes();
-
-      expect(attribs).not.toBe(undefined);
-      expect(attribs instanceof np.Attributes).toBe(true);
-    });
   });
 });

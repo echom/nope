@@ -1,4 +1,4 @@
-describe('np.Attribute', function() {
+describe('np.Attributes', function() {
 	describe('ctor', function() {
 		it('creates an instance of attributes', function() {
       var att = new np.Attributes();

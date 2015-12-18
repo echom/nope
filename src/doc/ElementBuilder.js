@@ -61,6 +61,11 @@
 		return this;
 	};
 
+	ElementBuilder.prototype.text = function(text) {
+		this.element.append(new np.Text(text));
+	};
+
+
 	/**
 	 * Compile's the entire builder tree given the compile target.
 	 * @param {np.Compiler} target - the compile target

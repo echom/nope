@@ -13,9 +13,11 @@ var fs = require('fs');
 var paths = {
   src: [
     'src/nope.js',
-    'src/element/Attributes.js',
-    'src/element/Element.js',
-    'src/element/ElementBuilder.js',
+    'src/doc/Attributes.js',
+    'src/doc/Node.js',
+    'src/doc/Text.js',
+    'src/doc/Element.js',
+    'src/doc/ElementBuilder.js',
     'src/html/MetaBuilder.js',
     'src/html/BaseBuilder.js',
     'src/html/HeadBuilder.js',
@@ -34,7 +36,7 @@ gulp.task('build', function() {
     .pipe(jshint.reporter('default'))
     .pipe(concat('nope.js'))
     .pipe(gulp.dest('dist'))
-    .pipe(uglify()).on('error', gutil.log)
+    .pipe(uglify({ mangle: true, output: { max_line_len: 300 } })).on('error', gutil.log)
     .pipe(rename('nope.min.js'))
     .pipe(gulp.dest('dist'));
 });
@@ -97,7 +99,8 @@ gulp.task('document', function(done) {
       path: 'tools/jsdoc',
       title: '{nope} - Documentation'
     },
-    destination: 'dist/docs'
+    destination: 'dist/docs',
+    opts: { private: false }
   });
 
   exec('node_modules/.bin/jsdoc -c ' + conf, function(err, stdout, stderr) {

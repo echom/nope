@@ -13,7 +13,8 @@
 	var HeadBuilder = np.inherits(function(parentBuilder) {
 		Base.call(this, parentBuilder, new np.Element('head'));
 
-		this.charset_ = new np.MetaBuilder().charset('utf-8');
+		this.title_ = new np.ElementBuilder(this, new np.Element('title'));
+		this.charset_ = new np.MetaBuilder(this).charset('utf-8');
 		this.equivs_ = {};
 		this.metas_ = {};
 	}, Base);
@@ -21,7 +22,7 @@
 	/**
 	  * Sets this document's charset.
 		* @method np.HeadBuilder#charset
-		* @param {string} charset='utf-8' - the charset (e.g. 'utf-8')
+		* @param {string} [charset='utf-8'] - the charset (e.g. 'utf-8')
 		* @return HeadBuilder this instance
 		*/
 	HeadBuilder.prototype.charset = function(charset) {
@@ -37,7 +38,7 @@
 		* @return HeadBuilder this instance
 		*/
 	HeadBuilder.prototype.meta = function(name, content) {
-		var builder = this.metas_[equiv] || (this.metas_ = np.MetaBuilder());
+		var builder = this.metas_[equiv] || (this.metas_ = np.MetaBuilder(this));
 		builder.meta(name, content);
 		return this;
 	};
@@ -51,12 +52,30 @@
 		* @return HeadBuilder this instance
 		*/
 	HeadBuilder.prototype.httpEquiv = function(equiv, content) {
-		var builder = this.equivs_[equiv] || (this.equivs_ = np.MetaBuilder());
+		var builder = this.equivs_[equiv] || (this.equivs_ = np.MetaBuilder(this));
 		builder.httpEquiv(equiv, content);
 		return this;
 	};
 
+	/**
+	 * Sets this document's base element given href and target.
+	 * @method np.HeadBuilder#base
+	 * @param {string} [href] the href attribute
+	 * @param {string} [target] the target attribute
+	 */
+	HeadBuilder.prototype.base = function(href, target) {
+		if(!href && !target) {
+			throw new Error(np.messages.invalidOperation('base', 'neither "href" nor "target" were provided.'));
+		}
+		var base = this.base_ || (this.base_ = new np.BaseBuilder(this));
+		if(href) base.href(href);
+		if(target) base.target(target);
+		return this;
+	};
 
+	HeadBuilder.prototype.title = function(title) {
+		this.title_.text(title);
+	};
 
 	np.HeadBuilder = HeadBuilder;
 }(this.np));
