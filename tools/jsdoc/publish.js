@@ -60,10 +60,10 @@
               .ele('div').att('style', 'flex: 0')
     left = header.up()
               .ele('div').att('class', 'hbox').att('style', 'flex: 1; min-height: 0;')
-              .ele('div').att('style', 'flex: 0 0 350px; overflow-y: auto; min-height: 0;');
+              .ele('div').att('style', 'flex: 0 1 350px; overflow-y: auto; min-height: 0;');
 
     right = left.up()
-              .ele('div').att('style', 'flex: 1; overflow-y: auto; ');
+              .ele('div').att('style', 'flex: 1 1 800px; overflow-y: auto; ');
 
 
 

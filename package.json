@@ -1,7 +1,7 @@
 {
   "name": "nope",
   "version": "0.0.1",
-  "description": "html creation and manipulation library",
+  "description": "a document creation and manipulation library",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

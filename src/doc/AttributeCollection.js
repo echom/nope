@@ -67,7 +67,7 @@
 
 	/**
 	 * Removes an attribute value from the attributes collection.
-	 * @method np.AttributeCollection#rem
+	 * @method np.AttributeCollection#remove
 	 * @param {string} name - the attribute's name
 	 */
 	AttributeCollection.prototype.remove = function(name) {
