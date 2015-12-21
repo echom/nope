@@ -55,27 +55,27 @@ describe('np.ElementBuilder', function() {
     });
   });
 
-  describe('#attrib', function() {
+  describe('#attrib_', function() {
     it('sets and attribute on the element', function() {
       var element = np.mocks.Element(),
-          attributes = np.mocks.Attributes(),
+          attributes = np.mocks.AttributeCollection(),
           builder = new np.ElementBuilder(null, element);
 
       element.attributes.and.returnValue(attributes);
 
-      builder.attrib('name', 'value');
+      builder.attrib_('name', 'value');
 
       expect(element.attributes).toHaveBeenCalled();
       expect(attributes.set).toHaveBeenCalledWith('name', 'value');
     });
   });
 
-  describe('#text', function() {
+  describe('#text_', function() {
     it('appends a text node to this element', function() {
       var element = np.mocks.Element(),
           builder = new np.ElementBuilder(null, element);
 
-      builder.text('Hello world');
+      builder.text_('Hello world');
 
       expect(element.append).toHaveBeenCalledWith(jasmine.any(np.Text));
     });

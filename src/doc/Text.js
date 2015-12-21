@@ -2,13 +2,11 @@
   'use strict';
 
   /**
-   * Creates a new Node instance with the given type.
-   * @constructor np.Node
-   * @classdesc The Node represents a document node. It provides methods for
-   * navigating and modifying the document tree.
-   * @param {np.Node} [parent] - the node's parent node
-   * @param {string} [text=''] - the node's text content
-   * @throws {Error} when the type argument is not defined.
+   * Creates a new Text instance.
+   * @constructor np.Text
+   * @classdesc The Text node represents text in elements.
+   * @param {string} [text=''] - the text content
+   * @param {np.Node} [parent] - the text's parent node
    */
   var Text = np.inherits(function(text, parent) {
     np.Node.call(this, parent);

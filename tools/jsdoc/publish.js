@@ -41,7 +41,7 @@
     'html, body { height: 100%; }\n' +
     '.symbol { transition: all 0.5s; }\n' +
     '.symbol-dsc { transition: max-height 0.5s; overflow: hidden; }\n' +
-    '.symbol.expanded { background: #f5f5f5; }\n' +
+    '.symbol.expanded {  }\n' +
     '.symbol > .symbol-dsc { max-height: 0; }\n' +
     '.symbol.expanded > .symbol-dsc { max-height: 1000px; }\n' +
     '.symbol button.expand { display: block; margin-top: 10px; }\n' +
@@ -120,8 +120,7 @@
               .ele('span', symbol.modifiers).att('style', 'color: #777').up()
               .txt(symbol.longname)
               .txt(symbol.longsignature).up()
-            .ele('p').txt((symbol.kind === 'class' ? symbol.classdesc : symbol.description) || ' ')
-            .ele('hr');
+            .ele('p').txt((symbol.kind === 'class' ? symbol.classdesc : symbol.description) || ' ');
     } else {
       parent.ele('a').att('id', 'sum-' + symbol.id).txt(' ').up();
 
@@ -149,8 +148,10 @@
   }
 
   function describeSymbol(symbol) {
-    var desc = parent.ele('div')
-            .att('class', 'symbol-dsc col-xs-11 .col-xs-offset-1')
+    var desc = parent
+          .ele('div').att('class', 'symbol-dsc row')
+          .ele('div')
+            .att('class', 'col-xs-11 col-xs-offset-1')
             .att('id', 'dsc-' + symbol.id),
         para,
         err;
@@ -184,6 +185,10 @@
            .ele('span').att('style', 'color: #777').txt('(' + fuseTypes(exc) + ')').up()
            .ele('br');
       });
+    }
+
+    if(symbol.toplevel){
+      desc.up().up().ele('hr');
     }
   }
 

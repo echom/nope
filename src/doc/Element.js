@@ -25,10 +25,10 @@
   /**
    * Returns this element's attribute collection.
    * @method np.Element#attributes
-   * @return {np.Attributes} this element's attributes
+   * @return {np.AttributeCollection} this element's attributes
    */
   Element.prototype.attributes = function() {
-    return this.attributes_ || (this.attributes_ = new np.Attributes());
+    return this.attributes_ || (this.attributes_ = new np.AttributeCollection());
   };
 
 
@@ -42,8 +42,7 @@
    * @throws {TypeError} when the 'node' argument is not an {@link np.Node}.
    */
   Element.prototype.append = function(node) {
-    var children = this.children || (this.children = []),
-        index;
+    var children = this.children || (this.children = new np.NodeCollection());
 
     if(!node) {
       throw new Error(np.message.argumentEmpty('node'));
@@ -53,10 +52,7 @@
       throw new TypeError(np.message.argumentType('node', 'np.Node'));
     }
 
-    if((index = children.indexOf(node)) >= 0) {
-      children.splice(index, 1);
-    }
-    children.push(node);
+    children.remove(node).add(node);
     node.parent = this;
     return this;
   };

@@ -2,43 +2,44 @@
   'use strict';
 
   /**
-   * Creates a new Attributes instance.
-   * @constructor np.Attributes
-   * @classdesc The Attributes class represents a collection of HTML attributes.
+   * Creates a new AttributeCollection instance.
+   * @constructor np.AttributeCollection
+   * @classdesc The AttributeCollection class represents a collection of
+   * document attributes.
 	 * It provides methods for retrieving, modifying and deleting attributes.
    */
-  var Attributes = function(conf) {
+  var AttributeCollection = function() {
     this.attributes_ = {};
   };
 
 	/**
 	 * Returns the raw attributes collection as name-value pairs.
-	 * @method np.Attributes#raw
+	 * @method np.AttributeCollection#raw
 	 * @private
 	 * @return {Object} the attributes as name-value pairs.
 	 */
-	Attributes.prototype.raw = function() {
+	AttributeCollection.prototype.raw = function() {
 		return this.attributes_;
 	};
 
 	/**
 	 * Determines whether this attributes collection has an attribute
 	 * with the given name.
-	 * @method np.Attributes#has
+	 * @method np.AttributeCollection#has
 	 * @param {string} name - the attribute's name
 	 * @return {boolean} true if the attribute exist, otherwise false
 	 */
-	Attributes.prototype.has = function(name) {
+	AttributeCollection.prototype.has = function(name) {
 		return !!name && name in this.attributes_;
 	};
 
 	/**
 	 * Retrieves an attribute value from the attributes collection.
-	 * @method np.Attributes#get
+	 * @method np.AttributeCollection#get
 	 * @param {string} name - the attribute's name
 	 * @return {string} the attribute's value
 	 */
-	Attributes.prototype.get = function(name) {
+	AttributeCollection.prototype.get = function(name) {
 		if(!name) {
 			throw new Error(np.message.argumentEmpty('name'));
 		}
@@ -49,12 +50,12 @@
 	/**
 	 * Sets an attribute value in the attributes collection or creates it
 	 * if it does not yet exist.
-	 * @method np.Attributes#set
+	 * @method np.AttributeCollection#set
 	 * @param {string} name - the attribute's name
    * @param {*} value - the attribute's value (will be converted to string)
 	 * @return {string} the attribute's new value
 	 */
-	Attributes.prototype.set = function(name, value) {
+	AttributeCollection.prototype.set = function(name, value) {
 		if(!name) {
 			throw new Error(np.message.argumentEmpty('name'));
 		}
@@ -66,12 +67,12 @@
 
 	/**
 	 * Removes an attribute value from the attributes collection.
-	 * @method np.Attributes#rem
+	 * @method np.AttributeCollection#rem
 	 * @param {string} name - the attribute's name
 	 */
-	Attributes.prototype.rem = function(name) {
+	AttributeCollection.prototype.rem = function(name) {
 		delete this.attributes_[name];
 	};
 
-  np.Attributes = Attributes;
+  np.AttributeCollection = AttributeCollection;
 }(this.np));

@@ -73,8 +73,11 @@
 		return this;
 	};
 
+	/**
+	 *
+	 */
 	HeadBuilder.prototype.title = function(title) {
-		this.title_.text(title);
+		this.title_.text_(title);
 	};
 
 	np.HeadBuilder = HeadBuilder;

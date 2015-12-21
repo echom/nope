@@ -25,7 +25,7 @@ describe('np.Element', function() {
           attribs = el.attributes();
 
       expect(attribs).not.toBe(undefined);
-      expect(attribs instanceof np.Attributes).toBe(true);
+      expect(attribs instanceof np.AttributeCollection).toBe(true);
     });
   });
 
@@ -37,6 +37,7 @@ describe('np.Element', function() {
           el3 = new np.Element('body');
       el1.append(el2);
       el1.append(el3);
+
 
       expect(el1.children).toContain(el2);
       expect(el1.children).toContain(el3);

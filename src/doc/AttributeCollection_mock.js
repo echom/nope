@@ -1,5 +1,5 @@
 (function(mocks) {
-  mocks.Attributes = function() {
+  mocks.AttributeCollection = function() {
     return {
       get: jasmine.createSpy(),
       set: jasmine.createSpy(),

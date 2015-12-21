@@ -14,12 +14,12 @@
 	/**
 	 * Sets the "href" attribute on the <base> element. Valid values are URLs
 	 * (@see http://www.w3.org/TR/html5/infrastructure.html#valid-url-potentially-surrounded-by-spaces).
-	 * @member np.BaseBuilder#href
+	 * @method np.BaseBuilder#href
 	 * @param {string} href - the href attribute
 	 * @return {np.BaseBuilder} this BaseBuilder instance
 	 */
   BaseBuilder.prototype.href = function(href) {
-    this.attrib('href', href);
+    this.attrib_('href', href);
 		return this;
   };
 
@@ -28,12 +28,12 @@
 	 * browsing context keywords ('_top', '_blank', '_self', '_blank') or browsing
 	 * context names
 	 * (@see http://www.w3.org/TR/html5/browsers.html#valid-browsing-context-name-or-keyword).
-	 * @member np.BaseBuilder#target
+	 * @method np.BaseBuilder#target
 	 * @param {string} target - the target attribute's value.
 	 * @return {np.BaseBuilder} this BaseBuilder instance
 	 */
   BaseBuilder.prototype.target = function(target) {
-    this.attrib('target', target);
+    this.attrib_('target', target);
 		return this;
   };
 

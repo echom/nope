@@ -51,17 +51,25 @@
 
 	/**
 	 * Sets an attribute on the element.
-	 * @method np.ElementBuilder#attr
+	 * @method np.ElementBuilder#attrib
 	 * @param {string} name - the attribute's name
 	 * @param {*} value - the attribute's value (will be stringified)
-	 * @return np.ElementBuilder this builder instance
+	 * @return {np.ElementBuilder} this builder instance
+	 * @private
 	 */
-	ElementBuilder.prototype.attrib = function(name, value) {
+	ElementBuilder.prototype.attrib_ = function(name, value) {
 		this.element.attributes().set('' + name, '' + value);
 		return this;
 	};
 
-	ElementBuilder.prototype.text = function(text) {
+	/**
+	 * Adds a text node to this element.
+	 * @method np.ElementBuilder#text
+	 * @param {string} text - the text node's content
+	 * @return {np.ElementBuilder} this builder instance
+	 * @private
+	 */
+	ElementBuilder.prototype.text_ = function(text) {
 		this.element.append(new np.Text(text));
 	};
 

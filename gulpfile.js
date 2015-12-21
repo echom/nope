@@ -13,7 +13,8 @@ var fs = require('fs');
 var paths = {
   src: [
     'src/nope.js',
-    'src/doc/Attributes.js',
+    'src/doc/AttributeCollection.js',
+    'src/doc/NodeCollection.js',
     'src/doc/Node.js',
     'src/doc/Text.js',
     'src/doc/Element.js',
