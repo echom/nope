@@ -4,12 +4,17 @@
   /**
    * Creates a new NodeCollection instance.
    * @constructor np.NodeCollection
+   * @param {np.Node[]} [array] - an optional array of nodes with which to
+   * initialize this NodeCollection
+   * @param {boolean} [readonly=false] - a boolean value indicating whether this
+   * collection can be modified
    * @classdesc The NodeCollection class represents a collection of document
    * nodes.
 	 * It provides methods for retrieving, modifying and deleting nodes.
    */
-  var NodeCollection = function(array) {
+  var NodeCollection = function(array, readonly) {
     this.children_ = array || [];
+    this.readonly_ = !!readonly;
   };
 
   /**
@@ -24,13 +29,15 @@
   NodeCollection.prototype.add = function(node) {
     var children = this.children_;
 
-    if(!node) {
+    if(this.readonly_) {
+      throw new Error(np.msg.opInvalid('add', 'the collection was marked readonly'));
+    } else if(!node) {
       throw new Error(np.msg.argEmpty('node'));
     } else if(!np.isA(node, np.Node)) {
       throw new TypeError(np.msg.argType('node', 'np.Node'));
     }
 
-    if((children.indexOf(node)) <= 0) {
+    if((children.indexOf(node)) < 0) {
       children.push(node);
     }
 
@@ -49,8 +56,12 @@
     var children = this.children_,
         index;
 
-    if(!node) {
+    if(this.readonly_) {
+      throw new Error(np.msg.opInvalid('remove', 'the collection was marked readonly'));
+    } else if(!node) {
       throw new Error(np.msg.argEmpty('node'));
+    } else if(!np.isA(node, np.Node)) {
+      throw new TypeError(np.msg.argType('node', 'np.Node'));
     }
     if((index = children.indexOf(node)) >= 0) {
       children.splice(index, 1);
@@ -128,7 +139,7 @@
         result.push(children[i]);
       }
     }
-    return new NodeCollection(result);
+    return new NodeCollection(result, true);
   };
 
   /**

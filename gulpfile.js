@@ -29,8 +29,8 @@ var paths = {
   ],
   min: 'dist/nope.min.js',
   max: 'dist/nope.js',
-  mocks: 'src/**/*_mock.js',
-  specs: 'src/**/*_spec.js'
+  mocks: 'src/**/*.mock.js',
+  specs: 'src/**/*.spec.js'
 };
 
 gulp.task('build', function() {

@@ -59,8 +59,9 @@
   /**
    * Specifies that the script should be executed asynchronously, as soon as it
    * becomes available.
-   * Valid values are {@code 'async'} or {@code true} to defer the execution, and
-   * {@code ''} (empty string) or {@code false} to disable deferred execution.
+   * Valid values are {@code 'async'} or {@code true} to enable asynchronous
+	 * execution, and {@code ''} (empty string) or {@code false} to disable
+	 * asynchronous execution.
    * @method np.ScriptBuilder#async
    * @param {string|boolean} async - whether to defer script execution
    * @return {np.ScriptBuilder} this ScriptBuilder instance.

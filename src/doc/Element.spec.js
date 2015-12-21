@@ -90,4 +90,20 @@ describe('np.Element', function() {
     });
 
   });
+
+  describe('#nodeType_', function() {
+    it('return "element"', function() {
+      var el = new np.Element('x');
+      expect(el.nodeType_).toBe('element');
+    });
+  });
+  describe('#nodeIsElement_', function() {
+    it('matches only elements', function() {
+      var el = new np.Element('x'),
+          nd = new np.Node();
+
+      expect(np.Element.nodeIsElement_(el)).toBe(true);
+      expect(np.Element.nodeIsElement_(nd)).toBe(false);
+    });
+  });
 });

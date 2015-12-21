@@ -5,7 +5,7 @@
     el.type = type;
     el.append = jasmine.createSpy('append');
     el.attributes = jasmine.createSpy('attributes');
-    el.children = [];
+    el.children = jasmine.createSpy('attributes');
 
     return el;
   };

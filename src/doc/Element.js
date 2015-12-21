@@ -37,9 +37,6 @@
 
   }, np.Node);
 
-  Element.prototype.nodeType_ = 'element';
-  Element.nodeIsElement_ = function(node) { return node.type === 'element'; };
-
   /**
    * Returns this element's attribute collection.
    * @method np.Element#attributes
@@ -49,13 +46,23 @@
     return this.attributes_;
   };
 
+  /**
+   * Returns this element's child node collection.
+   * @method np.Element#children
+   * @return {np.NodeCollection} this element's child nodes
+   */
   Element.prototype.children = function() {
     return this.children_;
   };
 
-  Element.prototype.elements = function() {
-    return this.children_.where(Element.childElement_);
-  };
+  // /**
+  //  * Returns this element's child elements collection (read only).
+  //  * @method np.Element#elements
+  //  * @return {np.NodeCollection} this element's child elements
+  //  */
+  // Element.prototype.elements = function() {
+  //   return this.children_.where(Element.childElement_);
+  // };
 
   /**
    * Appends a node to this element.
@@ -79,6 +86,9 @@
     node.parent = this;
     return this;
   };
+
+  Element.prototype.nodeType_ = 'element';
+  Element.nodeIsElement_ = function(node) { return node.nodeType_ === 'element'; };
 
   np.Element = Element;
 }(this.np));

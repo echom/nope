@@ -31,4 +31,19 @@ describe('np.Text', function() {
     });
   });
 
+  describe('#nodeType_', function() {
+    it('return "text"', function() {
+      var tx = new np.Text();
+      expect(tx.nodeType_).toBe('text');
+    });
+  });
+  describe('#nodeIsElement_', function() {
+    it('matches only elements', function() {
+      var tx = new np.Text();
+          nd = new np.Node();
+
+      expect(np.Text.nodeIsText_(tx)).toBe(true);
+      expect(np.Text.nodeIsText_(nd)).toBe(false);
+    });
+  });
 });
