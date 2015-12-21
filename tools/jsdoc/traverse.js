@@ -100,7 +100,7 @@
 			if(!this.id_) {
 				this.id_ = this.longname
 		            .replace(/#/g, ':')
-		            .replace(/[^a-zA-Z\d\.-]/g, '_');
+		            .replace(/[^a-zA-Z\d\.:-]/g, '_');
 			}
 			return this.id_;
 		}
