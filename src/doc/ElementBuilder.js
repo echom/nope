@@ -11,7 +11,7 @@
 	 */
 	var ElementBuilder = function(parentBuilder, element) {
 		if(!element) {
-			throw new Error(np.message.argumentEmpty('element'));
+			throw new Error(np.msg.argEmpty('element'));
 		}
 
 		/**
@@ -50,36 +50,54 @@
 	};
 
 	/**
-	 * Sets an attribute on the element.
-	 * @method np.ElementBuilder#attrib
-	 * @param {string} name - the attribute's name
-	 * @param {*} value - the attribute's value (will be stringified)
-	 * @return {np.ElementBuilder} this builder instance
-	 * @private
-	 */
-	ElementBuilder.prototype.attrib_ = function(name, value) {
-		this.element.attributes().set('' + name, '' + value);
-		return this;
-	};
-
-	/**
-	 * Adds a text node to this element.
-	 * @method np.ElementBuilder#text
-	 * @param {string} text - the text node's content
-	 * @return {np.ElementBuilder} this builder instance
-	 * @private
-	 */
-	ElementBuilder.prototype.text_ = function(text) {
-		this.element.append(new np.Text(text));
-	};
-
-
-	/**
 	 * Compile's the entire builder tree given the compile target.
 	 * @param {np.Compiler} target - the compile target
 	 */
 	ElementBuilder.prototype.compile = function(target) {
 		target.compile(this.root().element);
+	};
+
+
+	/**
+	 * Adds an attribute setter function to a class. The class will receive a
+	 * function with the name of the attribute taking one string parameter.
+	 * @example
+	 *   var CustomElementBuilder = function() {...};
+	 *   ElementBuilder.addAttributeSetter_(CustomElementBuilder, 'customAttr');
+	 *   var builder = new CustomElementBuilder().customAttr('value');
+	 *
+	 * @method np.ElementBuilder.addAttributeSetter_
+	 * @param {function} ctor - the constructor function to augment
+	 * @param {string} attribute - the attribute name to expose
+	 * @private
+	 */
+	ElementBuilder.addAttributeSetter_ = function(ctor, attribute) {
+		ctor.prototype[attribute] = function(value) {
+			if(value === undefined) {
+				throw new Error(np.msg.argEmpty(attribute));
+			}
+			this.element.attributes().set('' + attribute, '' + value);
+			return this;
+		};
+	};
+
+	/**
+	 * Adds a text setter function to a class. The class will receive a
+	 * function with the name of the attribute taking one string parameter.
+	 * @example
+	 *   var CustomElementBuilder = function() {...};
+	 *   ElementBuilder.addTextSetter_(CustomElementBuilder);
+	 *   var builder = new CustomElementBuilder().text('text');
+	 *
+	 * @method np.ElementBuilder.addTextSetter_
+	 * @param {function} ctor - the constructor function to augment
+	 * @private
+	 */
+	ElementBuilder.addTextSetter_ = function(type) {
+		type.prototype.text = function(text) {
+			this.element.append(new np.Text(text));
+		};
+		return this;
 	};
 
 	np.ElementBuilder = ElementBuilder;

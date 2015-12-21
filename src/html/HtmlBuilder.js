@@ -67,6 +67,16 @@
 		return this;
 	};
 
+	/**
+		* Sets this document's title.
+		* @param {string} title - the title
+		* @return HtmlBuilder this instance
+		*/
+	HtmlBuilder.prototype.title = function(title) {
+		this.head_.title(title);
+		return this;
+	};
+
 	np.HtmlBuilder = HtmlBuilder;
 
 	np.html = function() { return new np.HtmlBuilder(); };

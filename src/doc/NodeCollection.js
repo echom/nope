@@ -8,8 +8,8 @@
    * nodes.
 	 * It provides methods for retrieving, modifying and deleting nodes.
    */
-  var NodeCollection = function() {
-    this.children_ = [];
+  var NodeCollection = function(array) {
+    this.children_ = array || [];
   };
 
   /**
@@ -25,9 +25,9 @@
     var children = this.children_;
 
     if(!node) {
-      throw new Error(np.message.argumentEmpty('node'));
+      throw new Error(np.msg.argEmpty('node'));
     } else if(!np.isA(node, np.Node)) {
-      throw new TypeError(np.message.argumentType('node', 'np.Node'));
+      throw new TypeError(np.msg.argType('node', 'np.Node'));
     }
 
     if((children.indexOf(node)) <= 0) {
@@ -50,7 +50,7 @@
         index;
 
     if(!node) {
-      throw new Error(np.message.argumentEmpty('node'));
+      throw new Error(np.msg.argEmpty('node'));
     }
     if((index = children.indexOf(node)) >= 0) {
       children.splice(index, 1);
@@ -59,16 +59,26 @@
     return this;
   };
 
-  NodeCollection.prototype.indexOf = function(node) {
-    if(!node) {
-      throw new Error(np.message.argumentEmpty('node'));
-    }
-    return this.children_.indexOf(node);
-  };
-
+  /**
+   * Returns the first node within the collection which matches the given
+   * predicate. The predicate function receives a node and is expected to
+   * return a boolean value indicating whether the node matches.
+   * @method np.NodeCollection#first
+   * @param {function(np.Node):boolean} predicate - the predicate function to
+   * be applied to elements
+   * @param {*} [ctx] - an optional context for the predicate (otherwise 'this'
+   * will be the NodeCollection).
+   * @return {np.Node} the first node matching the predicate or 'undefined' if
+   * no node matches
+   * @throws {Error} when the 'predicate' argument is not provided.
+   * @example
+   * var collection = new np.NodeCollection(),
+   *     predicate = function(node) { return node.count() == 0; };
+   * collection.first(predicate);
+   */
   NodeCollection.prototype.first = function(predicate, ctx) {
     if(!predicate) {
-      throw new Error(np.message.argumentEmpty('predicate'));
+      throw new Error(np.msg.argEmpty('predicate'));
     }
 
     ctx = ctx || this;
@@ -76,6 +86,7 @@
     var children = this.children_,
         i = 0,
         l = children.length;
+
     for(; i < l; i++) {
       if(predicate.call(ctx, children[i])){
         return children[i];
@@ -83,6 +94,48 @@
     }
   };
 
+  /**
+   * Returns the first node within the collection which matches the given
+   * predicate. The predicate function receives a node and is expected to
+   * return a boolean value indicating whether the node matches.
+   * @method np.NodeCollection#where
+   * @param {function(np.Node):boolean} predicate - the predicate function to
+   * be applied to elements
+   * @param {*} [ctx] - an optional context for the predicate (otherwise 'this'
+   * will be the NodeCollection).
+   * @return {np.NodeCollection} all nodes matching the predicate an empty
+   * collection if no node matches
+   * @throws {Error} when the 'predicate' argument is not provided.
+   * @example
+   * var collection = new np.NodeCollection(),
+   *     predicate = function(node) { return node.count() == 0; };
+   * collection.all(predicate);
+   */
+  NodeCollection.prototype.where = function(predicate, ctx) {
+    if(!predicate) {
+      throw new Error(np.msg.argEmpty('predicate'));
+    }
+
+    ctx = ctx || this;
+
+    var children = this.children_,
+        i = 0,
+        l = children.length,
+        result = [];
+
+    for(; i < l; i++) {
+      if(predicate.call(ctx, children[i])){
+        result.push(children[i]);
+      }
+    }
+    return new NodeCollection(result);
+  };
+
+  /**
+   * Returns all child nodes within this NodeCollection as an array.
+   * @method np.NodeCollection#toArray
+   * @return {np.Node[]} this collection's nodes as an array.
+   */
   NodeCollection.prototype.toArray = function() {
     return [].concat(this.children_);
   };

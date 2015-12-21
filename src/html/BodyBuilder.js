@@ -4,8 +4,8 @@
 	var Base = np.ElementBuilder;
 
 	/**
-	 * @constructor np.HeadBuilder
-	 * @param {np.HtmlBuilder} parentBuilder this builder's parent
+	 * @constructor np.BodyBuilder
+	 * @param {np.ElementBuilder} parentBuilder this builder's parent
 	 * @augments np.ElementBuilder
 	 */
 	var BodyBuilder = np.inherits(function(parentBuilder) {

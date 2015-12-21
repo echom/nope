@@ -35,12 +35,13 @@ describe('np.Element', function() {
       var el1 = new np.Element('html'),
           el2 = new np.Element('head'),
           el3 = new np.Element('body');
+      spyOn(el1.children(), 'add');
+
       el1.append(el2);
       el1.append(el3);
 
-
-      expect(el1.children).toContain(el2);
-      expect(el1.children).toContain(el3);
+      expect(el1.children().add).toHaveBeenCalledWith(el2);
+      expect(el1.children().add).toHaveBeenCalledWith(el3);
     });
 
     it('assigns the parent element of elements being appended', function() {
@@ -58,13 +59,13 @@ describe('np.Element', function() {
       var el1 = new np.Element('html'),
           el2 = new np.Element('head'),
           el3 = new np.Element('body');
+
       el1.append(el2);
       el1.append(el3);
       el1.append(el2);
 
-      expect(el1.children.length).toBe(2);
-      expect(el1.children[0]).toBe(el3);
-      expect(el1.children[1]).toBe(el2);
+      expect(el1.children().toArray().indexOf(el2)).toBe(1);
+      expect(el1.children().toArray().indexOf(el3)).toBe(0);
     });
 
     it('does not accept itself as appendee', function() {

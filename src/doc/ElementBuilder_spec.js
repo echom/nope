@@ -33,7 +33,7 @@ describe('np.ElementBuilder', function() {
     });
   });
 
-  describe('root', function() {
+  describe('#root', function() {
     it('returns the root builder of the tree', function() {
       var builder1 = new np.ElementBuilder(null, np.mocks.Element()),
           builder2 = new np.ElementBuilder(builder1, np.mocks.Element()),
@@ -52,32 +52,6 @@ describe('np.ElementBuilder', function() {
 
       expect(builder2.up()).toBe(builder1);
       expect(builder1.up()).toBeUndefined();
-    });
-  });
-
-  describe('#attrib_', function() {
-    it('sets and attribute on the element', function() {
-      var element = np.mocks.Element(),
-          attributes = np.mocks.AttributeCollection(),
-          builder = new np.ElementBuilder(null, element);
-
-      element.attributes.and.returnValue(attributes);
-
-      builder.attrib_('name', 'value');
-
-      expect(element.attributes).toHaveBeenCalled();
-      expect(attributes.set).toHaveBeenCalledWith('name', 'value');
-    });
-  });
-
-  describe('#text_', function() {
-    it('appends a text node to this element', function() {
-      var element = np.mocks.Element(),
-          builder = new np.ElementBuilder(null, element);
-
-      builder.text_('Hello world');
-
-      expect(element.append).toHaveBeenCalledWith(jasmine.any(np.Text));
     });
   });
 

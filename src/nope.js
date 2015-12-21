@@ -39,56 +39,56 @@
 
 	/**
 	 * This namespace contains functions for formatting messages.
-	 * @namespace np.message
+	 * @namespace np.msg
 	 * @private
 	 */
-	np.message = {};
+	np.msg = {};
 
 	/**
 	 * Formats a generic argument error.
-	 * @method np.message.invalidArgument
+	 * @method np.msg.argInvalid
 	 * @param {string} name - the argument's name
 	 * @param {string} message - the message
 	 * @return {string} the formatted error message
 	 * @private
 	 */
-	np.message.invalidArgument = function(name, message) {
+	np.msg.argInvalid = function(name, message) {
 		return 'InvalidArgument: "' + name + '" - ' + message;
 	};
 
 	/**
 	 * Formats an error message for a missing argument.
-	 * @method np.message.argumentEmpty
+	 * @method np.msg.argEmpty
 	 * @param {string} name - the argument's name
 	 * @return {string} the formatted error message
 	 * @private
 	 */
-	np.message.argumentEmpty = function(name) {
-		return np.message.invalidArgument(name, 'was not supplied');
+	np.msg.argEmpty = function(name) {
+		return np.msg.argInvalid(name, 'was not supplied');
 	};
 
 	/**
 	 * Formats a error message for arguments of the wrong type.
-	 * @method np.message.argumentType
+	 * @method np.msg.argType
 	 * @param {string} name - the argument's name
 	 * @param {string} type - the expected type
 	 * @return {string} the formatted error message
 	 * @private
 	 */
-	np.message.argumentType = function(name, type) {
-		return np.message.invalidArgument(name, 'must be of type ' + type);
+	np.msg.argType = function(name, type) {
+		return np.msg.argInvalid(name, 'must be of type ' + type);
 	};
 
 	/**
 	 * Formats an error message for invalid operations.
-	 * @method np.message.invalidOperation
+	 * @method np.msg.opInvalid
 	 * @param {string} operation - the operation which failed
 	 * @param {string} message - the message
 	 * @return {string} the formatted error message
 	 * @private
 	 */
 
-	np.message.invalidOperation = function(operation, message) {
+	np.msg.opInvalid = function(operation, message) {
 		return 'InvalidOperation: "' + operation + '" - ' + message;
 	};
 

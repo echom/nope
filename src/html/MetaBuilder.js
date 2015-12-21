@@ -14,18 +14,21 @@
 		Base.call(this, parentBuilder, new np.Element('meta'));
 	}, Base);
 
+
 	MetaBuilder.prototype.charset = function(charset) {
-		this.attrib_('charset', charset);
+		this.element.attributes().set('charset', charset);
 		return this;
 	};
 	MetaBuilder.prototype.http = function(http, content) {
-		this.attrib_('http-equiv', httpEquiv);
-		this.attrib_('content', content);
+		var attributes = this.element.attributes();
+		attributes.set('http-equiv', httpEquiv);
+		attributes.set('content', content);
 		return this;
 	};
 	MetaBuilder.prototype.name = function(name, content) {
-		this.attrib_('name', name);
-		this.attrib_('content', content);
+		var attributes = this.element.attributes();
+		attributes.set('name', name);
+		attributes.set('content', content);
 		return this;
 	};
 

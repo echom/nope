@@ -41,7 +41,7 @@
 	 */
 	AttributeCollection.prototype.get = function(name) {
 		if(!name) {
-			throw new Error(np.message.argumentEmpty('name'));
+			throw new Error(np.msg.argEmpty('name'));
 		}
 
 		return this.attributes_[name];
@@ -57,10 +57,10 @@
 	 */
 	AttributeCollection.prototype.set = function(name, value) {
 		if(!name) {
-			throw new Error(np.message.argumentEmpty('name'));
+			throw new Error(np.msg.argEmpty('name'));
 		}
 		if(!value) {
-			throw new Error(np.message.argumentEmpty('value'));
+			throw new Error(np.msg.argEmpty('value'));
 		}
 		return (this.attributes_[name] = '' + value);
 	};
@@ -70,7 +70,7 @@
 	 * @method np.AttributeCollection#rem
 	 * @param {string} name - the attribute's name
 	 */
-	AttributeCollection.prototype.rem = function(name) {
+	AttributeCollection.prototype.remove = function(name) {
 		delete this.attributes_[name];
 	};
 

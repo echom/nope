@@ -21,6 +21,8 @@ var paths = {
     'src/doc/ElementBuilder.js',
     'src/html/MetaBuilder.js',
     'src/html/BaseBuilder.js',
+    'src/html/LinkBuilder.js',
+    'src/html/ScriptBuilder.js',
     'src/html/HeadBuilder.js',
     'src/html/BodyBuilder.js',
     'src/html/HtmlBuilder.js'

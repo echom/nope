@@ -11,7 +11,7 @@
    * @augments np.Node
    */
   var Element = np.inherits(function(type, parent) {
-    if(!type) throw new Error(np.message.argumentEmpty('type'));
+    if(!type) throw new Error(np.msg.argEmpty('type'));
 
     np.Node.call(this, parent);
 
@@ -20,7 +20,25 @@
      * @member {string} np.Element#type
      */
     this.type = type;
+
+    /**
+     * This element's child nodes
+     * @member {np.NodeCollection} np.Element#children_
+     * @private
+     */
+    this.children_ = new np.NodeCollection();
+
+    /**
+     * This element's attributes
+     * @member {np.NodeCollection} np.Element#attributes_
+     * @private
+     */
+    this.attributes_ = new np.AttributeCollection();
+
   }, np.Node);
+
+  Element.prototype.nodeType_ = 'element';
+  Element.nodeIsElement_ = function(node) { return node.type === 'element'; };
 
   /**
    * Returns this element's attribute collection.
@@ -28,9 +46,16 @@
    * @return {np.AttributeCollection} this element's attributes
    */
   Element.prototype.attributes = function() {
-    return this.attributes_ || (this.attributes_ = new np.AttributeCollection());
+    return this.attributes_;
   };
 
+  Element.prototype.children = function() {
+    return this.children_;
+  };
+
+  Element.prototype.elements = function() {
+    return this.children_.where(Element.childElement_);
+  };
 
   /**
    * Appends a node to this element.
@@ -42,17 +67,15 @@
    * @throws {TypeError} when the 'node' argument is not an {@link np.Node}.
    */
   Element.prototype.append = function(node) {
-    var children = this.children || (this.children = new np.NodeCollection());
-
     if(!node) {
-      throw new Error(np.message.argumentEmpty('node'));
+      throw new Error(np.msg.argEmpty('node'));
     } else if(node === this) {
-      throw new Error(np.message.invalidOperation('append', 'trying to append to self'));
+      throw new Error(np.msg.opInvalid('append', 'trying to append to self'));
     } else if(!np.isA(node, np.Node)) {
-      throw new TypeError(np.message.argumentType('node', 'np.Node'));
+      throw new TypeError(np.msg.argType('node', 'np.Node'));
     }
 
-    children.remove(node).add(node);
+    this.children_.remove(node).add(node);
     node.parent = this;
     return this;
   };

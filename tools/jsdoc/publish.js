@@ -81,8 +81,8 @@
   function processSymbol(symbol) {
     if(symbol.kind === 'package') {
       title.txt(symbol.name).txt(' - ').txt(symbol.description);
-      header.ele('h1').txt(symbol.name).up()
-            .ele('p').att('class', 'lead').txt(symbol.description);
+      header.ele('h1').txt(symbol.name)
+            .ele('small').att('class', 'lead').txt(symbol.description).up();
     } else {
       symbol.toplevel && indexSymbol(symbol);
 

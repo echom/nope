@@ -24,5 +24,8 @@
     return this;
   };
 
+  Text.prototype.nodeType_ = 'text';
+  Text.nodeIsText_ = function(node) { return node.type === 'text'; };
+
   np.Text = Text;
 }(this.np));

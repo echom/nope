@@ -76,11 +76,11 @@ describe('np.AttributeCollection', function() {
     });
 	});
 
-	describe('rem', function() {
+	describe('remove', function() {
 		it('removes an attribute with the given name', function() {
       var att = new np.AttributeCollection();
 			att.set('name', 'value');
-			att.rem('name');
+			att.remove('name');
 
       expect(att.has('name')).toBe(false);
     });

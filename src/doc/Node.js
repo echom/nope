@@ -11,7 +11,7 @@
    */
   var Node = function(parent) {
     if(parent && !(np.isA(parent, np.Node))) {
-      throw new Error(np.message.argumentType('parent', 'np.Node'));
+      throw new Error(np.msg.argType('parent', 'np.Node'));
     }
     /**
      * The parent node

@@ -1,15 +1,17 @@
 (function(np) {
 	'use strict';
 
+	var ElementBuilder = np.ElementBuilder;
+
 	/**
 	 * @constructor np.BaseBuilder
 	 * @classdesc The HeadBuilder wraps a HTML <base> element.
-	 * @param {np.HtmlBuilder} parentBuilder - this builder's parent
+	 * @param {np.ElementBuilder} parentBuilder - this builder's parent
 	 * @augments np.ElementBuilder
 	 */
 	var BaseBuilder = np.inherits(function(parentBuilder) {
-		np.ElementBuilder.call(this, parentBuilder, new np.Element('base'));
-	}, np.ElementBuilder);
+		ElementBuilder.call(this, parentBuilder, new np.Element('base'));
+	}, ElementBuilder);
 
 	/**
 	 * Sets the "href" attribute on the <base> element. Valid values are URLs
@@ -18,10 +20,7 @@
 	 * @param {string} href - the href attribute
 	 * @return {np.BaseBuilder} this BaseBuilder instance
 	 */
-  BaseBuilder.prototype.href = function(href) {
-    this.attrib_('href', href);
-		return this;
-  };
+	ElementBuilder.addAttributeSetter_(BaseBuilder, 'href');
 
 	/**
 	 * Sets the "target" attribute on the <base> element. Valid values include
@@ -32,10 +31,7 @@
 	 * @param {string} target - the target attribute's value.
 	 * @return {np.BaseBuilder} this BaseBuilder instance
 	 */
-  BaseBuilder.prototype.target = function(target) {
-    this.attrib_('target', target);
-		return this;
-  };
+  ElementBuilder.addAttributeSetter_(BaseBuilder, 'target');
 
 	np.BaseBuilder = BaseBuilder;
 }(this.np));
