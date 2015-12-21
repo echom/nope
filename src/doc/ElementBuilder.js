@@ -34,7 +34,7 @@
 	/**
 	 * Returns this builder's parent.
 	 * @method np.ElementBuilder#up
-	 * @return np.ElementBuilder this builder's parent builder
+	 * @return {np.ElementBuilder} this builder's parent builder
 	 */
 	ElementBuilder.prototype.up = function() {
 		if(this.parent) return this.parent;
@@ -43,7 +43,7 @@
 	 * Returns the root builder of the tree. If this builder is the root
 	 * builder it will return itself.
 	 * @method np.ElementBuilder#root
-	 * @return np.ElementBuilder the root builder of this builder tree
+	 * @return {np.ElementBuilder} the root builder of this builder tree
 	 */
 	ElementBuilder.prototype.root = function() {
 		return this.parent ? this.parent.root() : this;

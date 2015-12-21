@@ -191,7 +191,6 @@
       .ele('a')
         .att('class', 'list-group-item')
         .att('href', '#sum-' + symbol.id)
-        .att('onclick', 'expandSymbol("sym-' + symbol.id + '")')
         //.ele('i').att('class', iconForKind(symbol.kind)).txt(' ').up()
         .ele('span')
           .raw(symbol.kind == 'namespace' ? '{ } ' : '&nbsp;f*')
