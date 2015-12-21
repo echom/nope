@@ -78,7 +78,7 @@
    * @param {function(np.Node):boolean} predicate - the predicate function to
    * be applied to elements
    * @param {*} [ctx] - an optional context for the predicate (otherwise 'this'
-   * will be the NodeCollection).
+   * will be the NodeCollection)
    * @return {np.Node} the first node matching the predicate or 'undefined' if
    * no node matches
    * @throws {Error} when the 'predicate' argument is not provided.
@@ -106,15 +106,15 @@
   };
 
   /**
-   * Returns the first node within the collection which matches the given
+   * Returns the all nodes within the collection which match the given
    * predicate. The predicate function receives a node and is expected to
    * return a boolean value indicating whether the node matches.
    * @method np.NodeCollection#where
    * @param {function(np.Node):boolean} predicate - the predicate function to
    * be applied to elements
    * @param {*} [ctx] - an optional context for the predicate (otherwise 'this'
-   * will be the NodeCollection).
-   * @return {np.NodeCollection} all nodes matching the predicate an empty
+   * will be the NodeCollection)
+   * @return {np.NodeCollection} all nodes matching the predicate or an empty
    * collection if no node matches
    * @throws {Error} when the 'predicate' argument is not provided.
    * @example

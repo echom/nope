@@ -7,7 +7,7 @@
    * @classdesc The Element class represents a HTML element. It provides methods for
    * navigating and modifying the HTML tree.
    * @param {string} type - the element's type
-   * @throws {Error} when - the type argument is not defined
+   * @throws {Error} when the type argument is not defined
    * @augments np.Node
    */
   var Element = np.inherits(function(type, parent) {

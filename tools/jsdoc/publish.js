@@ -29,25 +29,26 @@
       .att('rel', 'stylesheet')
       .att('href', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css');
     head.ele('script')
-      .raw('\nfunction expandSymbol(id) {' +
-           'document.getElementById(id).className = "symbol container-fluid expanded";' +
-           '}\n' +
-           'function collapseSymbol(id) {' +
-           'document.getElementById(id).className = "symbol container-fluid";' +
-           '}\n'
-         );
+      .raw('\nfunction toggleSymbol(id) {' +
+              'var target = document.getElementById(id);\n' +
+              'target.className = /expanded/.test(target.className) ? \n' +
+                '"symbol container-fluid" :\n' +
+                '"symbol container-fluid expanded";\n' +
+           '}\n');
 
     head.ele('style').raw('\n' +
     'html, body { height: 100%; }\n' +
-    '.symbol { transition: all 0.5s; }\n' +
+    '.symbol { transition: all 0.3s; }\n' +
+    '.symbol:hover { background: #f5f5f5; } \n' +
     '.symbol-dsc { transition: max-height 0.5s; overflow: hidden; }\n' +
-    '.symbol.expanded {  }\n' +
     '.symbol > .symbol-dsc { max-height: 0; }\n' +
     '.symbol.expanded > .symbol-dsc { max-height: 1000px; }\n' +
-    '.symbol button.expand { display: block; margin-top: 10px; }\n' +
-    '.symbol.expanded button.expand { display: none; }\n' +
-    '.symbol button.collapse { display: none; margin-top: 10px; }\n' +
-    '.symbol.expanded button.collapse { display: block; }\n' +
+    '.symbol p.expansion { margin-top: 10px; }\n' +
+    '.symbol .glyphicon-chevron-down { display: inline-block; }\n' +
+    '.symbol.expanded .glyphicon-chevron-down { display: none; }\n' +
+    '.symbol .glyphicon-chevron-up { display: none; }\n' +
+    '.symbol.expanded .glyphicon-chevron-up { display: inline-block; }\n' +
+    '.symbol[onclick] { cursor: pointer; }\n' +
     '.bottom-padding { height: 100px; }\n' +
     '.hbox { display: flex; flex-direction: row; align-items: stretch; }\n' +
     '.vbox { display: flex; flex-direction: column; align-items: stretch; }\n' +
@@ -89,6 +90,9 @@
       parent = parent.ele('section')
           .att('class', 'symbol container-fluid')
           .att('id', 'sym-' + symbol.id);
+      if(hasDetails(symbol)) {
+        parent.att('onclick', 'toggleSymbol("sym-' + symbol.id + '")');
+      }
 
       summarizeSymbol(symbol);
       describeSymbol(symbol);
@@ -102,16 +106,11 @@
       parent.ele('a').att('id', 'sum-' + symbol.id).txt(' ').up();
 
       if(hasDetails(symbol)) {
-        parent.ele('button')
-                .att('class', 'expand btn btn-link pull-right')
-                .att('onclick', 'expandSymbol("sym-' + symbol.id + '")')
+        parent.ele('p')
+                .att('class', 'expansion btn btn-link pull-right')
                 .ele('i').att('class', 'glyphicon glyphicon-chevron-down').txt(' ').up()
-              .up()
-              .ele('button')
-                .att('class', 'collapse btn btn-link pull-right')
-                .att('onclick', 'collapseSymbol("sym-' + symbol.id + '")')
                 .ele('i').att('class', 'glyphicon glyphicon-chevron-up').txt(' ').up()
-              .up();
+              .up()
       }
 
       parent.ele('h3').txt(symbol.name).txt(symbol.signature).up()
@@ -125,14 +124,9 @@
       parent.ele('a').att('id', 'sum-' + symbol.id).txt(' ').up();
 
       if(hasDetails(symbol)) {
-        parent.ele('button')
-                .att('class', 'expand btn btn-link pull-right')
-                .att('onclick', 'expandSymbol("sym-' + symbol.id + '")')
+        parent.ele('p')
+                .att('class', 'expansion btn btn-link pull-right')
                 .ele('i').att('class', 'glyphicon glyphicon-chevron-down').txt(' ').up()
-              .up()
-              .ele('button')
-                .att('class', 'collapse btn btn-link pull-right')
-                .att('onclick', 'collapseSymbol("sym-' + symbol.id + '")')
                 .ele('i').att('class', 'glyphicon glyphicon-chevron-up').txt(' ').up()
               .up()
       }

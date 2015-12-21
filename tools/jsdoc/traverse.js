@@ -72,7 +72,7 @@
 					signature = '(';
 					if(this.params) {
 						signature += this.params.map(function(p) {
-							return p.name + ':' + (p.type ? p.type.names.join('|') : '*');
+							return p.name + (p.optional ? '=' : '') + ':' + (p.type ? p.type.names.join('|') : '*');
 						}).join(', ');
 					}
 					signature += ')';
