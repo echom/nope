@@ -2,6 +2,7 @@ var fs = require('fs');
     exec = require('child_process').exec,
     karma = require('karma'),
     gulp = require('gulp'),
+    gzip = require('gulp-gzip'),
     gutil = require('gulp-util'),
     concat = require('gulp-concat'),
     rename = require('gulp-rename'),
@@ -46,13 +47,11 @@ gulp.task('build', function() {
     .pipe(gulp.dest('dist'));
 });
 
-// gulp.task('build:mocks', function() {
-//   return gulp.src(paths.mocks)
-//     .pipe(jshint())
-//     .pipe(jshint.reporter('default'))
-//     .pipe(concat('nope-mocks.js'))
-//     .pipe(gulp.dest('dist'));
-// });
+gulp.task('gzip', ['build'], function() {
+  gulp.src(paths.min)
+    .pipe(gzip())
+    .pipe(gulp.dest('dist'));
+})
 
 gulp.task('unit:dist', ['unit:coverage', 'build'], function(done) {
   new karma.Server(karmaConfigure({
