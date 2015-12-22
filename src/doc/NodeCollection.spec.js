@@ -166,4 +166,47 @@ describe('np.NodeCollection', function() {
       expect(toFail).toThrowError(/InvalidArgument/);
     });
   });
+
+  describe('#each', function() {
+		beforeEach(function() {
+      this.el1 = new np.Element('x');
+      this.el2 = new np.Element('y');
+      this.el3 = new np.Element('z');
+
+			this.nodes = new np.NodeCollection([this.el1]);
+			this.cb = jasmine.createSpy();
+		});
+		it('calls the callback function for each attribute', function() {
+			this.nodes.add(this.el2);
+			this.nodes.add(this.el3);
+
+			this.nodes.each(this.cb);
+
+			expect(this.cb).toHaveBeenCalledWith(this.el1);
+			expect(this.cb).toHaveBeenCalledWith(this.el2);
+			expect(this.cb).toHaveBeenCalledWith(this.el3);
+		});
+		it('does not call the callback function if attributes are empty', function() {
+      this.nodes = new np.NodeCollection();
+			this.nodes.each(this.cb);
+			expect(this.cb).not.toHaveBeenCalled();
+		});
+
+		it('calls the callback with itself as the context by default', function() {
+			this.nodes.each(this.cb);
+			expect(this.cb.calls.mostRecent().object).toBe(this.nodes);
+		});
+
+		it('calls the callback with in the provided context', function() {
+			var ctx = {};
+			this.nodes.each(this.cb, ctx);
+			expect(this.cb.calls.mostRecent().object).toBe(ctx);
+		});
+
+    it('throws if no callback is provided', function() {
+			var nodes = this.nodes,
+          toFail = function() { nodes.each(); };
+			expect(toFail).toThrowError(/InvalidArgument/);
+		});
+	});
 });

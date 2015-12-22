@@ -20,7 +20,7 @@
 	 * @param {string} href - the href attribute
 	 * @return {np.BaseBuilder} this BaseBuilder instance
 	 */
-	ElementBuilder.addAttributeSetter_(BaseBuilder, 'href');
+	ElementBuilder.addAttValueAccess_(BaseBuilder, 'href');
 
 	/**
 	 * Sets the "target" attribute on the <base> element. Valid values include
@@ -31,7 +31,7 @@
 	 * @param {string} target - the target attribute's value.
 	 * @return {np.BaseBuilder} this BaseBuilder instance
 	 */
-  ElementBuilder.addAttributeSetter_(BaseBuilder, 'target');
+  ElementBuilder.addAttValueAccess_(BaseBuilder, 'target');
 
 	np.BaseBuilder = BaseBuilder;
 }(this.np));

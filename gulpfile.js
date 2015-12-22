@@ -23,9 +23,11 @@ var paths = {
     'src/html/BaseBuilder.js',
     'src/html/LinkBuilder.js',
     'src/html/ScriptBuilder.js',
+    'src/html/StyleBuilder.js',
     'src/html/HeadBuilder.js',
     'src/html/BodyBuilder.js',
-    'src/html/HtmlBuilder.js'
+    'src/html/HtmlBuilder.js',
+    'src/html/DomCompiler.js'
   ],
   min: 'dist/nope.min.js',
   max: 'dist/nope.js',

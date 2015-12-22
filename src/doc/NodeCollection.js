@@ -142,6 +142,19 @@
     return new NodeCollection(result, true);
   };
 
+  NodeCollection.prototype.each = function(fn, ctx) {
+    if(!fn) {
+      throw new Error(np.msg.argEmpty('fn'));
+    }
+
+    var children = this.children_,
+        i = 0,
+        l = children.length;
+
+    for(; i < l; i++) {
+      fn.call(ctx || this, children[i]);
+    }
+  };
   /**
    * Returns all child nodes within this NodeCollection as an array.
    * @method np.NodeCollection#toArray

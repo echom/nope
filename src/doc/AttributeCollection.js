@@ -12,15 +12,15 @@
     this.attributes_ = {};
   };
 
-	/**
-	 * Returns the raw attributes collection as name-value pairs.
-	 * @method np.AttributeCollection#raw
-	 * @private
-	 * @return {Object} the attributes as name-value pairs.
-	 */
-	AttributeCollection.prototype.raw = function() {
-		return this.attributes_;
-	};
+	// /**
+	//  * Returns the raw attributes collection as name-value pairs.
+	//  * @method np.AttributeCollection#raw
+	//  * @private
+	//  * @return {Object} the attributes as name-value pairs.
+	//  */
+	// AttributeCollection.prototype.raw = function() {
+	// 	return this.attributes_;
+	// };
 
 	/**
 	 * Determines whether this attributes collection has an attribute
@@ -73,6 +73,17 @@
 	AttributeCollection.prototype.remove = function(name) {
 		delete this.attributes_[name];
 	};
+
+  AttributeCollection.prototype.each = function(fn, ctx) {
+    if(!fn) {
+      throw new Error(np.msg.argEmpty('fn'));
+    }
+    
+    for(var key in this.attributes_) {
+      fn.call(ctx || this, key, this.attributes_[key]);
+    }
+  };
+
 
   np.AttributeCollection = AttributeCollection;
 }(this.np));

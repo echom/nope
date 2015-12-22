@@ -79,5 +79,10 @@
 
 	np.HtmlBuilder = HtmlBuilder;
 
+	/**
+	 * Returns a new HtmlBuilder instance.
+	 * @method np.html
+	 * @return {np.HtmlBuilder} a new HtmlBuilder
+	 */
 	np.html = function() { return new np.HtmlBuilder(); };
 }(this.np));

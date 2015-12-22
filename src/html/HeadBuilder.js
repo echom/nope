@@ -14,8 +14,8 @@
 	var HeadBuilder = np.inherits(function(parentBuilder) {
 		ElementBuilder.call(this, parentBuilder, new np.Element('head'));
 
-		this.title_ = new np.ElementBuilder(this, new np.Element('title'));
 		this.charset_ = new np.MetaBuilder(this).charset('utf-8');
+		this.title_ = new np.ElementBuilder(this, new np.Element('title'));
 		this.equivs_ = {};
 		this.metas_ = {};
 	}, ElementBuilder);
@@ -82,8 +82,8 @@
 	 * @return {HeadBuilder} this HeadBuilder instance
 	 */
 	HeadBuilder.prototype.title = function(title) {
-		var text = this.title_.first(Text.nodeIsText_) || new np.Text().text(title);
-		this.title_.append(text);
+		var text = this.title_.element.children().first(np.Text.nodeIsText_) || new np.Text().text(title);
+		this.title_.element.append(text);
 		return this;
 	};
 

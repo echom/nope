@@ -1,15 +1,15 @@
 describe('np.AttributeCollection', function() {
-	describe('ctor', function() {
+	describe('#ctor', function() {
 		it('creates an instance of attributes', function() {
       var att = new np.AttributeCollection();
       expect(att instanceof np.AttributeCollection).toBe(true);
     });
 	});
 
-	describe('get', function() {
+	describe('#get', function() {
 		it('gets an attribute value', function() {
 			var att = new np.AttributeCollection();
-			att.raw()['name'] = 'value';
+			att.set('name', 'value');
 
 			expect(att.get('name')).toBe('value');
 			expect(att.get('other')).toBe(undefined);
@@ -22,7 +22,7 @@ describe('np.AttributeCollection', function() {
 		});
 	});
 
-	describe('set', function() {
+	describe('#set', function() {
 		it('sets an attribute value', function() {
       var att = new np.AttributeCollection();
 			att.set('name', 'value');
@@ -44,16 +44,7 @@ describe('np.AttributeCollection', function() {
 		});
 	});
 
-	describe('raw', function() {
-		it('gets the raw attribute map', function() {
-      var att = new np.AttributeCollection();
-			att.set('name', 'value');
-
-      //expect(att.raw()).toBe(jasmine.objectContaining({ name: 'value' }));
-    });
-	});
-
-	describe('has', function() {
+	describe('#has', function() {
 		it('returns true if the attribute exists', function() {
       var att = new np.AttributeCollection();
 			att.set('name', 'value');
@@ -67,16 +58,16 @@ describe('np.AttributeCollection', function() {
     });
 	});
 
-	describe('raw', function() {
-		it('gets the raw attribute map', function() {
-      var att = new np.AttributeCollection();
-			att.set('name', 'value');
+	// describe('#raw', function() {
+	// 	it('gets the raw attribute map', function() {
+  //     var att = new np.AttributeCollection();
+	// 		att.set('name', 'value');
+	//
+  //     expect(att.raw()['name']).toBe('value');
+  //   });
+	// });
 
-      expect(att.raw()['name']).toBe('value');
-    });
-	});
-
-	describe('remove', function() {
+	describe('#remove', function() {
 		it('removes an attribute with the given name', function() {
       var att = new np.AttributeCollection();
 			att.set('name', 'value');
@@ -86,5 +77,44 @@ describe('np.AttributeCollection', function() {
     });
 	});
 
+	describe('#each', function() {
+		beforeEach(function() {
+			this.att = new np.AttributeCollection();
+			this.cb = jasmine.createSpy();
+		});
+		it('calls the callback function for each attribute', function() {
+			this.att.set('name0', 'value0');
+			this.att.set('name1', 'value1');
+			this.att.set('name2', 'value2');
 
+			this.att.each(this.cb);
+
+			expect(this.cb).toHaveBeenCalledWith('name0', 'value0');
+			expect(this.cb).toHaveBeenCalledWith('name1', 'value1');
+			expect(this.cb).toHaveBeenCalledWith('name2', 'value2');
+		});
+		it('does not call the callback function if attributes are empty', function() {
+			this.att.each(this.cb);
+			expect(this.cb).not.toHaveBeenCalled();
+		});
+
+		it('calls the callback with itself as the context by default', function() {
+			this.att.set('name0', 'value0');
+			this.att.each(this.cb);
+			expect(this.cb.calls.mostRecent().object).toBe(this.att);
+		});
+
+		it('calls the callback with in the provided context', function() {
+			var ctx = {};
+			this.att.set('name0', 'value0');
+			this.att.each(this.cb, ctx);
+			expect(this.cb.calls.mostRecent().object).toBe(ctx);
+		});
+
+		it('throws if no callback is provided', function() {
+			var att = this.att,
+          toFail = function() { att.each(); };
+			expect(toFail).toThrowError(/InvalidArgument/);
+		});
+	});
 });

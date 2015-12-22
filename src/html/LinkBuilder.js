@@ -25,7 +25,7 @@
    * @return {np.LinkBuilder} this LinkBuilder instance.
    * @throws {Error} when the 'type' argument is empty.
    */
-  ElementBuilder.addAttributeSetter_(LinkBuilder, 'type');
+  ElementBuilder.addAttValueAccess_(LinkBuilder, 'type');
 
   /**
    * Sets the relationship of the link destination.
@@ -34,7 +34,7 @@
    * @return {np.LinkBuilder} this LinkBuilder instance.
    * @throws {Error} when the 'rel' argument is empty.
    */
-  ElementBuilder.addAttributeSetter_(LinkBuilder, 'rel');
+  ElementBuilder.addAttValueAccess_(LinkBuilder, 'rel');
 
   /**
    * Sets the language of the link destination.
@@ -43,7 +43,7 @@
    * @return {np.LinkBuilder} this LinkBuilder instance.
    * @throws {Error} when the 'hreflang' argument is empty.
    */
-  ElementBuilder.addAttributeSetter_(LinkBuilder, 'hreflang');
+  ElementBuilder.addAttValueAccess_(LinkBuilder, 'hreflang');
 
   /**
    * Sets the media for which the link destination was designed.
@@ -52,7 +52,7 @@
    * @return {np.LinkBuilder} this LinkBuilder instance.
    * @throws {Error} when the 'media' argument is empty.
    */
-  ElementBuilder.addAttributeSetter_(LinkBuilder, 'media');
+  ElementBuilder.addAttValueAccess_(LinkBuilder, 'media');
 
   /**
    * Sets the sizes of icons for visual media.
@@ -61,7 +61,7 @@
    * @return {np.LinkBuilder} this LinkBuilder instance.
    * @throws {Error} when the 'sizes' argument is empty.
    */
-  ElementBuilder.addAttributeSetter_(LinkBuilder, 'sizes');
+  ElementBuilder.addAttValueAccess_(LinkBuilder, 'sizes');
 
 	np.LinkBuilder = LinkBuilder;
 }(this.np));

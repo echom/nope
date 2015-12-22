@@ -18,6 +18,7 @@
      * @member {np.Node} np.Node#parent
      */
     this.parent = parent;
+    this.id = Node.idCounter_++;
   };
 
   /**
@@ -38,6 +39,8 @@
   Node.prototype.root = function() {
     return this.parent ? this.parent.root() : this;
   };
+
+  Node.idCounter_ = 0;
 
   np.Node = Node;
 }(this.np));

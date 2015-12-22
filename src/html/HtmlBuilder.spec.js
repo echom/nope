@@ -39,14 +39,17 @@ describe('np.HtmlBuilder', function() {
       spyOn(head, 'charset');
       spyOn(head, 'meta');
       spyOn(head, 'httpEquiv');
+      spyOn(head, 'title');
 
       html.charset('a');
       html.meta('b', 'c');
       html.httpEquiv('d', 'e');
+      html.title('the title');
 
       expect(head.charset).toHaveBeenCalledWith('a');
       expect(head.meta).toHaveBeenCalledWith('b', 'c');
       expect(head.httpEquiv).toHaveBeenCalledWith('d', 'e');
+      expect(head.title).toHaveBeenCalledWith('the title');
     });
   });
 });
