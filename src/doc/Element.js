@@ -67,7 +67,7 @@
   /**
    * Appends a node to this element.
    * @method np.Element#append
-   * @param {np.Node} element - the element to append
+   * @param {np.Node} node - the node to append
    * @return {np.Element} this element instance
    * @throws {Error} when the 'node' argument is not defined.
    * @throws {Error} when the 'node' argument is itself.

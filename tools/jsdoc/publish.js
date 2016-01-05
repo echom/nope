@@ -13,7 +13,6 @@
 
   function publish(data, opts) {
     var conf = env.conf.templates;
-    conf.title = conf.title || 'Documentation';
 
     // PREPARE DOCUMENT
     var doc = xmlbuilder.create('html').dec().dtd().root(),
@@ -31,18 +30,16 @@
     head.ele('script')
       .raw('\nfunction toggleSymbol(id) {' +
               'var target = document.getElementById(id);\n' +
-              'target.className = /expanded/.test(target.className) ? \n' +
-                '"symbol container-fluid" :\n' +
-                '"symbol container-fluid expanded";\n' +
+              'target.classList.toggle("expanded");\n' +
            '}\n');
 
     head.ele('style').raw('\n' +
     'html, body { height: 100%; }\n' +
     '.symbol { transition: all 0.3s; }\n' +
     '.symbol:hover { background: #f5f5f5; } \n' +
-    '.symbol-dsc { transition: max-height 0.5s; overflow: hidden; }\n' +
-    '.symbol > .symbol-dsc { max-height: 0; }\n' +
-    '.symbol.expanded > .symbol-dsc { max-height: 1000px; }\n' +
+    //'.symbol-dsc { transition: max-height 0.5s; overflow: hidden; }\n' +
+    '.symbol > .symbol-dsc { display: none; }\n' +
+    '.symbol.expanded > .symbol-dsc { display: block; }\n' +
     '.symbol p.expansion { margin-top: 10px; }\n' +
     '.symbol .glyphicon-chevron-down { display: inline-block; }\n' +
     '.symbol.expanded .glyphicon-chevron-down { display: none; }\n' +
@@ -88,7 +85,7 @@
       symbol.toplevel && indexSymbol(symbol);
 
       parent = parent.ele('section')
-          .att('class', 'symbol container-fluid')
+          .att('class', 'symbol container-fluid' + (symbol.inherited ? ' inherited' : ''))
           .att('id', 'sym-' + symbol.id);
       if(hasDetails(symbol)) {
         parent.att('onclick', 'toggleSymbol("sym-' + symbol.id + '")');
@@ -106,7 +103,7 @@
       parent.ele('a').att('id', 'sum-' + symbol.id).txt(' ').up();
 
       if(hasDetails(symbol)) {
-        parent.ele('p')
+        parent.ele('button')
                 .att('class', 'expansion btn btn-link pull-right')
                 .ele('i').att('class', 'glyphicon glyphicon-chevron-down').txt(' ').up()
                 .ele('i').att('class', 'glyphicon glyphicon-chevron-up').txt(' ').up()
@@ -115,7 +112,7 @@
 
       parent.ele('h3').txt(symbol.name).txt(symbol.signature).up()
             .ele('small')
-              .att('style', 'display: block; margin: -0.5em 0 1em;')
+              .att('style', 'margin: -0.5em 0 1em;')
               .ele('span', symbol.modifiers).att('style', 'color: #777').up()
               .txt(symbol.longname)
               .txt(symbol.longsignature).up()
@@ -124,7 +121,7 @@
       parent.ele('a').att('id', 'sum-' + symbol.id).txt(' ').up();
 
       if(hasDetails(symbol)) {
-        parent.ele('p')
+        parent.ele('button')
                 .att('class', 'expansion btn btn-link pull-right')
                 .ele('i').att('class', 'glyphicon glyphicon-chevron-down').txt(' ').up()
                 .ele('i').att('class', 'glyphicon glyphicon-chevron-up').txt(' ').up()
@@ -133,7 +130,7 @@
 
       parent.ele('h4').txt(symbol.name).txt(symbol.signature).up()
             .ele('small')
-              .att('style', 'display: block; margin: -0.5em 0 1em;')
+              .att('style', 'margin: -0.5em 0 1em;')
               .ele('span', symbol.modifiers).att('style', 'color: #777').up()
               .txt(symbol.longname)
               .txt(symbol.longsignature).up()
@@ -191,25 +188,11 @@
       .ele('a')
         .att('class', 'list-group-item')
         .att('href', '#sum-' + symbol.id)
-        //.ele('i').att('class', iconForKind(symbol.kind)).txt(' ').up()
         .ele('span')
           .raw(symbol.kind == 'namespace' ? '{ } ' : '&nbsp;f*')
           .att('title', symbol.kind == 'namespace' ? 'Namespace' : 'Constructor')
           .up()
-        .ele('span').raw('&nbsp;').txt(symbol.longname);
-  }
-
-  function iconForKind(kind) {
-    switch(kind) {
-      case 'namespace': return 'glyphicon glyphicon-folder-open';
-      case 'class': return 'glyphicon glyphicon-plus-sign';
-    }
-  }
-  function iconForAccess(access) {
-    switch(access) {
-      case 'private': return 'glyphicon glyphicon-minus';
-      default: return 'glyphicon glyphicon-plus'
-    }
+        .ele('span').raw('&nbsp;').txt(symbol.longname).up();
   }
 
   function hasDetails(symbol) {

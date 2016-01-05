@@ -87,9 +87,33 @@
 	 * @return {string} the formatted error message
 	 * @private
 	 */
-
 	np.msg.opInvalid = function(operation, message) {
 		return 'InvalidOperation: "' + operation + '" - ' + message;
 	};
+
+	/**
+	 * Formats an out of range error message.
+	 * @method np.msg.outOfRange
+	 * @param {string} name - the name of the erroneous variable
+	 * @param {string} range - the expected range
+	 * @return {string} the formatted error message
+	 * @private
+	 */
+	np.msg.outOfRange = function(name, range) {
+		return 'OutOfRange: "' + name + '" must in range ' + range + '].';
+	};
+
+	// np.msg.templateString = function(tmpl, vars) {
+	// 	var msg = tmpl,
+	// 			key,
+	// 			name;
+	// 	for(key in vars) {
+	// 		if(vars.hasOwnProperty(key)) {
+	// 			name = '${' + key + '}'
+	// 			msg = msg.replace(name, vars[key]);
+	// 		}
+	// 	}
+	// 	return msg;
+	// };
 
 }(this.np || (this.np = {})));

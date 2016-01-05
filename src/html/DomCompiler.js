@@ -74,20 +74,34 @@
     }, this);
   };
 
+	/**
+	 * Creates a new DomCompiler instance
+	 * @constructor np.DomCompiler
+	 * @classdesc The DomCompiler class represents a compiler which uses a
+	 * browser's DOM API to render and synchronize a virtual DOM.
+	 * @param {Document} doc - the compiler's target document
+	 */
 	var DomCompiler = function(doc) {
     this.win = window;
     this.doc = doc || document;
 	};
 
+	/**
+	 * Compiles the element into this compiler's document instance.
+	 * @method np.DomCompiler#compile
+	 * @param {np.Element} root - the root element of the np.Element tree
+	 * representing the document.
+	 * @private
+	 */
   DomCompiler.prototype.compile = function(root) {
     if(root.type == 'html') {
       var htmlLink = new DomElementLink(document, null, root, document);
-      this.applyElement(
+      this.applyElement_(
         htmlLink,
         this.doc.getElementsByTagName('head')[0],
         root.children().first(function(node) { return node.type === 'head'; })
       );
-      this.applyElement(
+      this.applyElement_(
         htmlLink,
         this.doc.getElementsByTagName('body')[0],
         root.children().first(function(node) { return node.type === 'body'; })
@@ -97,10 +111,17 @@
     }
   };
 
-  DomCompiler.prototype.applyElement = function(parentLink, dom, shadow) {
+  DomCompiler.prototype.applyElement_ = function(parentLink, dom, shadow) {
     dom.innerHTML = '';
     parentLink.childLinks[shadow.id] = new DomElementLink(parentLink.doc, parentLink, shadow, dom);
   };
 
-	np.dom = function(doc) { return new DomCompiler(doc); };
+	/**
+	 * Returns a new DomCompiler instance.
+	 * @method np.dom
+	 * @param {Document} [doc=document] - the document to use as the compiler's
+	 * target (the current document by default)
+	 * @return {np.DomCompiler} a new DomCompiler
+	 */
+	np.dom = function(doc) { return new DomCompiler(doc || document); };
 }(this.np));

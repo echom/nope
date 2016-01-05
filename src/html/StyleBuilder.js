@@ -4,7 +4,7 @@
 	var ElementBuilder = np.ElementBuilder;
 
 	/**
-	 * @constructor np.ScriptBuilder
+	 * @constructor np.StyleBuilder
 	 * @param {np.ElementBuilder} parentBuilder this builder's parent
 	 * @augments np.ElementBuilder
 	 */

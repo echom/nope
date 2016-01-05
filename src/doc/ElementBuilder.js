@@ -124,8 +124,8 @@
 	 * @param {function} ctor - the constructor function to augment
 	 * @private
 	 */
-	ElementBuilder.addTextAccess_ = function(type) {
-		type.prototype.text = function(text) {
+	ElementBuilder.addTextAccess_ = function(ctor) {
+		ctor.prototype.text = function(text) {
 			this.element.append(new np.Text(text));
 		};
 		return this;

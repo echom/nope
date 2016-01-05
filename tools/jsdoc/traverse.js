@@ -8,7 +8,7 @@
 		'kind', 'name', 'longname', 'memberof',
 		'scope', 'description', 'meta', 'comment',
 		'params', 'returns', 'exceptions', 'readonly',
-		'classdesc', 'type'
+		'classdesc', 'type', 'inherited', 'inherits'
 	].forEach(function(prop) {
 		Object.defineProperty(Symbol.prototype, prop, {
 			get: function() { return this.symbol_[prop]; }
