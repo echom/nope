@@ -14,7 +14,7 @@
    * @throws {Error} when the element argument is not provided
    */
   var HtmlElementBuilder = np.inherits(function(parentBuilder, element) {
-    ElementBuilder.call(parentBuilder, element);
+    ElementBuilder.call(this, parentBuilder, element);
   }, ElementBuilder);
 
   /**
@@ -140,13 +140,13 @@
   ElementBuilder.addAttValueAccess_(HtmlElementBuilder, 'translate');
 
 
+  /**
+   * @method HtmlElementBuilder.addHeadingAccess_
+   * @param {function} ctor - the constructor function to augment
+   * @private
+   */
   HtmlElementBuilder.addHeadingAccess_ = function(ctor) {
-    ctor.prototype.h1 = function() { return new np.HeadingBuilder(this, 1); }
-    ctor.prototype.h2 = function() { return new np.HeadingBuilder(this, 2); }
-    ctor.prototype.h3 = function() { return new np.HeadingBuilder(this, 3); }
-    ctor.prototype.h4 = function() { return new np.HeadingBuilder(this, 4); }
-    ctor.prototype.h5 = function() { return new np.HeadingBuilder(this, 5); }
-    ctor.prototype.h6 = function() { return new np.HeadingBuilder(this, 6); }
+    ctor.prototype.h = function(level) { return new np.HeadingBuilder(this, level); };
   };
 
 

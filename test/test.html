@@ -7,8 +7,13 @@
   </head>
   <body>
     <script>
-      np.html().charset('utf-8').title('Hello World')
-        .compile(np.dom());
+      var html = np.html()
+                  .charset('utf-8')
+                  .title('Hello World')
+                  .body()
+                    .h(1).text('Hello World')
+                  .compile(np.dom());
+
     </script>
   </body>
 </html>

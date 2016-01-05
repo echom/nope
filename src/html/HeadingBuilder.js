@@ -20,7 +20,7 @@
     if(!np.isA(level, 'number')) {
       throw new Error(np.msg.argType('level', 'number'));
     } else if(level < 1 || level > 6) {
-      throw new RangeError(np.msg.outOfRange('level', '[1..6]'))
+      throw new RangeError(np.msg.outOfRange('level', '[1..6]'));
     }
 
 		HtmlElementBuilder.call(this, parentBuilder, new np.Element('h' + level));

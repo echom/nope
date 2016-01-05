@@ -175,5 +175,9 @@ describe('np.ElementBuilder', function() {
         content: 'world'
       }));
     });
+    it('adds a function which will return the builder', function() {
+      np.ElementBuilder.addTextAccess_(this.FakeBuilder);
+      expect(this.fakeBuilder.text('world')).toBe(this.fakeBuilder);
+    });
   });
 });

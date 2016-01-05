@@ -1,23 +1,26 @@
 (function(np) {
 	'use strict';
 
-	var Base = np.ElementBuilder;
+	var HtmlElementBuilder = np.HtmlElementBuilder;
 
 	/**
 	 * @constructor np.BodyBuilder
 	 * @param {np.ElementBuilder} parentBuilder this builder's parent
-	 * @augments np.ElementBuilder
+	 * @augments np.HtmlElementBuilder
 	 */
 	var BodyBuilder = np.inherits(function(parentBuilder) {
-		Base.call(this, parentBuilder, new np.Element('body'));
-	}, Base);
+		HtmlElementBuilder.call(this, parentBuilder, new np.Element('body'));
+	}, HtmlElementBuilder);
 
-	BodyBuilder.prototype.h1 = function() { return new HeadingBuilder(this, 1); }
-	BodyBuilder.prototype.h2 = function() { return new HeadingBuilder(this, 2); }
-	BodyBuilder.prototype.h3 = function() { return new HeadingBuilder(this, 3); }
-	BodyBuilder.prototype.h4 = function() { return new HeadingBuilder(this, 4); }
-	BodyBuilder.prototype.h5 = function() { return new HeadingBuilder(this, 5); }
-	BodyBuilder.prototype.h6 = function() { return new HeadingBuilder(this, 6); }
+	/**
+	 * Adds a heading with the given heading level to this body.
+	 * @method np.BodyBuilder#h
+	 * @param {number} level - the heading level (1 - 6)
+	 * @return {np.HeadingBuilder} the new heading builder
+	 * @throws {Error} if the 'level' parameter is not a number.
+	 * @throws {RangeError} if the 'level' is smaller than 1 or greater than 6.
+	 */
+	HtmlElementBuilder.addHeadingAccess_(BodyBuilder);
 
 
 	np.BodyBuilder = BodyBuilder;

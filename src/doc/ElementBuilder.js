@@ -127,8 +127,8 @@
 	ElementBuilder.addTextAccess_ = function(ctor) {
 		ctor.prototype.text = function(text) {
 			this.element.append(new np.Text(text));
+			return this;
 		};
-		return this;
 	};
 
 	np.ElementBuilder = ElementBuilder;
