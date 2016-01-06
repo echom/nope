@@ -4,31 +4,31 @@
 	var ElementBuilder = np.ElementBuilder;
 
 	/**
-	 * @constructor np.StyleBuilder
+	 * @constructor np.HtmlStyleBuilder
 	 * @param {np.ElementBuilder} parentBuilder this builder's parent
 	 * @augments np.ElementBuilder
 	 */
-	var StyleBuilder = np.inherits(function(parentBuilder) {
+	var HtmlStyleBuilder = np.inherits(function(parentBuilder) {
 		ElementBuilder.call(this, parentBuilder, new np.Element('style'));
 	}, ElementBuilder);
 
   /**
    * Sets the MIME type that designates a styling language.
-   * @method np.StyleBuilder#type
+   * @method np.HtmlStyleBuilder#type
    * @param {string} type - the MIME type of the style language
-   * @return {np.StyleBuilder} this StyleBuilder instance.
+   * @return {np.HtmlStyleBuilder} this HtmlStyleBuilder instance.
    * @throws {Error} when the 'type' argument is empty.
    */
-  ElementBuilder.addAttValueAccess_(StyleBuilder, 'type');
+  ElementBuilder.addAttValueAccess_(HtmlStyleBuilder, 'type');
 
   /**
    * Specifies which media the styles apply to.
-   * @method np.StyleBuilder#media
+   * @method np.HtmlStyleBuilder#media
    * @param {string} media - a valid media query list
-   * @return {np.StyleBuilder} this StyleBuilder instance.
+   * @return {np.HtmlStyleBuilder} this HtmlStyleBuilder instance.
    * @throws {Error} when the 'media' argument is empty.
    */
-  ElementBuilder.addAttValueAccess_(StyleBuilder, 'media');
+  ElementBuilder.addAttValueAccess_(HtmlStyleBuilder, 'media');
 
   /**
    * Indicates that the specified style information is meant to apply only to
@@ -36,21 +36,21 @@
    * Otherwise, the specified styles are meant to apply to the entire document.
    * Valid values are {@code 'scoped'} or {@code true} to enable scoping and
    * {@code false} to disable scoping.
-   * @method np.StyleBuilder#defer
+   * @method np.HtmlStyleBuilder#defer
    * @param {string|boolean} defer - whether to defer script execution
-   * @return {np.StyleBuilder} this StyleBuilder instance.
+   * @return {np.HtmlStyleBuilder} this HtmlStyleBuilder instance.
    * @throws {Error} when the 'defer' argument is not provided.
    */
-	ElementBuilder.addAttBoolAccess_(StyleBuilder, 'scoped');
+	ElementBuilder.addAttBoolAccess_(HtmlStyleBuilder, 'scoped');
 
   /**
    * Adds a text node to the style element.
-   * @method np.StyleBuilder#text
+   * @method np.HtmlStyleBuilder#text
    * @param {string} text - the text of the text node.
-   * @return {np.StyleBuilder} this StyleBuilder instance.
+   * @return {np.HtmlStyleBuilder} this HtmlStyleBuilder instance.
    * @throws {Error} when the 'text' argument is not provided.
    */
-  ElementBuilder.addTextAccess_(StyleBuilder);
+  ElementBuilder.addTextAccess_(HtmlStyleBuilder);
 
-	np.StyleBuilder = StyleBuilder;
+	np.HtmlStyleBuilder = HtmlStyleBuilder;
 }(this.np));

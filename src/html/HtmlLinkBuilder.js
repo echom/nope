@@ -4,13 +4,13 @@
 	var ElementBuilder = np.ElementBuilder;
 
 	/**
-	 * @constructor np.LinkBuilder
+	 * @constructor np.HtmlLinkBuilder
    * @param {string} href - the link destination URL
 	 * @param {np.ElementBuilder} parentBuilder - this builder's parent
 	 * @augments np.ElementBuilder
    * @throws {Error} when the href attribute is empty
 	 */
-	var LinkBuilder = np.inherits(function(href, parentBuilder) {
+	var HtmlLinkBuilder = np.inherits(function(href, parentBuilder) {
     if(!href) {
       throw new Error(np.msg.argEmpty('href'));
     }
@@ -20,48 +20,48 @@
 
   /**
    * Sets the mime-type of the link destination.
-   * @method np.LinkBuilder#type
+   * @method np.HtmlLinkBuilder#type
    * @param {string} type - the mime-type of the link destination
-   * @return {np.LinkBuilder} this LinkBuilder instance.
+   * @return {np.HtmlLinkBuilder} this HtmlLinkBuilder instance.
    * @throws {Error} when the 'type' argument is empty.
    */
-  ElementBuilder.addAttValueAccess_(LinkBuilder, 'type');
+  ElementBuilder.addAttValueAccess_(HtmlLinkBuilder, 'type');
 
   /**
    * Sets the relationship of the link destination.
-   * @method np.LinkBuilder#rel
+   * @method np.HtmlLinkBuilder#rel
    * @param {string} rel - the relationship of the link destination
-   * @return {np.LinkBuilder} this LinkBuilder instance.
+   * @return {np.HtmlLinkBuilder} this HtmlLinkBuilder instance.
    * @throws {Error} when the 'rel' argument is empty.
    */
-  ElementBuilder.addAttValueAccess_(LinkBuilder, 'rel');
+  ElementBuilder.addAttValueAccess_(HtmlLinkBuilder, 'rel');
 
   /**
    * Sets the language of the link destination.
-   * @method np.LinkBuilder#hreflang
+   * @method np.HtmlLinkBuilder#hreflang
    * @param {string} hreflang - the language of the link destination
-   * @return {np.LinkBuilder} this LinkBuilder instance.
+   * @return {np.HtmlLinkBuilder} this HtmlLinkBuilder instance.
    * @throws {Error} when the 'hreflang' argument is empty.
    */
-  ElementBuilder.addAttValueAccess_(LinkBuilder, 'hreflang');
+  ElementBuilder.addAttValueAccess_(HtmlLinkBuilder, 'hreflang');
 
   /**
    * Sets the media for which the link destination was designed.
-   * @method np.LinkBuilder#media
+   * @method np.HtmlLinkBuilder#media
    * @param {string} media - the media for which the link destination was designed
-   * @return {np.LinkBuilder} this LinkBuilder instance.
+   * @return {np.HtmlLinkBuilder} this HtmlLinkBuilder instance.
    * @throws {Error} when the 'media' argument is empty.
    */
-  ElementBuilder.addAttValueAccess_(LinkBuilder, 'media');
+  ElementBuilder.addAttValueAccess_(HtmlLinkBuilder, 'media');
 
   /**
    * Sets the sizes of icons for visual media.
-   * @method np.LinkBuilder#sizes
+   * @method np.HtmlLinkBuilder#sizes
    * @param {string} sizes - the sizes of icons for visual media
-   * @return {np.LinkBuilder} this LinkBuilder instance.
+   * @return {np.HtmlLinkBuilder} this HtmlLinkBuilder instance.
    * @throws {Error} when the 'sizes' argument is empty.
    */
-  ElementBuilder.addAttValueAccess_(LinkBuilder, 'sizes');
+  ElementBuilder.addAttValueAccess_(HtmlLinkBuilder, 'sizes');
 
-	np.LinkBuilder = LinkBuilder;
+	np.HtmlLinkBuilder = HtmlLinkBuilder;
 }(this.np));

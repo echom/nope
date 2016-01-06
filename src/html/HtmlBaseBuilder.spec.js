@@ -1,15 +1,15 @@
-describe('np.BaseBuilder', function() {
+describe('np.HtmlBaseBuilder', function() {
   describe('#ctor', function() {
-    it('creates an instance of BaseBuilder', function() {
-      var base = new np.BaseBuilder();
+    it('creates an instance of HtmlBaseBuilder', function() {
+      var base = new np.HtmlBaseBuilder();
 
-      expect(base instanceof np.BaseBuilder).toBe(true);
+      expect(base instanceof np.HtmlBaseBuilder).toBe(true);
     });
   });
 
   describe('#href', function() {
     it('sets the href attribute on the wrapped element', function() {
-      var base = new np.BaseBuilder();
+      var base = new np.HtmlBaseBuilder();
       spyOn(base.element.attributes(), 'set');
 
       base.href('http://www.test.com');
@@ -19,7 +19,7 @@ describe('np.BaseBuilder', function() {
 
   describe('#target', function() {
     it('set the target attribute', function() {
-      var base = new np.BaseBuilder();
+      var base = new np.HtmlBaseBuilder();
       spyOn(base.element.attributes(), 'set');
 
       base.target('_blank');

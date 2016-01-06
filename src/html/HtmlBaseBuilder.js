@@ -4,34 +4,34 @@
 	var ElementBuilder = np.ElementBuilder;
 
 	/**
-	 * @constructor np.BaseBuilder
-	 * @classdesc The HeadBuilder wraps a HTML <base> element.
+	 * @constructor np.HtmlBaseBuilder
+	 * @classdesc The HtmlHeadBuilder wraps a HTML <base> element.
 	 * @param {np.ElementBuilder} parentBuilder - this builder's parent
 	 * @augments np.ElementBuilder
 	 */
-	var BaseBuilder = np.inherits(function(parentBuilder) {
+	var HtmlBaseBuilder = np.inherits(function(parentBuilder) {
 		ElementBuilder.call(this, parentBuilder, new np.Element('base'));
 	}, ElementBuilder);
 
 	/**
 	 * Sets the "href" attribute on the <base> element. Valid values are URLs
 	 * (@see http://www.w3.org/TR/html5/infrastructure.html#valid-url-potentially-surrounded-by-spaces).
-	 * @method np.BaseBuilder#href
+	 * @method np.HtmlBaseBuilder#href
 	 * @param {string} href - the href attribute
-	 * @return {np.BaseBuilder} this BaseBuilder instance
+	 * @return {np.HtmlBaseBuilder} this HtmlBaseBuilder instance
 	 */
-	ElementBuilder.addAttValueAccess_(BaseBuilder, 'href');
+	ElementBuilder.addAttValueAccess_(HtmlBaseBuilder, 'href');
 
 	/**
 	 * Sets the "target" attribute on the <base> element. Valid values include
 	 * browsing context keywords ('_top', '_blank', '_self', '_blank') or browsing
 	 * context names
 	 * (@see http://www.w3.org/TR/html5/browsers.html#valid-browsing-context-name-or-keyword).
-	 * @method np.BaseBuilder#target
+	 * @method np.HtmlBaseBuilder#target
 	 * @param {string} target - the target attribute's value.
-	 * @return {np.BaseBuilder} this BaseBuilder instance
+	 * @return {np.HtmlBaseBuilder} this HtmlBaseBuilder instance
 	 */
-  ElementBuilder.addAttValueAccess_(BaseBuilder, 'target');
+  ElementBuilder.addAttValueAccess_(HtmlBaseBuilder, 'target');
 
-	np.BaseBuilder = BaseBuilder;
+	np.HtmlBaseBuilder = HtmlBaseBuilder;
 }(this.np));
