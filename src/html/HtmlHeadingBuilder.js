@@ -7,9 +7,9 @@
 	/**
 	 * Creates a new HtmlHeadingBuilder instance wrapping a <h*> element.
 	 * @constructor np.HtmlHeadingBuilder
-	 * @classdesc The HtmlHeadingBuilder wraps a HTML <head> element and provides
-	 * methods to add common child elements.
-	 * @param {np.ElementBuilder} parentBuilder - this builder's parent
+	 * @classdesc The HtmlHeadingBuilder wraps a HTML <h1>, <h2>, <h3>, <h4>, <h5>
+	 * or <h6> element and provides methods to add common child elements.
+	 * @param {np.HtmlElementBuilder} parentBuilder - this builder's parent
    * @param {number} [level=1] - a number between 1 and 6 representing this
    * heading's level
 	 * @augments np.HtmlBuilder
@@ -23,7 +23,7 @@
       throw new RangeError(np.msg.outOfRange('level', '[1..6]'));
     }
 
-		HtmlBuilder.call(this, parentBuilder, new np.Element('h' + level));
+		HtmlBuilder.call(this, parentBuilder, 'h' + level, 'phrasing');
 	}, HtmlBuilder);
 
   /**

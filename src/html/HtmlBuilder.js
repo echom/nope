@@ -6,10 +6,16 @@
       CONTENT_MODEL_METADATA = 'metadata',
       CONTENT_MODEL_PHRASING = 'phrasing',
       CONTENT_MODEL_FLOW = 'flow',
+      hasConcreteContentModel = function(b) {
+        return b.contentModel_ !== CONTENT_MODEL_TRANSPARENT;
+      },
+      isAOrButtonAncestor = function(b) {
+        return b.element.type === 'a' || b.element.type === 'button';
+      },
       addPhrasingAccess_ = function(ctor, type) {
         ctor.prototype[type] = function() {
-          return new HtmlBuilder(this, type, CONTENT_MODEL_PHRASING);
-        }
+          return new np.HtmlBuilder(this, type, CONTENT_MODEL_PHRASING);
+        };
       };
 
   /**
@@ -28,14 +34,17 @@
     this.contentModel_ = contentModel || CONTENT_MODEL_TRANSPARENT;
   }, ElementBuilder);
 
-  HtmlBuilder.prototype.getContentModel = function() {
+  HtmlBuilder.prototype.firstUp_ = function(predicate) {
     var builder = this;
-        contentModel = this.contentModel_;
-    while(builder.parent && contentModel === CONTENT_MODEL_TRANSPARENT) {
-      builder = builder.parent;
-      contentModel = builder.contentModel_;
+    while(builder && !predicate(builder)) {
+      builder = builder.up();
     }
-    return contentModel;
+    return builder;
+  };
+
+  HtmlBuilder.prototype.getContentModel = function() {
+    var builder= this.firstUp_(hasConcreteContentModel);
+    return return builder && builder.contentModel_;
   };
 
   addPhrasingAccess_(HtmlBuilder, 'em');
@@ -54,7 +63,45 @@
   addPhrasingAccess_(HtmlBuilder, 'kbd');
   addPhrasingAccess_(HtmlBuilder, 'var');
 
-  HtmlBuilder.prototype.a = function() { return new HtmlABuilder(this); };
+  HtmlBuilder.prototype.br = function() { return new HtmlVoidBuilder(this, 'br'); };
+
+  HtmlBuilder.prototype.wbr = function() { return new HtmlVoidBuilder(this, 'wbr'); };
+
+  HtmlBuilder.prototype.a = function() {
+    if(this.firstUp_(isAOrButtonAncestor)) {
+      throw new Error(np.msg.opInvalid(
+        'a()',
+        '<a> cannot be nested in <a> or <button>'
+      ));
+    }
+    return new HtmlABuilder(this);
+  };
+
+  HtmlBuilder.prototype.ins = function() { return new HtmlInsBuilder(this); };
+
+  HtmlBuilder.prototype.del = function() { return new HtmlDelBuilder(this); };
+
+  HtmlBuilder.prototype.map = function() { return new HtmlMapBuilder(this); };
+
+  HtmlBuilder.prototype.h = function(level) {
+    if(this.getContentModel() !== CONTENT_MODEL_FLOW) {
+      throw new Error(np.msg.opInvalid(
+        'h()',
+        '<h' + level + '> cannot be nested in phrasing content'
+      ));
+    }
+    return new np.HtmlHeadingBuilder(this, level);
+  };
+
+  HtmlBuilder.prototype.embed = function() {
+    if(this.firstUp_(isAOrButtonAncestor)) {
+      throw new Error(np.msg.opInvalid(
+        'embed()',
+        '<embed> cannot be nested in <a> or <button>'
+      ));
+    }
+    return new HtmlEmbedBuilder(this);
+  };
 
   // transparents: a, ins, del, map, object (constrained), noscript (constrained),
   //               video (constrained), audio (constrained)
@@ -185,19 +232,22 @@
    */
   ElementBuilder.addAttValueAccess_(HtmlBuilder, 'translate');
 
-  /**
-   * @method HtmlBuilder.addHeadingAccess_
-   * @param {function} ctor - the constructor function to augment
-   * @private
-   */
-  HtmlBuilder.addHeadingAccess_ = function(ctor) {
-    ctor.prototype.h = function(level) { return new np.HtmlHeadingBuilder(this, level); };
-  };
-
-
   HtmlBuilder.addPhrasingAccess_ = addPhrasingAccess_;
 
 
+  /**
+   * @constructor np.HtmlVoidBuilder
+   * @augments {np.HtmlBuilder}
+   * @classdesc The HtmlVoidBuilder is the abstract base class for all
+   * element builders wrapping HTML void elements.
+   * @abstract
+   * @param {np.HtmlBuilder} parentBuilder - this builder's parent
+   * @param {np.Element} element - the element this builder will apply changes to
+   * @throws {Error} when the element argument is not provided
+   */
+  var HtmlVoidBuilder = np.inherits(function(parentBuilder, type) {
+    HtmlBuilder.call(this, parentBuilder, type, CONTENT_MODEL_PHRASING);
+  }, ElementBuilder);
 
   var HtmlABuilder = np.inherits(function(parentBuilder) {
     HtmlBuilder.call(this, parentBuilder, 'a', CONTENT_MODEL_TRANSPARENT);
@@ -210,24 +260,30 @@
   ElementBuilder.addAttValueAccess_(HtmlABuilder, 'media');
   ElementBuilder.addAttValueAccess_(HtmlABuilder, 'type');
 
-
-
   var HtmlInsBuilder = np.inherits(function(parentBuilder) {
-    HtmlBuilder.call(this, parentBuilder, np.Element('ins'), 'phrasing');
+    HtmlBuilder.call(this, parentBuilder, np.Element('ins'), CONTENT_MODEL_TRANSPARENT);
   }, HtmlBuilder);
   ElementBuilder.addAttValueAccess_(HtmlInsBuilder, 'cite');
   ElementBuilder.addAttValueAccess_(HtmlInsBuilder, 'datetime');
 
-  /**
-   * @implements {np.HtmlDelBuilder}
-   */
   var HtmlDelBuilder = np.inherits(function(parentBuilder) {
-    HtmlBuilder.call(this, parentBuilder, np.Element('del'), 'phrasing');
+    HtmlBuilder.call(this, parentBuilder, np.Element('del'), CONTENT_MODEL_TRANSPARENT);
   }, HtmlBuilder);
   ElementBuilder.addAttValueAccess_(HtmlDelBuilder, 'cite');
   ElementBuilder.addAttValueAccess_(HtmlDelBuilder, 'datetime');
 
+  var HtmlEmbedBuilder = np.inherits(function(parentBuilder) {
+    HtmlVoidBuilder.call(this, parentBuilder, np.Element('embed'), CONTENT_MODEL_TRANSPARENT);
+  }, HtmlVoidBuilder);
+  ElementBuilder.addAttValueAccess_(HtmlEmbedBuilder, 'src');
+  ElementBuilder.addAttValueAccess_(HtmlEmbedBuilder, 'type');
+  ElementBuilder.addAttValueAccess_(HtmlEmbedBuilder, 'height');
+  ElementBuilder.addAttValueAccess_(HtmlEmbedBuilder, 'width');
 
   np.HtmlBuilder = HtmlBuilder;
   np.HtmlABuilder = HtmlABuilder;
+  np.HtmlVoidBuilder = HtmlVoidBuilder;
+  np.HtmlInsBuilder = HtmlInsBuilder;
+  np.HtmlDelBuilder = HtmlDelBuilder;
+  np.HtmlEmbedBuilder = HtmlDelBuilder;
 }(this.np));
