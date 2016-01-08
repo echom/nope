@@ -11,8 +11,14 @@
                   .charset('utf-8')
                   .title('Hello World')
                   .body()
-                    .h(1).text('Hello World')
-                  .compile(np.dom());
+                    .h(1).text('Hello World').up()
+                    .p().text('So, is this better than what we had before?').up()
+                    .p().b('I don\'t know... ').up().text('Maybe...').up()
+                    .a().href('#hello').p('Click me!').up().up();
+
+      function compile() {
+        html.compile(np.dom());
+      }
 
     </script>
   </body>

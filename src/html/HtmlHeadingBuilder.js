@@ -2,7 +2,7 @@
 	'use strict';
 
 	var ElementBuilder = np.ElementBuilder,
-      HtmlBuilder = np.HtmlBuilder;
+      HtmlSimpleBuilder = np.HtmlSimpleBuilder;
 
 	/**
 	 * Creates a new HtmlHeadingBuilder instance wrapping a <h*> element.
@@ -12,7 +12,7 @@
 	 * @param {np.HtmlElementBuilder} parentBuilder - this builder's parent
    * @param {number} [level=1] - a number between 1 and 6 representing this
    * heading's level
-	 * @augments np.HtmlBuilder
+	 * @augments np.HtmlSimpleBuilder
 	 */
 	var HtmlHeadingBuilder = np.inherits(function(parentBuilder, level) {
     level = level === undefined ? 1 : +level;
@@ -23,8 +23,8 @@
       throw new RangeError(np.msg.outOfRange('level', '[1..6]'));
     }
 
-		HtmlBuilder.call(this, parentBuilder, 'h' + level, 'phrasing');
-	}, HtmlBuilder);
+		HtmlSimpleBuilder.call(this, parentBuilder, 'h' + level, 'phrasing');
+	}, HtmlSimpleBuilder);
 
   /**
    * Adds a text node to the heading element.
