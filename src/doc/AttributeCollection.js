@@ -78,9 +78,10 @@
     if(!fn) {
       throw new Error(np.msg.argEmpty('fn'));
     }
+    ctx = ctx || this;
     
     for(var key in this.attributes_) {
-      fn.call(ctx || this, key, this.attributes_[key]);
+      fn.call(ctx, key, this.attributes_[key]);
     }
   };
 

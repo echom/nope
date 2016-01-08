@@ -13,9 +13,8 @@
   /**
    * @constructor np.HtmlBuilder
    * @augments {np.HtmlSimpleBuilder}
-   * @classdesc The HtmlBuilder is the abstract base class element builders
-   * which wrap void HTML elements (e.g. <br>, <hr>, <param>...).
-   * @abstract
+   * @classdesc The HtmlBuilder is the base class for element builders
+   * which wrap HTML content elements (e.g. <br>, <hr>, <param>...).
    * @param {np.ElementBuilder} parentBuilder - this builder's parent
    * @param {np.Element} element - the element this builder will apply changes to
    * @throws {Error} when the element argument is not provided
@@ -30,14 +29,33 @@
     this.contentModel_ = CONTENT_MODEL_TRANSPARENT;
   }, ElementBuilder);
 
-  HtmlBuilder.prototype.firstUp_ = function(predicate) {
+  /**
+   * Returns the first ancestor builder which fulfils the given predicate or
+   * null if no ancestor matches.
+   * @method np.HtmlBuilder#firstUp_
+   * @param {function} predicate - the predicate function to apply
+   * @return {np.ElementBuilder} the first matching ancestor builder or null
+   * @throws {Error} when the 'predicate' argument is not provided.
+   */
+  HtmlBuilder.prototype.firstUp_ = function(predicate, ctx) {
+    if(!predicate) {
+      throw new Error(np.msg.argEmpty('predicate'));
+    }
+
+    ctx = ctx || this
+
     var builder = this;
-    while(builder && !predicate(builder)) {
+    while(builder && !predicate.call(ctx, builder)) {
       builder = builder.parent;
     }
     return builder;
   };
 
+  /**
+   * Returns this element builder's current content model.
+   * @method np.HtmlBuilder#getContentModel
+   * @return either 'flow' or 'phrasing'
+   */
   HtmlBuilder.prototype.getContentModel = function() {
     var builder= this.firstUp_(hasConcreteContentModel_);
     return builder && builder.contentModel_;

@@ -147,12 +147,14 @@
       throw new Error(np.msg.argEmpty('fn'));
     }
 
+    ctx = ctx || this;
+
     var children = this.children_,
         i = 0,
         l = children.length;
 
     for(; i < l; i++) {
-      fn.call(ctx || this, children[i]);
+      fn.call(ctx, children[i]);
     }
   };
   /**
