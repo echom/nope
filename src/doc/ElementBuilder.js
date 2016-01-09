@@ -63,15 +63,15 @@
 	 * a function with the name of the attribute taking one string parameter.
 	 * @example
 	 *   var CustomElementBuilder = function() {...};
-	 *   ElementBuilder.addAttValueAccess_(CustomElementBuilder, 'customAttr');
+	 *   ElementBuilder.attV_(CustomElementBuilder, 'customAttr');
 	 *   var builder = new CustomElementBuilder().customAttr('value');
 	 *
-	 * @method np.ElementBuilder.addAttValueAccess_
+	 * @method np.ElementBuilder.attV_
 	 * @param {function} ctor - the constructor function to augment
 	 * @param {string} attribute - the attribute name to expose
 	 * @private
 	 */
-	ElementBuilder.addAttValueAccess_ = function(ctor, attribute) {
+	ElementBuilder.attV_ = function(ctor, attribute) {
 		ctor.prototype[attribute] = function(value) {
 			if(value === undefined) {
 				throw new Error(np.msg.argEmpty(attribute));
@@ -87,15 +87,15 @@
 	 * enable or disable the attribute.
 	 * @example
 	 *   var CustomElementBuilder = function() {...};
-	 *   ElementBuilder.addAttBoolAccess_(CustomElementBuilder, 'customAttr');
+	 *   ElementBuilder.attB_(CustomElementBuilder, 'customAttr');
 	 *   var builder = new CustomElementBuilder().customAttr(true);
 	 *
-	 * @method np.ElementBuilder.addAttBoolAccess_
+	 * @method np.ElementBuilder.attB_
 	 * @param {function} ctor - the constructor function to augment
 	 * @param {string} attribute - the attribute name to expose
 	 * @private
 	 */
-	ElementBuilder.addAttBoolAccess_ = function(ctor, attribute) {
+	ElementBuilder.attB_ = function(ctor, attribute) {
 		ctor.prototype[attribute] = function(value) {
 			if(value === undefined) {
 				throw new Error(np.msg.argEmpty(attribute));
@@ -117,14 +117,14 @@
 	 * function with the name of the attribute taking one string parameter.
 	 * @example
 	 *   var CustomElementBuilder = function() {...};
-	 *   ElementBuilder.addTextAccess_(CustomElementBuilder);
+	 *   ElementBuilder.chlT_(CustomElementBuilder);
 	 *   var builder = new CustomElementBuilder().text('text');
 	 *
-	 * @method np.ElementBuilder.addTextAccess_
+	 * @method np.ElementBuilder.chlT_
 	 * @param {function} ctor - the constructor function to augment
 	 * @private
 	 */
-	ElementBuilder.addTextAccess_ = function(ctor) {
+	ElementBuilder.chlT_ = function(ctor) {
 		ctor.prototype.text = function(text) {
 			if(text) {
 				this.element.append(new np.Text(text));

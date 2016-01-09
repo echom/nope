@@ -50,7 +50,11 @@ gulp.task('build', function() {
     .pipe(jshint.reporter('default'))
     .pipe(concat('nope.js'))
     .pipe(gulp.dest('dist'))
-    .pipe(uglify({ mangle: true, output: { max_line_len: 300 } })).on('error', gutil.log)
+    .pipe(uglify({
+      mangle: true,
+      output: { max_line_len: 300 },
+      compress: { hoist_vars: true }
+    })).on('error', gutil.log)
     .pipe(rename('nope.min.js'))
     .pipe(gulp.dest('dist'));
 });

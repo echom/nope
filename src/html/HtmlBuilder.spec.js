@@ -20,7 +20,18 @@ describe('np.HtmlBuilder', function() {
 
   describe('global attributes', function() {
     it('exposes the global attributes', function() {
-      //expect(this.builder.)
+      expect(this.builder.accesskey).toEqual(jasmine.any(Function));
+      expect(this.builder.class).toEqual(jasmine.any(Function));
+      expect(this.builder.contenteditable).toEqual(jasmine.any(Function));
+      expect(this.builder.dir).toEqual(jasmine.any(Function));
+      expect(this.builder.hidden).toEqual(jasmine.any(Function));
+      expect(this.builder.id).toEqual(jasmine.any(Function));
+      expect(this.builder.lang).toEqual(jasmine.any(Function));
+      expect(this.builder.spellcheck).toEqual(jasmine.any(Function));
+      expect(this.builder.style).toEqual(jasmine.any(Function));
+      expect(this.builder.tabindex).toEqual(jasmine.any(Function));
+      expect(this.builder.title).toEqual(jasmine.any(Function));
+      expect(this.builder.translate).toEqual(jasmine.any(Function));
     });
   });
 });

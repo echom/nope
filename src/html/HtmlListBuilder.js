@@ -6,7 +6,7 @@
       HtmlBuilder = np.HtmlBuilder;
 
   var HtmlLiBuilder = np.inherits(function(parentBuilder) {
-    HtmlSimpleBuilder.call(this, parentBuilder, 'li', np.HtmlContentModel.flow);
+    HtmlSimpleBuilder.call(this, parentBuilder, 'li', np.HtmlBuilder.CONTENT_MODEL_FLOW);
   }, HtmlSimpleBuilder);
   HtmlLiBuilder.prototype.value = function(value) {
     if(this.parent.element.type !== 'ol') {
@@ -26,7 +26,7 @@
    * @return {np.HtmlScriptBuilder} this HtmlScriptBuilder instance.
    * @throws {Error} when the 'text' argument is not provided.
    */
-  ElementBuilder.addTextAccess_(HtmlLiBuilder);
+  ElementBuilder.chlT_(HtmlLiBuilder);
 
 	/**
 	 * Creates a new HtmlUlBuilder instance wrapping a <h*> element.
@@ -45,9 +45,9 @@
     HtmlBuilder.call(this, parentBuilder, 'ol');
   }, HtmlBuilder);
 
-	ElementBuilder.addAttValueAccess_(HtmlOlBuilder, 'start');
-  ElementBuilder.addAttValueAccess_(HtmlOlBuilder, 'type');
-	ElementBuilder.addAttBoolAccess_(HtmlOlBuilder, 'reversed');
+	ElementBuilder.attV_(HtmlOlBuilder, 'start');
+  ElementBuilder.attV_(HtmlOlBuilder, 'type');
+	ElementBuilder.attB_(HtmlOlBuilder, 'reversed');
 
 	np.HtmlUlBuilder = HtmlUlBuilder;
   np.HtmlOlBuilder = HtmlOlBuilder;

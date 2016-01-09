@@ -184,14 +184,19 @@
   }
 
   function indexSymbol(symbol) {
+    var icon, title;
+    switch(symbol.kind) {
+      case 'class': icon = '&nbspf*'; title = 'Constructor'; break;
+      case 'enum': icon = '&nbsp;e'; title = 'Enumeration'; break;
+      case 'namespace': icon = '{ }'; title = 'Namespace'; break;
+      default: icon = '&nbsp;??'; title = 'Unknown Symbol'; break;
+    }
+
     index
       .ele('a')
         .att('class', 'list-group-item')
         .att('href', '#sum-' + symbol.id)
-        .ele('span')
-          .raw(symbol.kind == 'namespace' ? '{ } ' : '&nbsp;f*')
-          .att('title', symbol.kind == 'namespace' ? 'Namespace' : 'Constructor')
-          .up()
+        .ele('span').raw(icon).att('title', title).up()
         .ele('span').raw('&nbsp;').txt(symbol.longname).up();
   }
 

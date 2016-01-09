@@ -16,7 +16,11 @@
 	});
 
 	Object.defineProperty(Symbol.prototype, 'toplevel', {
-		get: function() { return this.kind === 'namespace' || this.kind === 'class'; }
+		get: function() {
+			return this.kind === 'namespace' ||
+						 this.kind === 'class' ||
+						 this.kind === 'enum';
+		}
 	});
 
 	Object.defineProperty(Symbol.prototype, 'member', {
@@ -117,10 +121,11 @@
 
 		onEnterSymbol && onEnterSymbol(symbol);
 
-		data({ memberof: symbol.longname, kind: 'member' }).each(recurse);
+		data({ memberof: symbol.longname, kind: 'member'}).each(recurse);
 		data({ memberof: symbol.longname, kind: 'function' }).each(recurse);
 		data({ memberof: symbol.longname, kind: 'event' }).each(recurse);
 		data({ memberof: symbol.longname, kind: 'namespace' }).each(recurse);
+		data({ memberof: symbol.longname, kind: 'enum' }).each(recurse);
 		data({ memberof: symbol.longname, kind: 'class' }).each(recurse);
 
 		onExitSymbol && onExitSymbol(symbol);
@@ -136,6 +141,9 @@
 		if(!opts.undocumented) { data({ undocumented: true }).remove(); }
 		if(!opts.ignored) { data({ ignore: true }).remove(); }
 		if(!opts.private) { data({ access: 'private' }).remove(); }
+
+		//transform @enum to kind:enum
+		data({ kind: 'member', isEnum: true}).each(function(symbol){ symbol.kind = 'enum'; });
 
     // filter the root symbols (except 'package' which is a built in symbol)
 		// and process

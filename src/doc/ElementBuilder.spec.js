@@ -67,7 +67,7 @@ describe('np.ElementBuilder', function() {
     });
   });
 
-  describe('.addAttValueAccess_', function() {
+  describe('.attV_', function() {
     beforeEach(function() {
       var fakeElement = np.mocks.Element(),
           fakeAttributes = np.mocks.AttributeCollection(),
@@ -84,25 +84,25 @@ describe('np.ElementBuilder', function() {
 
     it('adds an attribute setter to the provided constructor', function() {
       expect(this.FakeBuilder.prototype.hello).toBe(undefined);
-      np.ElementBuilder.addAttValueAccess_(this.FakeBuilder, 'hello');
+      np.ElementBuilder.attV_(this.FakeBuilder, 'hello');
 
       expect(this.FakeBuilder.prototype.hello).not.toBe(undefined);
     });
     it('adds a function that expects an argument', function() {
-      np.ElementBuilder.addAttValueAccess_(this.FakeBuilder, 'hello');
+      np.ElementBuilder.attV_(this.FakeBuilder, 'hello');
       var fakeBuilder = this.fakeBuilder,
           toFail = function() { fakeBuilder.hello(); };
 
       expect(toFail).toThrowError(/InvalidArgument/);
     });
     it('adds a function which will set the appropriate attribute', function() {
-      np.ElementBuilder.addAttValueAccess_(this.FakeBuilder, 'hello');
+      np.ElementBuilder.attV_(this.FakeBuilder, 'hello');
       this.fakeBuilder.hello('world');
 
       expect(this.fakeAttributes.set).toHaveBeenCalledWith('hello', 'world');
     });
   });
-  describe('.addAttBoolAccess_', function() {
+  describe('.attB_', function() {
     beforeEach(function() {
       var fakeElement = np.mocks.Element(),
           fakeAttributes = np.mocks.AttributeCollection(),
@@ -119,25 +119,25 @@ describe('np.ElementBuilder', function() {
 
     it('adds an attribute setter to the provided constructor', function() {
       expect(this.FakeBuilder.prototype.hello).toBe(undefined);
-      np.ElementBuilder.addAttBoolAccess_(this.FakeBuilder, 'hello');
+      np.ElementBuilder.attB_(this.FakeBuilder, 'hello');
 
       expect(this.FakeBuilder.prototype.hello).not.toBe(undefined);
     });
     it('adds a function that expects an argument', function() {
-      np.ElementBuilder.addAttBoolAccess_(this.FakeBuilder, 'hello');
+      np.ElementBuilder.attB_(this.FakeBuilder, 'hello');
       var fakeBuilder = this.fakeBuilder,
           toFail = function() { fakeBuilder.hello(); };
 
       expect(toFail).toThrowError(/InvalidArgument/);
     });
     it('adds a function which will set the appropriate attribute', function() {
-      np.ElementBuilder.addAttBoolAccess_(this.FakeBuilder, 'hello');
+      np.ElementBuilder.attB_(this.FakeBuilder, 'hello');
       this.fakeBuilder.hello(true);
 
       expect(this.fakeAttributes.set).toHaveBeenCalledWith('hello', 'hello');
     });
     it('adds a function which will remove the appropriate attribute', function() {
-      np.ElementBuilder.addAttBoolAccess_(this.FakeBuilder, 'hello');
+      np.ElementBuilder.attB_(this.FakeBuilder, 'hello');
 
       this.fakeBuilder.hello(true);
       this.fakeBuilder.hello(false);
@@ -146,7 +146,7 @@ describe('np.ElementBuilder', function() {
     });
   });
 
-  describe('.addTextAccess_', function() {
+  describe('.chlT_', function() {
     beforeEach(function() {
       var fakeElement = np.mocks.Element(),
           fakeChildren = np.mocks.NodeCollection(),
@@ -162,12 +162,12 @@ describe('np.ElementBuilder', function() {
 
     it('adds a text setter to the provided constructor', function() {
       expect(this.FakeBuilder.prototype.text).toBe(undefined);
-      np.ElementBuilder.addTextAccess_(this.FakeBuilder);
+      np.ElementBuilder.chlT_(this.FakeBuilder);
 
       expect(this.FakeBuilder.prototype.text).not.toBe(undefined);
     });
     it('adds a function which will append a text node', function() {
-      np.ElementBuilder.addTextAccess_(this.FakeBuilder);
+      np.ElementBuilder.chlT_(this.FakeBuilder);
       this.fakeBuilder.text('world');
 
       expect(this.fakeElement.append).toHaveBeenCalledWith(jasmine.any(np.Text));
@@ -176,7 +176,7 @@ describe('np.ElementBuilder', function() {
       }));
     });
     it('adds a function which will return the builder', function() {
-      np.ElementBuilder.addTextAccess_(this.FakeBuilder);
+      np.ElementBuilder.chlT_(this.FakeBuilder);
       expect(this.fakeBuilder.text('world')).toBe(this.fakeBuilder);
     });
   });

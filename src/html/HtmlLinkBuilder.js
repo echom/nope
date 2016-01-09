@@ -25,7 +25,7 @@
    * @return {np.HtmlLinkBuilder} this HtmlLinkBuilder instance.
    * @throws {Error} when the 'type' argument is empty.
    */
-  ElementBuilder.addAttValueAccess_(HtmlLinkBuilder, 'type');
+  ElementBuilder.attV_(HtmlLinkBuilder, 'type');
 
   /**
    * Sets the relationship of the link destination.
@@ -34,7 +34,7 @@
    * @return {np.HtmlLinkBuilder} this HtmlLinkBuilder instance.
    * @throws {Error} when the 'rel' argument is empty.
    */
-  ElementBuilder.addAttValueAccess_(HtmlLinkBuilder, 'rel');
+  ElementBuilder.attV_(HtmlLinkBuilder, 'rel');
 
   /**
    * Sets the language of the link destination.
@@ -43,7 +43,7 @@
    * @return {np.HtmlLinkBuilder} this HtmlLinkBuilder instance.
    * @throws {Error} when the 'hreflang' argument is empty.
    */
-  ElementBuilder.addAttValueAccess_(HtmlLinkBuilder, 'hreflang');
+  ElementBuilder.attV_(HtmlLinkBuilder, 'hreflang');
 
   /**
    * Sets the media for which the link destination was designed.
@@ -52,7 +52,7 @@
    * @return {np.HtmlLinkBuilder} this HtmlLinkBuilder instance.
    * @throws {Error} when the 'media' argument is empty.
    */
-  ElementBuilder.addAttValueAccess_(HtmlLinkBuilder, 'media');
+  ElementBuilder.attV_(HtmlLinkBuilder, 'media');
 
   /**
    * Sets the sizes of icons for visual media.
@@ -61,7 +61,7 @@
    * @return {np.HtmlLinkBuilder} this HtmlLinkBuilder instance.
    * @throws {Error} when the 'sizes' argument is empty.
    */
-  ElementBuilder.addAttValueAccess_(HtmlLinkBuilder, 'sizes');
+  ElementBuilder.attV_(HtmlLinkBuilder, 'sizes');
 
 	np.HtmlLinkBuilder = HtmlLinkBuilder;
 }(this.np));

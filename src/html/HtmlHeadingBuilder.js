@@ -33,7 +33,7 @@
    * @return {np.HtmlScriptBuilder} this HtmlScriptBuilder instance.
    * @throws {Error} when the 'text' argument is not provided.
    */
-  ElementBuilder.addTextAccess_(HtmlHeadingBuilder);
+  ElementBuilder.chlT_(HtmlHeadingBuilder);
 
 	np.HtmlHeadingBuilder = HtmlHeadingBuilder;
 }(this.np));

@@ -19,7 +19,7 @@
    * @return {np.HtmlScriptBuilder} this HtmlScriptBuilder instance.
    * @throws {Error} when the 'src' argument is empty.
    */
-  ElementBuilder.addAttValueAccess_(HtmlScriptBuilder, 'src');
+  ElementBuilder.attV_(HtmlScriptBuilder, 'src');
 
   /**
    * Sets the language of the script or format of the data.
@@ -28,7 +28,7 @@
    * @return {np.HtmlScriptBuilder} this HtmlScriptBuilder instance.
    * @throws {Error} when the 'type' argument is empty.
    */
-  ElementBuilder.addAttValueAccess_(HtmlScriptBuilder, 'type');
+  ElementBuilder.attV_(HtmlScriptBuilder, 'type');
 
   /**
    * Sets the character encoding of the external script.
@@ -37,7 +37,7 @@
    * @return {np.HtmlScriptBuilder} this HtmlScriptBuilder instance.
    * @throws {Error} when the 'charset' argument is empty.
    */
-  ElementBuilder.addAttValueAccess_(HtmlScriptBuilder, 'charset');
+  ElementBuilder.attV_(HtmlScriptBuilder, 'charset');
 
   /**
    * Specifies that script should be executed after the document has been parsed.
@@ -48,7 +48,7 @@
    * @return {np.HtmlScriptBuilder} this HtmlScriptBuilder instance.
    * @throws {Error} when the 'defer' argument is not provided.
    */
-	ElementBuilder.addAttBoolAccess_(HtmlScriptBuilder, 'defer');
+	ElementBuilder.attB_(HtmlScriptBuilder, 'defer');
 
   /**
    * Specifies that the script should be executed asynchronously, as soon as it
@@ -60,7 +60,7 @@
    * @return {np.HtmlScriptBuilder} this HtmlScriptBuilder instance.
    * @throws {Error} when the 'async' argument is not provided.
    */
-  ElementBuilder.addAttBoolAccess_(HtmlScriptBuilder, 'async');
+  ElementBuilder.attB_(HtmlScriptBuilder, 'async');
 
   /**
    * Adds a text node to the script element.
@@ -69,7 +69,7 @@
    * @return {np.HtmlScriptBuilder} this HtmlScriptBuilder instance.
    * @throws {Error} when the 'text' argument is not provided.
    */
-  ElementBuilder.addTextAccess_(HtmlScriptBuilder);
+  ElementBuilder.chlT_(HtmlScriptBuilder);
 
 	np.HtmlScriptBuilder = HtmlScriptBuilder;
 }(this.np));

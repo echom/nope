@@ -5,12 +5,12 @@
       HtmlBuilder = np.HtmlBuilder;
 
   var HtmlEmbedBuilder = np.inherits(function(parentBuilder) {
-    HtmlBuilder.call(this, parentBuilder, np.Element('embed'), np.HtmlContentModel.transparent);
+    HtmlBuilder.call(this, parentBuilder, np.Element('embed'), np.HtmlBuilder.CONTENT_MODEL_TRANSPARENT);
   }, HtmlBuilder);
-  ElementBuilder.addAttValueAccess_(HtmlEmbedBuilder, 'src');
-  ElementBuilder.addAttValueAccess_(HtmlEmbedBuilder, 'type');
-  ElementBuilder.addAttValueAccess_(HtmlEmbedBuilder, 'height');
-  ElementBuilder.addAttValueAccess_(HtmlEmbedBuilder, 'width');
+  ElementBuilder.attV_(HtmlEmbedBuilder, 'src');
+  ElementBuilder.attV_(HtmlEmbedBuilder, 'type');
+  ElementBuilder.attV_(HtmlEmbedBuilder, 'height');
+  ElementBuilder.attV_(HtmlEmbedBuilder, 'width');
 
   np.HtmlEmbedBuilder = HtmlEmbedBuilder;
 }(this.np));

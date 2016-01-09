@@ -9,8 +9,8 @@
     HtmlBuilder.call(this, parentBuilder, 'param');
   }, HtmlBuilder);
 
-  ElementBuilder.addAttValueAccess_(HtmlParamBuilder, 'name');
-  ElementBuilder.addAttValueAccess_(HtmlParamBuilder, 'value');
+  ElementBuilder.attV_(HtmlParamBuilder, 'name');
+  ElementBuilder.attV_(HtmlParamBuilder, 'value');
 
 	/**
 	 * Creates a new HtmlObjectBuilder instance wrapping a <h*> element.
@@ -43,12 +43,12 @@
 		}
 	};
 
-	ElementBuilder.addAttValueAccess_(HtmlObjectBuilder, 'data');
-	ElementBuilder.addAttValueAccess_(HtmlObjectBuilder, 'type');
-	ElementBuilder.addAttValueAccess_(HtmlObjectBuilder, 'height');
-	ElementBuilder.addAttValueAccess_(HtmlObjectBuilder, 'width');
-	ElementBuilder.addAttValueAccess_(HtmlObjectBuilder, 'name');
-	ElementBuilder.addAttValueAccess_(HtmlObjectBuilder, 'form');
+	ElementBuilder.attV_(HtmlObjectBuilder, 'data');
+	ElementBuilder.attV_(HtmlObjectBuilder, 'type');
+	ElementBuilder.attV_(HtmlObjectBuilder, 'height');
+	ElementBuilder.attV_(HtmlObjectBuilder, 'width');
+	ElementBuilder.attV_(HtmlObjectBuilder, 'name');
+	ElementBuilder.attV_(HtmlObjectBuilder, 'form');
 
   /**
    * Adds a text node to the object element.
@@ -57,7 +57,7 @@
    * @return {np.HtmlScriptBuilder} this HtmlScriptBuilder instance.
    * @throws {Error} when the 'text' argument is not provided.
    */
-  ElementBuilder.addTextAccess_(HtmlObjectBuilder);
+  ElementBuilder.chlT_(HtmlObjectBuilder);
 
 	np.HtmlObjectBuilder = HtmlObjectBuilder;
 }(this.np));

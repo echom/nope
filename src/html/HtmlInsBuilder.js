@@ -5,16 +5,16 @@
       HtmlSimpleBuilder = np.HtmlSimpleBuilder;
 
   var HtmlInsBuilder = np.inherits(function(parentBuilder) {
-    HtmlSimpleBuilder.call(this, parentBuilder, np.Element('ins'), np.HtmlContentModel.transparent);
+    HtmlSimpleBuilder.call(this, parentBuilder, np.Element('ins'), np.HtmlBuilder.CONTENT_MODEL_TRANSPARENT);
   }, HtmlSimpleBuilder);
-  ElementBuilder.addAttValueAccess_(HtmlInsBuilder, 'cite');
-  ElementBuilder.addAttValueAccess_(HtmlInsBuilder, 'datetime');
+  ElementBuilder.attV_(HtmlInsBuilder, 'cite');
+  ElementBuilder.attV_(HtmlInsBuilder, 'datetime');
 
   var HtmlDelBuilder = np.inherits(function(parentBuilder) {
-    HtmlSimpleBuilder.call(this, parentBuilder, np.Element('del'), np.HtmlContentModel.transparent);
+    HtmlSimpleBuilder.call(this, parentBuilder, np.Element('del'), np.HtmlBuilder.CONTENT_MODEL_TRANSPARENT);
   }, HtmlSimpleBuilder);
-  ElementBuilder.addAttValueAccess_(HtmlDelBuilder, 'cite');
-  ElementBuilder.addAttValueAccess_(HtmlDelBuilder, 'datetime');
+  ElementBuilder.attV_(HtmlDelBuilder, 'cite');
+  ElementBuilder.attV_(HtmlDelBuilder, 'datetime');
 
 	np.HtmlInsBuilder = HtmlInsBuilder;
   np.HtmlDelBuilder = HtmlDelBuilder;

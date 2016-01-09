@@ -19,7 +19,7 @@
    * @return {np.HtmlStyleBuilder} this HtmlStyleBuilder instance.
    * @throws {Error} when the 'type' argument is empty.
    */
-  ElementBuilder.addAttValueAccess_(HtmlStyleBuilder, 'type');
+  ElementBuilder.attV_(HtmlStyleBuilder, 'type');
 
   /**
    * Specifies which media the styles apply to.
@@ -28,7 +28,7 @@
    * @return {np.HtmlStyleBuilder} this HtmlStyleBuilder instance.
    * @throws {Error} when the 'media' argument is empty.
    */
-  ElementBuilder.addAttValueAccess_(HtmlStyleBuilder, 'media');
+  ElementBuilder.attV_(HtmlStyleBuilder, 'media');
 
   /**
    * Indicates that the specified style information is meant to apply only to
@@ -41,7 +41,7 @@
    * @return {np.HtmlStyleBuilder} this HtmlStyleBuilder instance.
    * @throws {Error} when the 'defer' argument is not provided.
    */
-	ElementBuilder.addAttBoolAccess_(HtmlStyleBuilder, 'scoped');
+	ElementBuilder.attB_(HtmlStyleBuilder, 'scoped');
 
   /**
    * Adds a text node to the style element.
@@ -50,7 +50,7 @@
    * @return {np.HtmlStyleBuilder} this HtmlStyleBuilder instance.
    * @throws {Error} when the 'text' argument is not provided.
    */
-  ElementBuilder.addTextAccess_(HtmlStyleBuilder);
+  ElementBuilder.chlT_(HtmlStyleBuilder);
 
 	np.HtmlStyleBuilder = HtmlStyleBuilder;
 }(this.np));
