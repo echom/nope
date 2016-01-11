@@ -14,7 +14,7 @@
    * heading's level
 	 * @augments np.HtmlSimpleBuilder
 	 */
-	var HtmlHeadingBuilder = np.inherits(function(parentBuilder, level) {
+	var HtmlHeadingBuilder = np.inherits(function(parentBuilder, level, text) {
     level = level === undefined ? 1 : +level;
 
     if(!np.isA(level, 'number')) {

@@ -15,7 +15,7 @@
         'cannot set value on <li> that is not nested in <ol>'
       ));
     }
-    this.element.attributes().set('value', '' + value);
+    this.attrib('value', '' + value);
     return this;
   };
 

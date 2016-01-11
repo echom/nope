@@ -62,6 +62,7 @@
 		if(!value) {
 			throw new Error(np.msg.argEmpty('value'));
 		}
+
 		return (this.attributes_[name] = '' + value);
 	};
 
@@ -79,7 +80,7 @@
       throw new Error(np.msg.argEmpty('fn'));
     }
     ctx = ctx || this;
-    
+
     for(var key in this.attributes_) {
       fn.call(ctx, key, this.attributes_[key]);
     }

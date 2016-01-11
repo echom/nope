@@ -170,30 +170,30 @@
   addVoidAccess_(HtmlSimpleBuilder, 'wbr');
   addVoidAccess_(HtmlSimpleBuilder, 'hr');
 
-  HtmlSimpleBuilder.prototype.a = function() {
+  HtmlSimpleBuilder.prototype.a = function(text) {
     if(this.firstUp_(isAOrButtonAncestor_)) {
       throw new Error(np.msg.opInvalid(
         'a()',
         '<a> cannot be nested in <a> or <button>'
       ));
     }
-    return new np.HtmlABuilder(this);
+    return new np.HtmlABuilder(this).text(text);
   };
 
-  HtmlSimpleBuilder.prototype.ins = function() { return new np.HtmlInsBuilder(this); };
+  HtmlSimpleBuilder.prototype.ins = function(text) { return new np.HtmlInsBuilder(this).text(text); };
 
-  HtmlSimpleBuilder.prototype.del = function() { return new np.HtmlDelBuilder(this); };
+  HtmlSimpleBuilder.prototype.del = function(text) { return new np.HtmlDelBuilder(this).text(text); };
 
-  HtmlSimpleBuilder.prototype.map = function() { return new np.HtmlMapBuilder(this); };
+  HtmlSimpleBuilder.prototype.map = function(text) { return new np.HtmlMapBuilder(this).text(text); };
 
-  HtmlSimpleBuilder.prototype.h = function(level) {
+  HtmlSimpleBuilder.prototype.h = function(level, text) {
     if(this.getContentModel_() !== CONTENT_MODEL_FLOW) {
       throw new Error(np.msg.opInvalid(
         'h()',
         '<h' + level + '> cannot be nested in phrasing content'
       ));
     }
-    return new np.HtmlHeadingBuilder(this, level);
+    return new np.HtmlHeadingBuilder(this, level).text(text);
   };
 
   HtmlSimpleBuilder.prototype.embed = function() {

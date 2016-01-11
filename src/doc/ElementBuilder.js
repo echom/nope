@@ -49,6 +49,19 @@
 		return this.parent ? this.parent.root() : this;
 	};
 
+	ElementBuilder.prototype.attrib = function(name, value) {
+		if(!name) {
+			throw new Error(np.msg.argEmpty('name'));
+		}
+		if(!value) {
+			throw new Error(np.msg.argEmpty('value'));
+		}
+		if(np.isA(value, 'function')) value = value(this);
+		this.element.attributes().set('' + name, '' + value);
+		return this;
+	};
+
+
 	/**
 	 * Compile's the entire builder tree given the compile target.
 	 * @param {np.Compiler} target - the compile target
@@ -57,6 +70,20 @@
 		target.compile(this.root().element);
 	};
 
+
+	// JS logic interface
+
+	ElementBuilder.prototype.idStore_ = function() {
+		var root = this.root();
+		return root.idStore_ || (root.idStore_ = {});
+	};
+
+	ElementBuilder.prototype.save = function(id) {
+		this.idStore_()[id] = this;
+	};
+	ElementBuilder.prototype.load = function(id) {
+		return this.idStore_[id];
+	};
 
 	/**
 	 * Adds an attribute value setter function to a class. The class will receive
@@ -76,7 +103,7 @@
 			if(value === undefined) {
 				throw new Error(np.msg.argEmpty(attribute));
 			}
-			this.element.attributes().set('' + attribute, '' + value);
+			this.attrib('' + attribute, '' + value);
 			return this;
 		};
 	};
@@ -100,9 +127,12 @@
 			if(value === undefined) {
 				throw new Error(np.msg.argEmpty(attribute));
 			}
+			if(np.isA(value, 'function')) value = value(this);
+
+
 			value = value !== false ? true : false;
 			if(value) {
-				this.element.attributes().set('' + attribute, '' + attribute);
+				this.attrib('' + attribute, '' + attribute);
 			} else {
 				this.element.attributes().remove('' + attribute);
 			}
@@ -110,7 +140,6 @@
 			return this;
 		};
 	};
-
 
 	/**
 	 * Adds a text setter function to a class. The class will receive a
@@ -127,6 +156,7 @@
 	ElementBuilder.chlT_ = function(ctor) {
 		ctor.prototype.text = function(text) {
 			if(text) {
+				if(np.isA(text, 'function')) text = text(this);
 				this.element.append(new np.Text(text));
 			}
 			return this;

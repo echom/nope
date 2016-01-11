@@ -13,6 +13,8 @@
 		ElementBuilder.call(this, null, new np.Element('html'));
 		this.head_ = new np.HtmlHeadBuilder(this);
 		this.body_ = new np.HtmlBodyBuilder(this);
+
+		this.idStore_ = {};
 	}, ElementBuilder);
 
 	/**

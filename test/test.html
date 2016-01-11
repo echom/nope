@@ -7,13 +7,19 @@
   </head>
   <body>
     <script>
+      var yes = true;
+
       var html = np.html()
                   .title('Hello World')
                   .body()
                     .h(1).text('Hello World').up()
                     .p().text('So, is this better than what we had before?').up()
                     .p().b('I don\'t know... ').up().text('Maybe...').up()
-                    .a().href('#hello').p('Click me!').up().up();
+                    .p().text(function(p) { yes = !yes; return yes ? 'yes' : 'no';}).up()
+                    .p().text(function(p) { yes = !yes; return yes ? 'yes' : 'no';}).up()
+                    .p().text(function(p) { yes = !yes; return yes ? 'yes' : 'no';}).up()
+                    .a().href('#hello').p('Click me!').up().up()
+                  .up();
 
       function compile() {
         html.compile(np.dom());
