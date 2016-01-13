@@ -72,7 +72,7 @@
                     .class('symbol container-fluid' + (symbol.inherited ? ' inherited' : ''))
                     .id('sym-' + symbol.id);
       if(hasDetails(symbol)) {
-        symbolHtml.attrib('onclick', 'toggleSymbol("sym-' + symbol.id + '")');
+        //symbolHtml.attrib('onclick', 'toggleSymbol("sym-' + symbol.id + '")');
       }
 
       summarizeSymbol(symbol, symbolHtml);

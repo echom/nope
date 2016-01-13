@@ -70,12 +70,14 @@ describe('np.ElementBuilder', function() {
   describe('.attV_', function() {
     beforeEach(function() {
       var fakeElement = np.mocks.Element(),
+          fakeAttributes = np.mocks.AttributeCollection(),
           FakeBuilder = function() { this.element = fakeElement; },
           fakeBuilder = new FakeBuilder();
 
-      fakeBuilder.attrib = jasmine.createSpy('attrib');
+      fakeElement.attributes.and.returnValue(fakeAttributes);
 
       this.fakeElement = fakeElement;
+      this.fakeAttributes = fakeAttributes;
       this.FakeBuilder = FakeBuilder;
       this.fakeBuilder = fakeBuilder;
     });
@@ -97,18 +99,20 @@ describe('np.ElementBuilder', function() {
       np.ElementBuilder.attV_(this.FakeBuilder, 'hello');
       this.fakeBuilder.hello('world');
 
-      expect(this.fakeBuilder.attrib).toHaveBeenCalledWith('hello', 'world');
+      expect(this.fakeAttributes.set).toHaveBeenCalledWith('hello', 'world');
     });
   });
   describe('.attB_', function() {
     beforeEach(function() {
       var fakeElement = np.mocks.Element(),
+          fakeAttributes = np.mocks.AttributeCollection(),
           FakeBuilder = function() { this.element = fakeElement; },
           fakeBuilder = new FakeBuilder();
 
-      fakeBuilder.attrib = jasmine.createSpy('attrib');
+      fakeElement.attributes.and.returnValue(fakeAttributes);
 
       this.fakeElement = fakeElement;
+      this.fakeAttributes = fakeAttributes;
       this.FakeBuilder = FakeBuilder;
       this.fakeBuilder = fakeBuilder;
     });
@@ -130,7 +134,7 @@ describe('np.ElementBuilder', function() {
       np.ElementBuilder.attB_(this.FakeBuilder, 'hello');
       this.fakeBuilder.hello(true);
 
-      expect(this.fakeBuilder.attrib).toHaveBeenCalledWith('hello', 'hello');
+      expect(this.fakeAttributes.set).toHaveBeenCalledWith('hello', 'hello');
     });
     it('adds a function which will remove the appropriate attribute', function() {
       np.ElementBuilder.attB_(this.FakeBuilder, 'hello');

@@ -49,19 +49,6 @@
 		return this.parent ? this.parent.root() : this;
 	};
 
-	ElementBuilder.prototype.attrib = function(name, value) {
-		if(!name) {
-			throw new Error(np.msg.argEmpty('name'));
-		}
-		if(!value) {
-			throw new Error(np.msg.argEmpty('value'));
-		}
-		if(np.isA(value, 'function')) value = value(this);
-		this.element.attributes().set('' + name, '' + value);
-		return this;
-	};
-
-
 	/**
 	 * Compile's the entire builder tree given the compile target.
 	 * @param {np.Compiler} target - the compile target
@@ -103,7 +90,7 @@
 			if(value === undefined) {
 				throw new Error(np.msg.argEmpty(attribute));
 			}
-			this.attrib('' + attribute, '' + value);
+			this.element.attributes().set(attribute, value);
 			return this;
 		};
 	};
@@ -125,16 +112,15 @@
 	ElementBuilder.attB_ = function(ctor, attribute) {
 		ctor.prototype[attribute] = function(value) {
 			if(value === undefined) {
-				throw new Error(np.msg.argEmpty(attribute));
+				throw new Error(np.msg.argEmpty('value'));
 			}
 			if(np.isA(value, 'function')) value = value(this);
 
-
 			value = value !== false ? true : false;
 			if(value) {
-				this.attrib('' + attribute, '' + attribute);
+				this.element.attributes().set(attribute, attribute);
 			} else {
-				this.element.attributes().remove('' + attribute);
+				this.element.attributes().remove(attribute);
 			}
 
 			return this;

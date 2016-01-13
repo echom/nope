@@ -37,6 +37,11 @@
 							((typeof(type) == 'function') ? (obj instanceof type) : false);
 	};
 
+
+	var err = function(message, src) {
+		return message + (src ? ' (@' + src + ')' : '');
+	};
+
 	/**
 	 * This namespace contains functions for formatting messages.
 	 * @namespace np.msg
@@ -49,11 +54,12 @@
 	 * @method np.msg.argInvalid
 	 * @param {string} name - the argument's name
 	 * @param {string} message - the message
+	 * @param {string} [src] - optionally, the source from where the error originated
 	 * @return {string} the formatted error message
 	 * @private
 	 */
-	np.msg.argInvalid = function(name, message) {
-		return 'InvalidArgument: "' + name + '" - ' + message;
+	np.msg.argInvalid = function(name, message, src) {
+		return err('InvalidArgument: "' + name + '" - ' + message, src);
 	};
 
 	/**
@@ -61,10 +67,11 @@
 	 * @method np.msg.argEmpty
 	 * @param {string} name - the argument's name
 	 * @return {string} the formatted error message
+	 * @param {string} [src] - optionally, the source from where the error originated
 	 * @private
 	 */
-	np.msg.argEmpty = function(name) {
-		return np.msg.argInvalid(name, 'was not supplied');
+	np.msg.argEmpty = function(name, src) {
+		return np.msg.argInvalid(name, 'was not supplied', src);
 	};
 
 	/**
@@ -72,11 +79,12 @@
 	 * @method np.msg.argType
 	 * @param {string} name - the argument's name
 	 * @param {string} type - the expected type
+	 * @param {string} [src] - optionally, the source from where the error originated
 	 * @return {string} the formatted error message
 	 * @private
 	 */
-	np.msg.argType = function(name, type) {
-		return np.msg.argInvalid(name, 'must be of type ' + type);
+	np.msg.argType = function(name, type, src) {
+		return np.msg.argInvalid(name, 'must be of type ' + type, src);
 	};
 
 	/**
@@ -84,11 +92,12 @@
 	 * @method np.msg.opInvalid
 	 * @param {string} operation - the operation which failed
 	 * @param {string} message - the message
+	 * @param {string} [src] - optionally, the source from where the error originated
 	 * @return {string} the formatted error message
 	 * @private
 	 */
-	np.msg.opInvalid = function(operation, message) {
-		return 'InvalidOperation: "' + operation + '" - ' + message;
+	np.msg.opInvalid = function(operation, message, src) {
+		return err('InvalidOperation: "' + operation + '" - ' + message, src);
 	};
 
 	/**
@@ -96,24 +105,12 @@
 	 * @method np.msg.outOfRange
 	 * @param {string} name - the name of the erroneous variable
 	 * @param {string} range - the expected range
+	 * @param {string} [src] - optionally, the source from where the error originated
 	 * @return {string} the formatted error message
 	 * @private
 	 */
-	np.msg.outOfRange = function(name, range) {
+	np.msg.outOfRange = function(name, range, src) {
 		return 'OutOfRange: "' + name + '" must in range ' + range + '].';
 	};
-
-	// np.msg.templateString = function(tmpl, vars) {
-	// 	var msg = tmpl,
-	// 			key,
-	// 			name;
-	// 	for(key in vars) {
-	// 		if(vars.hasOwnProperty(key)) {
-	// 			name = '${' + key + '}'
-	// 			msg = msg.replace(name, vars[key]);
-	// 		}
-	// 	}
-	// 	return msg;
-	// };
 
 }(this.np || (this.np = {})));

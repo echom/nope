@@ -16,7 +16,7 @@
 
 
 	HtmlMetaBuilder.prototype.charset = function(charset) {
-		this.attrib('charset', charset);
+		this.element.attributes().set('charset', charset);
 		return this;
 	};
 	HtmlMetaBuilder.prototype.http = function(http, content) {
