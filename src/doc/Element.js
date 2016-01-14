@@ -35,6 +35,7 @@
      */
     this.attributes_ = new np.AttributeCollection();
 
+    this.selfClosing = true;
   }, np.Node);
 
   /**
@@ -64,6 +65,21 @@
   //   return this.children_.where(Element.childElement_);
   // };
 
+  Element.prototype.path = function() {
+    var path = '',
+        type = this.type,
+        parent = this.parent,
+        index = -1;
+    if(parent) {
+      path += parent.path();
+      index = parent.children().toArray()
+        .filter(function(node) { return node.type === type; })
+        .indexOf(this);
+    }
+    path += '<' + type + (index >= 0 ? '[' + index + ']' : '') + '>';
+    return path;
+  };
+
   /**
    * Appends a node to this element.
    * @method np.Element#append
@@ -75,11 +91,11 @@
    */
   Element.prototype.append = function(node) {
     if(!node) {
-      throw new Error(np.msg.argEmpty('node'));
+      throw new Error(np.msg.argEmpty('node', this.path()));
     } else if(node === this) {
-      throw new Error(np.msg.opInvalid('append', 'trying to append to self'));
+      throw new Error(np.msg.opInvalid('append', 'trying to append to self', this.path()));
     } else if(!np.isA(node, np.Node)) {
-      throw new TypeError(np.msg.argType('node', 'np.Node'));
+      throw new TypeError(np.msg.argType('node', 'np.Node', this.path()));
     }
 
     this.children_.remove(node).add(node);

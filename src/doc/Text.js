@@ -24,6 +24,18 @@
     return this;
   };
 
+  Text.prototype.path = function() {
+    var path = '',
+        parent = this.parent,
+        index = -1;
+    if(parent) {
+      path += parent.path();
+      index = parent.children().toArray().filter(Text.nodeIsText_).indexOf(this);
+    }
+    path += '#text' + (index >= 0 ? '[' + index + ']' : '');
+    return path;
+  };
+
   Text.prototype.nodeType_ = 'text';
   Text.nodeIsText_ = function(node) { return node.nodeType_ === 'text'; };
 

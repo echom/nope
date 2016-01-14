@@ -93,8 +93,8 @@
 	 * @param {string} href - the destination of the link element
 	 * @return {np.HtmlLinkBuilder} the new HtmlLinkBuilder instance.
 	 */
-	HtmlHeadBuilder.prototype.link = function(href) {
-		return new np.HtmlLinkBuilder(href, this);
+	HtmlHeadBuilder.prototype.link = function(rel, href) {
+		return new np.HtmlLinkBuilder(rel, href, this);
 	};
 
 	/**

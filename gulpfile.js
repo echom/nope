@@ -1,4 +1,5 @@
 var fs = require('fs');
+    del = require('del'),
     exec = require('child_process').exec,
     karma = require('karma'),
     gulp = require('gulp'),
@@ -36,13 +37,19 @@ var paths = {
     'src/html/HtmlInsBuilder.js',
     'src/html/HtmlBodyBuilder.js',
     'src/html/HtmlDocumentBuilder.js',
-    'src/html/DomCompiler.js'
+    'src/cmp/DomCompiler.js',
+    'src/cmp/StringCompiler.js',
+    'src/cmp/StreamCompiler.js'
   ],
   min: 'dist/nope.min.js',
   max: 'dist/nope.js',
   mocks: 'src/**/*.mock.js',
   specs: 'src/**/*.spec.js'
 };
+
+gulp.task('clean', function() {
+  return del(['dist/*']);
+});
 
 gulp.task('build', function() {
   return gulp.src(paths.src)
@@ -130,7 +137,7 @@ gulp.task('document', function(done) {
 gulp.task('umdhack:commonjs', function() {
   return gulp.src([
       'tools/umdhack/commonjs-prefix.js',
-      'dist/nope.min.js',
+      'dist/nope.js',
       'tools/umdhack/commonjs-suffix.js'
     ])
     .pipe(concat('nope.commonjs.min.js'))

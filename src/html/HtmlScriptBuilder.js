@@ -10,6 +10,7 @@
 	 */
 	var HtmlScriptBuilder = np.inherits(function(parentBuilder) {
 		ElementBuilder.call(this, parentBuilder, new np.Element('script'));
+		this.element.selfClosing = false;
 	}, ElementBuilder);
 
   /**

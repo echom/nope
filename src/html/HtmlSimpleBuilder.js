@@ -47,6 +47,7 @@
     HtmlBuilder.call(this, parentBuilder, type);
 
     this.contentModel_ = contentModel || CONTENT_MODEL_TRANSPARENT;
+    this.element.selfClosing = (type === 'br' || type === 'wbr' || type === 'hr');
   }, HtmlBuilder);
 
   /**
@@ -165,6 +166,7 @@
   //flow elements
   addFlowAccess_(HtmlSimpleBuilder, 'p', CONTENT_MODEL_PHRASING);
   addFlowAccess_(HtmlSimpleBuilder, 'pre', CONTENT_MODEL_PHRASING);
+  addFlowAccess_(HtmlSimpleBuilder, 'div', CONTENT_MODEL_FLOW);
 
   addVoidAccess_(HtmlSimpleBuilder, 'br');
   addVoidAccess_(HtmlSimpleBuilder, 'wbr');

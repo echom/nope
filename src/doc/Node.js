@@ -40,6 +40,15 @@
     return this.parent ? this.parent.root() : this;
   };
 
+  Node.prototype.traceAncestors_ = function() {
+    var current = this,
+        result = [current];
+
+    while((current = current.parent)) {
+      result.unshift(current);
+    }
+  };
+
   Node.idCounter_ = 0;
 
   np.Node = Node;

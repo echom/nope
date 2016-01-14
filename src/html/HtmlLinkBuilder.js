@@ -5,17 +5,24 @@
 
 	/**
 	 * @constructor np.HtmlLinkBuilder
+	 * @param {string} rel - the link's relationship to this document
    * @param {string} href - the link destination URL
 	 * @param {np.ElementBuilder} parentBuilder - this builder's parent
 	 * @augments np.ElementBuilder
    * @throws {Error} when the href attribute is empty
 	 */
-	var HtmlLinkBuilder = np.inherits(function(href, parentBuilder) {
-    if(!href) {
-      throw new Error(np.msg.argEmpty('href'));
-    }
+	var HtmlLinkBuilder = np.inherits(function(rel, href, parentBuilder) {
 		ElementBuilder.call(this, parentBuilder, new np.Element('link'));
-    this.attrib_('href', href);
+
+		if(!rel) {
+      throw new Error(np.msg.argEmpty('rel', this.element.path()));
+    }
+    if(!href) {
+      throw new Error(np.msg.argEmpty('href', this.element.path()));
+    }
+
+		this.element.attributes().set('rel', rel);
+    this.element.attributes().set('href', href);
 	}, ElementBuilder);
 
   /**
@@ -26,15 +33,6 @@
    * @throws {Error} when the 'type' argument is empty.
    */
   ElementBuilder.attV_(HtmlLinkBuilder, 'type');
-
-  /**
-   * Sets the relationship of the link destination.
-   * @method np.HtmlLinkBuilder#rel
-   * @param {string} rel - the relationship of the link destination
-   * @return {np.HtmlLinkBuilder} this HtmlLinkBuilder instance.
-   * @throws {Error} when the 'rel' argument is empty.
-   */
-  ElementBuilder.attV_(HtmlLinkBuilder, 'rel');
 
   /**
    * Sets the language of the link destination.

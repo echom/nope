@@ -38,16 +38,16 @@
 	};
 
 
-	var err = function(message, src) {
-		return message + (src ? ' (@' + src + ')' : '');
-	};
-
 	/**
 	 * This namespace contains functions for formatting messages.
 	 * @namespace np.msg
 	 * @private
 	 */
 	np.msg = {};
+
+	np.msg.err = function(message, src) {
+		return message;// + (src ? ' (@' + src + ')' : '');
+	};
 
 	/**
 	 * Formats a generic argument error.
@@ -59,7 +59,7 @@
 	 * @private
 	 */
 	np.msg.argInvalid = function(name, message, src) {
-		return err('InvalidArgument: "' + name + '" - ' + message, src);
+		return np.msg.err('InvalidArgument: "' + name + '" - ' + message, src);
 	};
 
 	/**
@@ -97,7 +97,7 @@
 	 * @private
 	 */
 	np.msg.opInvalid = function(operation, message, src) {
-		return err('InvalidOperation: "' + operation + '" - ' + message, src);
+		return np.msg.err('InvalidOperation: "' + operation + '" - ' + message, src);
 	};
 
 	/**

@@ -70,6 +70,10 @@
     return this;
   };
 
+  NodeCollection.prototype.count = function() {
+    return this.children_.length;
+  };
+
   /**
    * Returns the first node within the collection which matches the given
    * predicate. The predicate function receives a node and is expected to

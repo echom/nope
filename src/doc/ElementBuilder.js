@@ -54,7 +54,7 @@
 	 * @param {np.Compiler} target - the compile target
 	 */
 	ElementBuilder.prototype.compile = function(target) {
-		target.compile(this.root().element);
+		return target.compile(this.root().element);
 	};
 
 
@@ -67,6 +67,7 @@
 
 	ElementBuilder.prototype.save = function(id) {
 		this.idStore_()[id] = this;
+		return this;
 	};
 	ElementBuilder.prototype.load = function(id) {
 		return this.idStore_[id];
@@ -88,7 +89,7 @@
 	ElementBuilder.attV_ = function(ctor, attribute) {
 		ctor.prototype[attribute] = function(value) {
 			if(value === undefined) {
-				throw new Error(np.msg.argEmpty(attribute));
+				throw new Error(np.msg.argEmpty(attribute, this.element.path()));
 			}
 			this.element.attributes().set(attribute, value);
 			return this;
@@ -112,7 +113,7 @@
 	ElementBuilder.attB_ = function(ctor, attribute) {
 		ctor.prototype[attribute] = function(value) {
 			if(value === undefined) {
-				throw new Error(np.msg.argEmpty('value'));
+				throw new Error(np.msg.argEmpty('value', this.element.path()));
 			}
 			if(np.isA(value, 'function')) value = value(this);
 
