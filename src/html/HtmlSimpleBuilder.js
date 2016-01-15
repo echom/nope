@@ -161,7 +161,6 @@
 
   addPhrasingAccess_(HtmlSimpleBuilder, 'samp', CONTENT_MODEL_PHRASING);
   addPhrasingAccess_(HtmlSimpleBuilder, 'kbd', CONTENT_MODEL_PHRASING);
-  addPhrasingAccess_(HtmlSimpleBuilder, 'var', CONTENT_MODEL_PHRASING);
 
   //flow elements
   addFlowAccess_(HtmlSimpleBuilder, 'p', CONTENT_MODEL_PHRASING);
