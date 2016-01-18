@@ -122,7 +122,7 @@
 
   ELEMENT_RULES.ul = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES),
-    elements: arrayToMap(['ul']),
+    elements: arrayToMap(['li']),
     text: false
   };
   ELEMENT_RULES.ol = ELEMENT_RULES.ul;
@@ -220,6 +220,12 @@
   ELEMENT_RULES.embed = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['src', 'type', 'height', 'width'])),
   };
+
+  ELEMENT_RULES.area = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
+      'href|target|rel|hreflang|media|type|shape|coords'.split('|')
+    ))
+  };
   //TODO: ELEMENT_RULES.area
   //TODO: ELEMENT_RULES.col
   //TODO: ELEMENT_RULES.command
@@ -242,6 +248,15 @@
     ancestors: ['a', 'button']
   };
 
+  ELEMENT_RULES.audio = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
+      'autoplay|preload|controls|loop|mediagroup|muted|src'.split('|')
+    )),
+    cm: CONTENT_MODEL_TRANSPARENT
+  };
+
+
+
   ALL_ATTRIBUTES.forEach(function(name) {
     ATTRIBUTE_FACTORIES[name] = function(element, name, value) {
       checkAttributeAccess(element, name);
@@ -258,6 +273,15 @@
     };
   });
 
+  VOID_ELEMENTS.forEach(function(name) {
+    ELEMENT_FACTORIES[name] = function(parent) {
+      if(parent) {
+        checkElementAccess(parent, name);
+      }
+      return new HtmlElement(name, parent, ELEMENT_RULES[name].cm, true);
+    };
+  });
+
   FLOW_ELEMENTS.forEach(function(name) {
     ELEMENT_FACTORIES[name] = function(parent) {
       if(parent) {
@@ -268,8 +292,9 @@
   });
 
 
-  function HtmlElement(type, parent, contentModel) {
+  function HtmlElement(type, parent, contentModel, selfClosing) {
     np.Element.call(this, type, parent);
+    this.selfClosing = !!selfClosing;
     this.contentModel_ = contentModel;
   }
   np.inherits(HtmlElement, np.Element);
