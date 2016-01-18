@@ -1,6 +1,8 @@
 (function(np) {
   'use strict';
 
+  var t = new Date();
+
   var CONTENT_MODEL_FLOW = 'flow',
       CONTENT_MODEL_PHRASING = 'phrasing',
       CONTENT_MODEL_TRANSPARENT = 'transparent',
@@ -31,13 +33,16 @@
       TRANSPARENT_ELEMENTS = [
           'a|object|ins|del|map|noscript|video|audio'
         ].join('|').split('|'),
+      OTHER_ELEMENTS = [
+        'html|head|body|caption'
+      ].join('|').split('|'),
       ALL_ELEMENTS = [].concat(
         VOID_ELEMENTS,
         TEXT_ONLY_ELEMENTS,
         PHRASING_ELEMENTS,
         TRANSPARENT_ELEMENTS,
         FLOW_ELEMENTS,
-        'html|head|body|caption'.split('|')
+        OTHER_ELEMENTS
       ),
       ELEMENT_RULES = {},
       ELEMENT_FACTORIES = {},
@@ -74,6 +79,7 @@
   ELEMENT_RULES.h6 = ELEMENT_RULES.p;
   ELEMENT_RULES.pre = ELEMENT_RULES.p;
 
+  // Flow elements with flow content
   ELEMENT_RULES.div = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES),
     elements: arrayToMap(['style']
@@ -236,8 +242,6 @@
     ancestors: ['a', 'button']
   };
 
-
-
   ALL_ATTRIBUTES.forEach(function(name) {
     ATTRIBUTE_FACTORIES[name] = function(element, name, value) {
       checkAttributeAccess(element, name);
@@ -253,6 +257,16 @@
       return new HtmlElement(name, parent, ELEMENT_RULES[name].cm);
     };
   });
+
+  FLOW_ELEMENTS.forEach(function(name) {
+    ELEMENT_FACTORIES[name] = function(parent) {
+      if(parent) {
+        checkFlowElementAccess(parent, name);
+      }
+      return new HtmlElement(name, parent, ELEMENT_RULES[name].cm);
+    };
+  });
+
 
   function HtmlElement(type, parent, contentModel) {
     np.Element.call(this, type, parent);
@@ -312,21 +326,23 @@
   ALL_ELEMENTS.reduce(function(builder, name) {
     var methodName = builder[name] ? name + 'Element' : name;
     builder[methodName] = function(attributes, text) {
-      var element = ELEMENT_FACTORIES[name](this.current_),
+      var element = this.current_,
+          child = ELEMENT_FACTORIES[name](element),
           key;
 
-      if(this.current_) {
-        this.current_.append(element);
+      if(element) {
+        element.append(child);
       }
-      this.current_ = element;
+      this.current_ = child;
 
       if(attributes) {
         for(key in attributes) {
           if(attributes.hasOwnProperty(key)) {
-            ATTRIBUTE_FACTORIES[key](this.current_, key, attributes[key]);
+            ATTRIBUTE_FACTORIES[key](child, key, attributes[key]);
           }
         }
       }
+
       if(text) {
         this.text(text);
       }
@@ -356,28 +372,41 @@
     }
   }
   function checkElementAccess(element, childName) {
-    var rule = ELEMENT_RULES[element.type];
-    if(!rule.elements) {
+    var parentRule = ELEMENT_RULES[element.type],
+        childRule = ELEMENT_RULES[childName];
+    if(!parentRule.elements) {
       throw new Error(np.msg.opInvalid(
         childName + '()',
         '<' + element.type + '> cannot have child elements.',
         element.path()
       ));
-    } else if(!rule.elements[childName]) {
+    } else if(!parentRule.elements[childName]) {
       throw new Error(np.msg.opInvalid(
         childName + '()',
         '<' + element.type + '> cannot have <' + childName + '> child elements.',
         element.path()
       ));
-    } else if(
-      //element.contentModel_ === CONTENT_MODEL_TRANSPARENT &&
-      element.getContentModel_() === CONTENT_MODEL_PHRASING &&
-      rule.cm === CONTENT_MODEL_FLOW
-    ) {
+    } else if(childRule.ancestors) {
+      var match = element.firstParent_(function(e) {
+            return childRule.ancestors.indexOf(e.type) >= 0;
+          });
+      if(match) {
+        throw new Error(np.msg.opInvalid(
+          childName + '()',
+          '<' + childName + '> cannot have an ancestor <' + match.type + '>',
+          element.path()
+        ));
+      }
+    }
+  }
+  function checkFlowElementAccess(element, childName) {
+    checkElementAccess(element, childName);
+
+    if(element.getContentModel_() === CONTENT_MODEL_PHRASING) {
       throw new Error(np.msg.opInvalid(
-        childName + '()',
+        name + '()',
         '<' + element.type + '> cannot have <' + childName + '> child elements ' +
-        '(only accepts phrasing content).',
+        '(a is nested in an element that expects phrasing content only).',
         element.path()
       ));
     }
@@ -398,6 +427,6 @@
 
   // TODO: missing elements...
   // title
-
+  console.log('ready in: ' + (new Date() - t) + 'ms');
 
 }(this.np));
