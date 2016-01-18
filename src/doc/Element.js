@@ -69,12 +69,14 @@
     var path = '',
         type = this.type,
         parent = this.parent,
+        children,
         index = -1;
     if(parent) {
       path += parent.path();
-      index = parent.children().toArray()
-        .filter(function(node) { return node.type === type; })
-        .indexOf(this);
+      children = parent.children().toArray().filter(function(node) { return node.type === type; });
+      if(children.length > 1) {
+        index = children.indexOf(this);
+      }
     }
     path += '<' + type + (index >= 0 ? '[' + index + ']' : '') + '>';
     return path;

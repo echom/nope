@@ -46,7 +46,7 @@
 	np.msg = {};
 
 	np.msg.err = function(message, src) {
-		return message;// + (src ? ' (@' + src + ')' : '');
+		return message + (src ? ' (@' + src + ')' : '');
 	};
 
 	/**

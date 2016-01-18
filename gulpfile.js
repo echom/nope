@@ -37,6 +37,7 @@ var paths = {
     'src/html/HtmlInsBuilder.js',
     'src/html/HtmlBodyBuilder.js',
     'src/html/HtmlDocumentBuilder.js',
+    'src/HtmlUnifiedBuilder.js',
     'src/cmp/DomCompiler.js',
     'src/cmp/StringCompiler.js',
     'src/cmp/StreamCompiler.js'
