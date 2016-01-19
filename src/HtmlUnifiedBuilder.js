@@ -27,7 +27,8 @@
         'title|style|script'.split('|')),
       PHRASING_ELEMENTS = [
           'em|strong|small|mark|abbr|dfn|i|b|s|u|code|var|sup|sub|q|cite|span',
-          'bdo|bdi|button|datalist'
+          'bdo|bdi|button|datalist|kbd|label|meter|output|progress|ruby|samp',
+          'select'
         ].join('|').split('|'),
       FLOW_ELEMENTS = [
           'p|pre|ul|ol|dl|div|h1|h2|h3|h4|h5|h6|hgroup|address|blockquote',
@@ -38,7 +39,8 @@
           'a|object|ins|del|map|noscript|video|audio'
         ].join('|').split('|'),
       OTHER_ELEMENTS = [
-        'html|head|body|caption|colgroup|li'
+        'html|head|body|caption|colgroup|li|dd|dt|figcaption|iframe|legend',
+        'optgroup|option|rp|rt'
       ].join('|').split('|'),
       PHRASING_CONTENT = [].concat(
         VOID_CONTENT_ELEMENTS,
@@ -100,19 +102,29 @@
   ELEMENT_RULES.aside = ELEMENT_RULES.div;
   ELEMENT_RULES.section = ELEMENT_RULES.div;
 
+  ELEMENT_RULES.figure = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES),
+    elements: arrayToMap(FLOW_CONTENT.concat(['figcaption'])),
+    text: true,
+    cm: CONTENT_MODEL_FLOW
+  };
+
+  ELEMENT_RULES.form = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
+      'action|method|enctype|name|accept-charset|novalidate|autocomplete|target'.split('|')
+    )),
+    elements: arrayToMap(FLOW_CONTENT),
+    text: true,
+    cm: CONTENT_MODEL_FLOW,
+    ancestors: ['form']
+  };
+
   ELEMENT_RULES.blockquote = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['cite'])),
     elements: arrayToMap(FLOW_CONTENT),
     text: true,
     cm: CONTENT_MODEL_FLOW
   };
-  ELEMENT_RULES.canvas = {
-    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['width', 'height'])),
-    elements: arrayToMap(FLOW_CONTENT),
-    text: true,
-    cm: CONTENT_MODEL_TRANSPARENT
-  };
-
 
   ELEMENT_RULES.nav = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES),
@@ -132,13 +144,56 @@
   };
   ELEMENT_RULES.footer = ELEMENT_RULES.header;
 
+  ELEMENT_RULES.hgroup = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES),
+    elements: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+  };
+
+  ELEMENT_RULES.details = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['open'])),
+    elements: arrayToMap(FLOW_CONTENT),
+    text: true,
+    cm: CONTENT_MODEL_FLOW,
+    ancestors: arrayToMap(A_OR_BUTTON)
+  };
+  ELEMENT_RULES.fieldset = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['name', 'disabled', 'form'])),
+    elements: arrayToMap(FLOW_CONTENT.concat(['legend'])),
+    text: true,
+    cm: CONTENT_MODEL_FLOW
+  };
+  ELEMENT_RULES.legend = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES),
+    elements: arrayToMap(PHRASING_CONTENT),
+    text: true,
+    cm: CONTENT_MODEL_PHRASING
+  };
+
+  ELEMENT_RULES.figcaption = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES),
+    content: arrayToMap(FLOW_CONTENT),
+    text: true,
+    cm: CONTENT_MODEL_FLOW
+  };
+
+  ELEMENT_RULES.dl = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES),
+    elements: arrayToMap(['dd', 'dt'])
+  };
+  ELEMENT_RULES.dd = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES),
+    element: arrayToMap(FLOW_CONTENT),
+    text: true,
+    cm: CONTENT_MODEL_FLOW
+  };
+  ELEMENT_RULES.dt = ELEMENT_RULES.dd;
+
   ELEMENT_RULES.ul = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES),
     elements: arrayToMap(['li']),
     text: false
   };
   ELEMENT_RULES.ol = ELEMENT_RULES.ul;
-
   ELEMENT_RULES.li = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat('value')),
     elements: arrayToMap(FLOW_CONTENT),
@@ -170,6 +225,10 @@
   ELEMENT_RULES.cite = ELEMENT_RULES.em;
   ELEMENT_RULES.span = ELEMENT_RULES.em;
   ELEMENT_RULES.bdi = ELEMENT_RULES.em;
+  ELEMENT_RULES.kbd = ELEMENT_RULES.em;
+  ELEMENT_RULES.rp = ELEMENT_RULES.em;
+  ELEMENT_RULES.rt = ELEMENT_RULES.em;
+  ELEMENT_RULES.samp = ELEMENT_RULES.em;
   ELEMENT_RULES.bdo = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['dir'])),
     elements: arrayToMap(PHRASING_CONTENT),
@@ -184,6 +243,69 @@
     text: true,
     cm: CONTENT_MODEL_TEXT
   };
+  ELEMENT_RULES.output = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['name', 'form', 'for'])),
+    elements: arrayToMap(PHRASING_CONTENT),
+    text: true,
+    cm: CONTENT_MODEL_PHRASING
+  };
+  ELEMENT_RULES.progress = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['value', 'max'])),
+    elements: arrayToMap(PHRASING_CONTENT),
+    text: true,
+    cm: CONTENT_MODEL_PHRASING,
+    ancestors: ['progress']
+  };
+  ELEMENT_RULES.ruby = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES),
+    elements: arrayToMap(PHRASING_CONTENT.concat(['rt', 'rp'])),
+    text: true,
+    cm: CONTENT_MODEL_PHRASING
+  };
+
+  ELEMENT_RULES.meter = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
+      'value|min|max|low|high|optimum'.split('|')
+    )),
+    elements: arrayToMap(PHRASING_CONTENT),
+    text: true,
+    cm: CONTENT_MODEL_PHRASING,
+    ancestors: ['meter']
+  };
+
+  ELEMENT_RULES.input = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat([
+        'type|name|disabled|form|maxlength|readonly|size|value|autocomplete',
+        'autofocus|list|pattern|required|placeholder|dirname|checked|value',
+        'formenctype|formaction|formmethod|formtarget|formnovalidate|multiple',
+        'accept|height|width|alt|src|list|min|max|step'
+      ].join('|').split('|'))),
+    ancestors: A_OR_BUTTON
+  };
+
+  ELEMENT_RULES.datalist = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES),
+    elements: arrayToMap(PHRASING_CONTENT.concat(['option'])),
+    text: true,
+    cm: CONTENT_MODEL_PHRASING
+  };
+  ELEMENT_RULES.optgroup = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['label', 'disabled'])),
+    elements: arrayToMap(['option'])
+  };
+  ELEMENT_RULES.option = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
+      ['label', 'disabled', 'value', 'selected']
+    )),
+    text: true
+  };
+  ELEMENT_RULES.select = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
+      'name|disabled|form|size|multiple|autofocus|required'.split('|')
+    )),
+    elements: arrayToMap(['optgroup', 'option']),
+    ancestors: A_OR_BUTTON
+  };
 
   ELEMENT_RULES.button = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
@@ -195,13 +317,20 @@
     ancestors: arrayToMap(A_OR_BUTTON)
   };
 
-  ELEMENT_RULES.datalist = {
-    attributes: arrayToMap(GLOBAL_ATTRIBUTES),
-    elements: arrayToMap(PHRASING_CONTENT),
-    text: true,
-    cm: CONTENT_MODEL_PHRASING
+  ELEMENT_RULES.keygen = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
+      'challenge|keytype|autofocus|name|disabled|form'.split('|')
+    )),
+    ancestors: A_OR_BUTTON
   };
 
+  ELEMENT_RULES.label = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['for', 'form'])),
+    elements: arrayToMap(PHRASING_CONTENT),
+    text: true,
+    cm: CONTENT_MODEL_PHRASING,
+    ancestors: ['label']
+  };
 
   ELEMENT_RULES.caption = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES),
@@ -228,12 +357,30 @@
   ELEMENT_RULES.hr = ELEMENT_RULES.br;
   ELEMENT_RULES.wbr = ELEMENT_RULES.br;
   ELEMENT_RULES.img = {
-    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['src', 'alt', 'height', 'width', 'usemap', 'ismap']))
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
+      ['src', 'alt', 'height', 'width', 'usemap', 'ismap']
+    ))
   };
   ELEMENT_RULES.embed = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['src', 'type', 'height', 'width'])),
   };
+  ELEMENT_RULES.command = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
+      'type|label|icon|disabled|radiogroup|checked'.split('|')
+    ))
+  };
+  ELEMENT_RULES.menu = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['type', 'label'])),
+    elemenets: arrayToMap(FLOW_CONTENT.concat(['li'])),
+    cm: CONTENT_MODEL_FLOW
+  };
 
+  ELEMENT_RULES.map = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['name'])),
+    elements: arrayToMap(FLOW_CONTENT),
+    text: true,
+    cm: CONTENT_MODEL_TRANSPARENT
+  };
   ELEMENT_RULES.area = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
       'href|target|rel|hreflang|media|type|shape|coords'.split('|')
@@ -244,23 +391,10 @@
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['span'])),
     elements: arrayToMap(['col'])
   };
-
   ELEMENT_RULES.col = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['span']))
   };
 
-  ELEMENT_RULES.command = {
-    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
-      'type|label|icon|disabled|radiogroup|checked'.split('|')
-    ))
-  };
-
-  //TODO: ELEMENT_RULES.col
-  //TODO: ELEMENT_RULES.command
-  //TODO: ELEMENT_RULES.keygen
-  //TODO: ELEMENT_RULES.source
-  //TODO: ELEMENT_RULES.track
-  //TODO: ELEMENT_RULES.input
 
   ELEMENT_RULES.a = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
@@ -272,6 +406,14 @@
     ancestors: A_OR_BUTTON
   };
 
+  ELEMENT_RULES.del = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['cite', 'datetime'])),
+    elements: arrayToMap(FLOW_CONTENT),
+    text: true,
+    cm: CONTENT_MODEL_TRANSPARENT
+  };
+  ELEMENT_RULES.ins = ELEMENT_RULES.del;
+
   ELEMENT_RULES.audio = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
       'autoplay|preload|controls|loop|mediagroup|muted|src'.split('|')
@@ -279,7 +421,41 @@
     elements: arrayToMap(FLOW_CONTENT),
     cm: CONTENT_MODEL_TRANSPARENT
   };
-
+  ELEMENT_RULES.canvas = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['width', 'height'])),
+    elements: arrayToMap(FLOW_CONTENT),
+    text: true,
+    cm: CONTENT_MODEL_TRANSPARENT
+  };
+  ELEMENT_RULES.iframe = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
+      'src|srcdoc|name|width|height|sandbox|seamless'.split('|')
+    )),
+    text: true,
+    ancestors: A_OR_BUTTON
+  };
+  ELEMENT_RULES.noscript = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES),
+    elements: arrayToMap(FLOW_CONTENT.concat(['link', 'meta', 'style'])),
+    text: true,
+    cm: CONTENT_MODEL_TRANSPARENT,
+    ancestors: ['noscript']
+  };
+  ELEMENT_RULES.object = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
+      'data|type|height|width|usemap|name|form'.split('|')
+    )),
+    elements: arrayToMap(FLOW_CONTENT.concat(['param'])),
+    text: true,
+    cm: CONTENT_MODEL_TRANSPARENT,
+    ancestors: A_OR_BUTTON
+  };
+  ELEMENT_RULES.script = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
+      'type|language|src|defer|async|charset'.split('|')
+    )),
+    text: true
+  };
 
 
   ALL_ATTRIBUTES.forEach(function(name) {
@@ -475,8 +651,19 @@
   // HtmlBuilder.html() -> creates <head> and <body>
   // HtmlBuilder.title() -> does it have to accept attributes?
 
+  // TODO: special methods for hyphenated attributes:
+  // meta@http-equiv, form@accept-charset
+
   // TODO: missing elements...
   // title
+
+  // TODO: ancestors should not be arrays, they should be maps, too
+
+  // TODO: fix multiple arrayToMap with better system
+
+  // TODO: ELEMENT_FACTORIES seem a bit obsolete now...
+
+  // TODO: advanced rules: input@type=submit, etc...
   console.log('ready in: ' + (new Date() - t) + 'ms');
 
 }(this.np));

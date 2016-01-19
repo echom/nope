@@ -98,7 +98,7 @@ gulp.task('unit:coverage', function(done) {
 
 gulp.task('unit:live', function(done) {
   new karma.Server(karmaConfigure({
-    browsers: ['Chrome'],
+    browsers: ['PhantomJS'],
     reporters: ['dots', 'coverage'],
     coverageReporter: { type: 'text' },
 		src: paths.src,
