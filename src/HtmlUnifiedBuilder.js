@@ -16,14 +16,18 @@
           'charset|http-equiv|data|form|defer|async|scoped|disabled|formaction',
           'autofocus|formenctype|formmethod|formtarget|formnovalidate'
         ].join('|').split('|')),
-      VOID_ELEMENTS = [
-          'base|link|meta|param|br|hr|wbr|img|area|col|command|embed|keygen',
-          'source|track|input|head'
+      VOID_CONTENT_ELEMENTS = [
+          'br|hr|wbr|img|command|embed|input'
         ].join('|').split('|'),
-      TEXT_ONLY_ELEMENTS = 'title|style|script|textarea'.split('|'),
+      VOID_ELEMENTS = VOID_CONTENT_ELEMENTS.concat([
+          'base|link|meta|param|area|col|keygen|source|track|head'
+        ].join('|').split('|')),
+      TEXT_ONLY_CONTENT_ELEMENTS = ['textarea'],
+      TEXT_ONLY_ELEMENTS = TEXT_ONLY_CONTENT_ELEMENTS.concat(
+        'title|style|script'.split('|')),
       PHRASING_ELEMENTS = [
           'em|strong|small|mark|abbr|dfn|i|b|s|u|code|var|sup|sub|q|cite|span',
-          'bdo|bdi|button'
+          'bdo|bdi|button|datalist'
         ].join('|').split('|'),
       FLOW_ELEMENTS = [
           'p|pre|ul|ol|dl|div|h1|h2|h3|h4|h5|h6|hgroup|address|blockquote',
@@ -34,8 +38,17 @@
           'a|object|ins|del|map|noscript|video|audio'
         ].join('|').split('|'),
       OTHER_ELEMENTS = [
-        'html|head|body|caption'
+        'html|head|body|caption|colgroup|li'
       ].join('|').split('|'),
+      PHRASING_CONTENT = [].concat(
+        VOID_CONTENT_ELEMENTS,
+        TEXT_ONLY_CONTENT_ELEMENTS,
+        PHRASING_ELEMENTS,
+        TRANSPARENT_ELEMENTS
+      ),
+      FLOW_CONTENT = PHRASING_CONTENT.concat(
+        FLOW_ELEMENTS
+      ),
       ALL_ELEMENTS = [].concat(
         VOID_ELEMENTS,
         TEXT_ONLY_ELEMENTS,
@@ -44,6 +57,7 @@
         FLOW_ELEMENTS,
         OTHER_ELEMENTS
       ),
+      A_OR_BUTTON = ['a', 'button'],
       ELEMENT_RULES = {},
       ELEMENT_FACTORIES = {},
       ATTRIBUTE_FACTORIES = {};
@@ -57,17 +71,13 @@
   };
   ELEMENT_RULES.body = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES),
-    elements: arrayToMap(['style']
-        .concat(PHRASING_ELEMENTS)
-        .concat(TRANSPARENT_ELEMENTS)
-        .concat(FLOW_ELEMENTS)
-    )
+    elements: arrayToMap(['style'].concat(FLOW_CONTENT))
   };
 
   //Flow elements with phrasing content
   ELEMENT_RULES.p = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES),
-    elements: arrayToMap(PHRASING_ELEMENTS.concat(TRANSPARENT_ELEMENTS)),
+    elements: arrayToMap(PHRASING_CONTENT),
     text: true,
     cm: CONTENT_MODEL_PHRASING
   };
@@ -82,11 +92,7 @@
   // Flow elements with flow content
   ELEMENT_RULES.div = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES),
-    elements: arrayToMap(['style']
-        .concat(PHRASING_ELEMENTS)
-        .concat(TRANSPARENT_ELEMENTS)
-        .concat(FLOW_ELEMENTS)
-    ),
+    elements: arrayToMap(['style'].concat(FLOW_CONTENT)),
     text: true,
     cm: CONTENT_MODEL_FLOW
   };
@@ -94,13 +100,23 @@
   ELEMENT_RULES.aside = ELEMENT_RULES.div;
   ELEMENT_RULES.section = ELEMENT_RULES.div;
 
+  ELEMENT_RULES.blockquote = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['cite'])),
+    elements: arrayToMap(FLOW_CONTENT),
+    text: true,
+    cm: CONTENT_MODEL_FLOW
+  };
+  ELEMENT_RULES.canvas = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['width', 'height'])),
+    elements: arrayToMap(FLOW_CONTENT),
+    text: true,
+    cm: CONTENT_MODEL_TRANSPARENT
+  };
+
+
   ELEMENT_RULES.nav = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES),
-    elements: arrayToMap([]
-        .concat(PHRASING_ELEMENTS)
-        .concat(TRANSPARENT_ELEMENTS)
-        .concat(FLOW_ELEMENTS)
-    ),
+    elements: arrayToMap(FLOW_CONTENT),
     text: true,
     cm: CONTENT_MODEL_FLOW,
     ancestors: arrayToMap(['address'])
@@ -109,11 +125,7 @@
 
   ELEMENT_RULES.header = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES),
-    elements: arrayToMap([]
-        .concat(PHRASING_ELEMENTS)
-        .concat(TRANSPARENT_ELEMENTS)
-        .concat(FLOW_ELEMENTS)
-    ),
+    elements: arrayToMap(FLOW_CONTENT),
     text: true,
     cm: CONTENT_MODEL_FLOW,
     ancestors: arrayToMap(['address', 'header', 'footer'])
@@ -129,11 +141,7 @@
 
   ELEMENT_RULES.li = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat('value')),
-    elements: arrayToMap([]
-        .concat(PHRASING_ELEMENTS)
-        .concat(TRANSPARENT_ELEMENTS)
-        .concat(FLOW_ELEMENTS)
-    ),
+    elements: arrayToMap(FLOW_CONTENT),
     cm: CONTENT_MODEL_FLOW,
     text: true
   };
@@ -141,7 +149,7 @@
   // Phrasing elements
   ELEMENT_RULES.em = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES),
-    elements: arrayToMap(PHRASING_ELEMENTS.concat(TRANSPARENT_ELEMENTS)),
+    elements: arrayToMap(PHRASING_CONTENT),
     text: true,
     cm: CONTENT_MODEL_PHRASING
   };
@@ -164,7 +172,7 @@
   ELEMENT_RULES.bdi = ELEMENT_RULES.em;
   ELEMENT_RULES.bdo = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['dir'])),
-    elements: arrayToMap(PHRASING_ELEMENTS),
+    elements: arrayToMap(PHRASING_CONTENT),
     text: true,
     cm: CONTENT_MODEL_PHRASING
   };
@@ -181,18 +189,23 @@
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
       'name|disabled|formaction|autofocus|formenctype|formmethod|formtarget|formnovalidate'.split('|')
     )),
-    elements: arrayToMap(PHRASING_ELEMENTS.concat(TRANSPARENT_ELEMENTS)),
+    elements: arrayToMap(PHRASING_CONTENT),
     text: true,
     cm: CONTENT_MODEL_PHRASING,
-    ancestors: arrayToMap(['a', 'button'])
+    ancestors: arrayToMap(A_OR_BUTTON)
   };
+
+  ELEMENT_RULES.datalist = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES),
+    elements: arrayToMap(PHRASING_CONTENT),
+    text: true,
+    cm: CONTENT_MODEL_PHRASING
+  };
+
 
   ELEMENT_RULES.caption = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES),
-    elements: arrayToMap([]
-      .concat(PHRASING_ELEMENTS)
-      .concat(TRANSPARENT_ELEMENTS)
-      .concat(FLOW_ELEMENTS)),
+    elements: arrayToMap(FLOW_CONTENT),
     text: true,
     cm: CONTENT_MODEL_FLOW
   };
@@ -213,7 +226,7 @@
     attributes: arrayToMap(GLOBAL_ATTRIBUTES)
   };
   ELEMENT_RULES.hr = ELEMENT_RULES.br;
-  ELEMENT_RULES.wbr = ELEMENT_RULES.wbr;
+  ELEMENT_RULES.wbr = ELEMENT_RULES.br;
   ELEMENT_RULES.img = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['src', 'alt', 'height', 'width', 'usemap', 'ismap']))
   };
@@ -226,7 +239,22 @@
       'href|target|rel|hreflang|media|type|shape|coords'.split('|')
     ))
   };
-  //TODO: ELEMENT_RULES.area
+
+  ELEMENT_RULES.colgroup = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['span'])),
+    elements: arrayToMap(['col'])
+  };
+
+  ELEMENT_RULES.col = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['span']))
+  };
+
+  ELEMENT_RULES.command = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
+      'type|label|icon|disabled|radiogroup|checked'.split('|')
+    ))
+  };
+
   //TODO: ELEMENT_RULES.col
   //TODO: ELEMENT_RULES.command
   //TODO: ELEMENT_RULES.keygen
@@ -238,20 +266,17 @@
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
       'href|target|rel|hreflang|media|type'.split('|')
     )),
-    elements: arrayToMap([]
-      .concat(PHRASING_ELEMENTS)
-      .concat(TRANSPARENT_ELEMENTS)
-      .concat(FLOW_ELEMENTS)
-    ),
+    elements: arrayToMap(FLOW_CONTENT),
     text: true,
     cm: CONTENT_MODEL_TRANSPARENT,
-    ancestors: ['a', 'button']
+    ancestors: A_OR_BUTTON
   };
 
   ELEMENT_RULES.audio = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
       'autoplay|preload|controls|loop|mediagroup|muted|src'.split('|')
     )),
+    elements: arrayToMap(FLOW_CONTENT),
     cm: CONTENT_MODEL_TRANSPARENT
   };
 
