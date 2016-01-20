@@ -28,7 +28,7 @@
       PHRASING_ELEMENTS = [
           'em|strong|small|mark|abbr|dfn|i|b|s|u|code|var|sup|sub|q|cite|span',
           'bdo|bdi|button|datalist|kbd|label|meter|output|progress|ruby|samp',
-          'select'
+          'select|time'
         ].join('|').split('|'),
       FLOW_ELEMENTS = [
           'p|pre|ul|ol|dl|div|h1|h2|h3|h4|h5|h6|hgroup|address|blockquote',
@@ -40,7 +40,7 @@
         ].join('|').split('|'),
       OTHER_ELEMENTS = [
         'html|head|body|caption|colgroup|li|dd|dt|figcaption|iframe|legend',
-        'optgroup|option|rp|rt'
+        'optgroup|option|rp|rt|summary|thead|tbody|tfoot|th|tr|td'
       ].join('|').split('|'),
       PHRASING_CONTENT = [].concat(
         VOID_CONTENT_ELEMENTS,
@@ -156,6 +156,12 @@
     cm: CONTENT_MODEL_FLOW,
     ancestors: arrayToMap(A_OR_BUTTON)
   };
+  ELEMENT_RULES.summary = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES),
+    elements: arrayToMap(PHRASING_CONTENT),
+    text: true,
+    cm: CONTENT_MODEL_PHRASING
+  };
   ELEMENT_RULES.fieldset = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['name', 'disabled', 'form'])),
     elements: arrayToMap(FLOW_CONTENT.concat(['legend'])),
@@ -201,6 +207,34 @@
     text: true
   };
 
+  ELEMENT_RULES.table = {
+    attribubtes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['border'])),
+    elements: arrayToMap(['caption', 'colgroup', 'thead', 'tfoot', 'tbody']),
+    ancestors: ['caption']
+  };
+  ELEMENT_RULES.tbody = {
+    attribubtes: arrayToMap(GLOBAL_ATTRIBUTES),
+    elements: arrayToMap(['tr'])
+  };
+  ELEMENT_RULES.thead = ELEMENT_RULES.tbody;
+  ELEMENT_RULES.tfoot = ELEMENT_RULES.tbody;
+  ELEMENT_RULES.tr = {
+    attribubtes: arrayToMap(GLOBAL_ATTRIBUTES),
+    elements: arrayToMap(['td', 'th'])
+  };
+  ELEMENT_RULES.td = {
+    attribubtes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['colspan', 'rowspan', 'headers'])),
+    elements: arrayToMap(FLOW_CONTENT),
+    text: true,
+    cm: CONTENT_MODEL_FLOW
+  };
+  ELEMENT_RULES.th = {
+    attribubtes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['colspan', 'rowspan', 'headers', 'scope'])),
+    elements: arrayToMap(FLOW_CONTENT),
+    text: true,
+    cm: CONTENT_MODEL_FLOW
+  };
+
   // Phrasing elements
   ELEMENT_RULES.em = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES),
@@ -229,6 +263,13 @@
   ELEMENT_RULES.rp = ELEMENT_RULES.em;
   ELEMENT_RULES.rt = ELEMENT_RULES.em;
   ELEMENT_RULES.samp = ELEMENT_RULES.em;
+  ELEMENT_RULES.time = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['datetime'])),
+    elements: arrayToMap(PHRASING_CONTENT),
+    text: true,
+    cm: CONTENT_MODEL_PHRASING,
+    ancestors: ['time']
+  }
   ELEMENT_RULES.bdo = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['dir'])),
     elements: arrayToMap(PHRASING_CONTENT),
@@ -395,7 +436,6 @@
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['span']))
   };
 
-
   ELEMENT_RULES.a = {
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
       'href|target|rel|hreflang|media|type'.split('|')
@@ -418,7 +458,16 @@
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
       'autoplay|preload|controls|loop|mediagroup|muted|src'.split('|')
     )),
-    elements: arrayToMap(FLOW_CONTENT),
+    elements: arrayToMap(FLOW_CONTENT.concat(['source', 'track'])),
+    cm: CONTENT_MODEL_TRANSPARENT,
+    ancestors: A_OR_BUTTON
+  };
+  ELEMENT_RULES.video = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
+      'autoplay|preload|controls|loop|poster|width|height|mediagroup|muted|src'.split('|')
+    )),
+    elements: arrayToMap(FLOW_CONTENT.concat(['source', 'track'])),
+    ancestors: A_OR_BUTTON,
     cm: CONTENT_MODEL_TRANSPARENT
   };
   ELEMENT_RULES.canvas = {
@@ -454,6 +503,25 @@
     attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
       'type|language|src|defer|async|charset'.split('|')
     )),
+    text: true
+  };
+  ELEMENT_RULES.source = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
+      ['src', 'type', 'media']
+    ))
+  };
+  ELEMENT_RULES.track = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(
+      'kind|src|srclang|label|default'.split('|')
+    ))
+  };
+
+  ELEMENT_RULES.style = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES.concat(['type', 'media', 'scoped'])),
+    text: true
+  };
+  ELEMENT_RULES.title = {
+    attributes: arrayToMap(GLOBAL_ATTRIBUTES),
     text: true
   };
 
