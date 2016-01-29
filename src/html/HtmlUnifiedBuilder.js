@@ -45,12 +45,19 @@
   };
 
   HtmlBuilder.prototype.att = function(name, value) {
-    var attributes = this.current_.attributes(),
+    var that = this,
+        attributes = this.current_.attributes(),
         factory;
     if(np.isA(name, 'string') && (factory = attributeFactories[name])) {
-      factory(this.current_, name, value);
+      factory(that.current_, name, value);
+    } else if(np.isA(name, 'object')){
+      Object.keys(name).forEach(function(key) { that.att(key, name[key]); });
     } else {
-      Object.keys(name).forEach(key, function() { this.att(key, name[key]); });
+      throw new Error(np.msg.argInvalid(
+        'name',
+        '"' + name + '" is neither an object nor an allowed attribute name',
+        this.current_ && this.current_.path()
+      ));
     }
   };
 

@@ -20,17 +20,51 @@ describe('np.HtmlUnifiedBuilder', function() {
 
       //TODO: proper compiler mock
       this.compilerMock = jasmine.createSpyObj('compiler', ['compile']);
-      this.compilerMock.compile.and.callFake(function(e) { that.root = e; });
+      this.compilerMock.compile;
+    });
+
+    describe('#ctor', function() {
+      it('creates a HtmlBuilder instance', function() {
+        var b = new np.HtmlUnifiedBuilder();
+      });
+      it('it is empty when created', function() {
+        var b = new np.HtmlUnifiedBuilder();
+        expect(b.current_).toBe(null);
+      });
     });
 
     describe('#<*>()', function() {
-      it('adds a new child element to the current element', function() {
+      it('produces an element', function() {
         this.builder.div();
 
+        var element = this.builder.current_;
+
+        expect(element).toEqual(jasmine.any(np.Element));
+        expect(element.type).toBe('div');
+      });
+      it('produces a new element that is a child of the current one', function() {
         this.builder.div();
-        this.builder.compile(this.compilerMock);
+        var parent = this.builder.current_;
+        this.builder.p();
+        var current = this.builder.current_;
 
+        expect(current).not.toBe(parent);
+        expect(current.parent).toBe(parent);
+      });
+      it('should append the provided text to the created element', function() {
+        this.builder.p('text to append');
 
+        var children = this.builder.current_.children();
+        expect(children.count()).toBe(1);
+        expect(children.first()).toEqual(jasmine.any(np.Text));
+        expect(children.first().content).toEqual('text to append');
+      });
+      it('should set the provided attributes to the created element', function() {
+        this.builder.p(0, { style: 'style', class: 'cssClass'});
+
+        var attributes = this.builder.current_.attributes();
+        expect(attributes.get('style')).toBe('style');
+        expect(attributes.get('class')).toBe('cssClass');
       });
     })
 

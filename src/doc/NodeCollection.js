@@ -92,15 +92,15 @@
    * collection.first(predicate);
    */
   NodeCollection.prototype.first = function(predicate, ctx) {
-    if(!predicate) {
-      throw new Error(np.msg.argEmpty('predicate'));
-    }
-
     ctx = ctx || this;
 
     var children = this.children_,
         i = 0,
         l = children.length;
+
+    if(!predicate) {
+      return children[0];
+    }
 
     for(; i < l; i++) {
       if(predicate.call(ctx, children[i])){

@@ -110,11 +110,10 @@ describe('np.NodeCollection', function() {
         expect(this).toBe(ctx);
       }, ctx);
     });
-    it('throws if the predicate is not provided', function() {
-      var coll = this.coll,
-          toFail = function() { coll.first(); };
+    it('returns the first item if the predicate is not provided', function() {
+      var node = this.coll.first();
 
-      expect(toFail).toThrowError(/InvalidArgument/);
+      expect(node).toBe(this.nodeA);
     });
   });
   describe('#where', function() {
