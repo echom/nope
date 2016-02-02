@@ -22,7 +22,7 @@ var paths = {
     'src/doc/Element.js',
     'src/doc/ElementBuilder.js',
     'src/html/HtmlRules.js',
-    'src/html/HtmlUnifiedBuilder.js',
+    'src/html/HtmlBuilder.js',
     'src/cmp/DomCompiler.js',
     'src/cmp/StringCompiler.js',
     'src/cmp/StreamCompiler.js'

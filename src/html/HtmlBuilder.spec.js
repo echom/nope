@@ -1,4 +1,4 @@
-describe('np.HtmlUnifiedBuilder', function() {
+describe('np.HtmlBuilder', function() {
 
   var allElements = [
         'a|abbr|address|area|article|aside|audio|b|base|bdi|bdo|blockquote|body',
@@ -16,7 +16,7 @@ describe('np.HtmlUnifiedBuilder', function() {
     beforeEach(function() {
       var that = this;
 
-      this.builder = new np.HtmlUnifiedBuilder();
+      this.builder = new np.HtmlBuilder();
 
       //TODO: proper compiler mock
       this.compilerMock = jasmine.createSpyObj('compiler', ['compile']);
@@ -25,10 +25,10 @@ describe('np.HtmlUnifiedBuilder', function() {
 
     describe('#ctor', function() {
       it('creates a HtmlBuilder instance', function() {
-        var b = new np.HtmlUnifiedBuilder();
+        var b = new np.HtmlBuilder();
       });
       it('it is empty when created', function() {
-        var b = new np.HtmlUnifiedBuilder();
+        var b = new np.HtmlBuilder();
         expect(b.current_).toBe(null);
       });
     });
@@ -79,7 +79,7 @@ describe('np.HtmlUnifiedBuilder', function() {
   });
   describe('rules', function() {
     beforeEach(function() {
-      this.builder = new np.HtmlUnifiedBuilder();
+      this.builder = new np.HtmlBuilder();
     });
 
     describe('global attributes', function() {
@@ -91,7 +91,9 @@ describe('np.HtmlUnifiedBuilder', function() {
       allElements.forEach(function(element) {
         it('accepts global attributes', function() {
           var builder = this.builder;
+
           builder[element]();
+          if(element === 'title') return;
 
           attributes.forEach(function(attribute) {
             builder.att(attribute, 'test');

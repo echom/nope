@@ -1,223 +1,237 @@
 (function(np) {
   'use strict';
 
-  var ElementBuilder = np.ElementBuilder,
-      CONTENT_MODEL_TRANSPARENT = 'transparent',
-      CONTENT_MODEL_METADATA = 'metadata',
-      CONTENT_MODEL_PHRASING = 'phrasing',
-      CONTENT_MODEL_FLOW = 'flow',
-      hasConcreteContentModel_ = function(b) {
-        return b.contentModel_ !== CONTENT_MODEL_TRANSPARENT;
-      };
+  var rules = np.HtmlRules,
+      elementFactories = {},
+      attributeFactories = {};
 
-  /**
-   * @constructor np.HtmlBuilder
-   * @augments {np.ElementBuilder}
-   * @classdesc The HtmlBuilder is the base class for element builders
-   * which wrap HTML content elements (e.g. <br>, <hr>, <param>...).
-   * @param {np.ElementBuilder} parentBuilder - this builder's parent
-   * @param {string} type - the type of HTML element this builder wraps
-   * @throws {Error} when the element argument is not provided
-   */
-  var HtmlBuilder = np.inherits(function(parentBuilder, type) {
-    if(!type) {
-      throw new Error(np.msg.argInvalid('type', 'must be a non-empty string'));
-    }
+  function HtmlElement(type, parent, contentModel, selfClosing) {
+    np.Element.call(this, type, parent);
+    this.selfClosing = !!selfClosing;
+    this.contentModel_ = contentModel;
+  }
+  np.inherits(HtmlElement, np.Element);
 
-    ElementBuilder.call(this, parentBuilder, new np.Element(type));
-
-    this.contentModel_ = CONTENT_MODEL_TRANSPARENT;
-  }, ElementBuilder);
-
-  /**
-   * Returns the first ancestor builder which fulfils the given predicate or
-   * null if no ancestor matches.
-   * @method np.HtmlBuilder#firstUp_
-   * @param {function} predicate - the predicate function to apply
-   * @return {np.ElementBuilder} the first matching ancestor builder or null
-   * @throws {Error} when the 'predicate' argument is not provided.
-   * @private
-   */
-  HtmlBuilder.prototype.firstUp_ = function(predicate, ctx) {
+  HtmlElement.prototype.firstParent_ = function(predicate, ctx) {
     if(!predicate) {
       throw new Error(np.msg.argEmpty('predicate'));
     }
 
     ctx = ctx || this;
 
-    var builder = this;
-    while(builder && !predicate.call(ctx, builder)) {
-      builder = builder.parent;
+    var element = this;
+    while(element && !predicate.call(ctx, element)) {
+      element = element.parent;
     }
-    return builder;
+    return element;
   };
 
-  /**
-   * Returns this element builder's current content model.
-   * @method np.HtmlBuilder#getContentModel_
-   * @return either 'flow' or 'phrasing'
-   * @private
-   */
-  HtmlBuilder.prototype.getContentModel_ = function() {
-    var builder= this.firstUp_(hasConcreteContentModel_);
-    return builder && builder.contentModel_;
+  function hasConcreteContentModel_(e) {
+    return e.contentModel_ !== rules.CONTENT_MODEL_TRANSPARENT;
+  }
+  HtmlElement.prototype.getContentModel = function() {
+    var element = this.firstParent_(hasConcreteContentModel_);
+    return element && element.contentModel_;
+  };
+
+  function HtmlBuilder() {
+    this.current_ = null;
+  }
+  np.inherits(HtmlBuilder, np.ElementBuilder);
+
+  HtmlBuilder.prototype.makeText_ = function(element, text) {
+    rules.checkTextAccess(element);
+    element.append(new np.Text(text));
+  };
+  HtmlBuilder.prototype.makeAttribute_ = function(element, name, value) {
+    var that = this,
+        attributes = element.attributes(),
+        factory;
+    if(np.isA(name, 'string') && (factory = attributeFactories[name])) {
+      factory(element, name, value);
+    } else if(np.isA(name, 'object')){
+      Object.keys(name).forEach(function(key) {
+        that.makeAttribute_(element, key, name[key]);
+      });
+    } else {
+      throw new Error(np.msg.argInvalid(
+        'name',
+        '"' + name + '" is neither an object nor an allowed attribute name',
+        element && element.path()
+      ));
+    }
+
+  };
+  HtmlBuilder.prototype.makeElement_ = function(parent, name, text, attributes) {
+    var element = elementFactories[name](parent),
+        key;
+
+    if(parent) {
+      parent.append(element);
+    }
+
+    if(text) {
+      this.makeText_(element, text);
+    }
+
+    if(attributes) {
+      this.makeAttribute_(element, attributes);
+    }
+
+    return element;
   };
 
 
-  /**
-   * Defines a keyboard shortcut to activate add focus to the element.
-   * @method np.HtmlBuilder#accesskey
-   * @param {string} accesskey - a space-separated list of characters
-   * @return {np.ElementBuilder} this ElementBuilder instance.
-   * @throws {Error} when the 'accesskey' argument is not provided.
-   */
-  ElementBuilder.attV_(HtmlBuilder, 'accesskey');
+  HtmlBuilder.prototype.text = function(text) {
+    this.makeText_(this.current_, text);
+  };
+  HtmlBuilder.prototype.att = function(name, value) {
+    this.makeAttribute_(this.current_, name, value);
+  };
+  HtmlBuilder.prototype.up = function() {
+    this.current_ = this.current_.up();
+    return this;
+  };
 
-  /**
-   * Defines a space-separated list of the classes of the element.
-   * @method np.HtmlBuilder#class
-   * @param {string} class - a space-separated list of class names
-   * @return {np.ElementBuilder} this ElementBuilder instance.
-   * @throws {Error} when the 'class' argument is not provided.
-   */
-  ElementBuilder.attV_(HtmlBuilder, 'class');
 
-  /**
-   * The contenteditable global attribute is an enumerated attribute indicating
-   * if the element should be editable by the user.
-   * @method np.HtmlBuilder#contenteditable
-   * @param {boolean} contenteditable - whether not the element's content
-   * can be edited by the user.
-   * @return {np.ElementBuilder} this ElementBuilder instance.
-   * @throws {Error} when the 'contenteditable' argument is not provided.
-   */
-  ElementBuilder.attV_(HtmlBuilder, 'contenteditable');
 
-  /**
-   * The dir global attribute is an enumerated attribute indicates the
-   * directionality of the element's text. Valid values are 'ltr', 'rtl' and
-   * 'auto'.
-   * @method np.HtmlBuilder#dir
-   * @param {string} dir - the text direction of the element
-   * @return {np.ElementBuilder} this ElementBuilder instance.
-   * @throws {Error} when the 'dir' argument is not provided.
-   */
-  ElementBuilder.attV_(HtmlBuilder, 'dir');
+  rules.ATTRIBUTES.forEach(function(name) {
+    attributeFactories[name] = function(element, name, value) {
+      rules.checkAttributeAccess(element, name);
+      element.attributes().set(name, value);
+    };
+  });
 
-  /**
-   * Is a Boolean attribute indicates that the element is not yet, is no
-   * longer, relevant.
-   * @method np.HtmlBuilder#hidden
-   * @param {boolean} hidden - whether this element is hidden
-   * @return {np.ElementBuilder} this ElementBuilder instance.
-   * @throws {Error} when the 'hidden' argument is not provided.
-   */
-  ElementBuilder.attB_(HtmlBuilder, 'hidden');
+  rules.TEXT_ONLY_ELEMENTS.forEach(function(name) {
+    elementFactories[name] = function(parent) {
+      if(parent) {
+        rules.checkElementAccess(parent, name);
+      }
+      return new HtmlElement(name, parent, rules.getRule(name).cm);
+    };
+  });
 
-  /**
-   * Defines a unique identifier (ID) which must be unique in the whole document.
-   * @method np.HtmlBuilder#id
-   * @param {string} id - the element's id
-   * @return {np.ElementBuilder} this ElementBuilder instance.
-   * @throws {Error} when the 'id' argument is not provided.
-   */
-  ElementBuilder.attV_(HtmlBuilder, 'id');
+  rules.PHRASING_ELEMENTS.forEach(function(name) {
+    elementFactories[name] = function(parent) {
+      if(parent) {
+        rules.checkElementAccess(parent, name);
+      }
+      return new HtmlElement(name, parent, rules.getRule(name).cm);
+    };
+  });
 
-  /**
-   * Participates in defining the language of the element, the language that
-   * non-editable elements are written in the language that editable elements
-   * should be written in.
-   * @method np.HtmlBuilder#lang
-   * @param {string} id - the element's language
-   * @return {np.ElementBuilder} this ElementBuilder instance.
-   * @throws {Error} when the 'lang' argument is not provided.
-   */
-  ElementBuilder.attV_(HtmlBuilder, 'lang');
+  rules.TRANSPARENT_ELEMENTS.forEach(function(name) {
+    elementFactories[name] = function(parent) {
+      if(parent) {
+        rules.checkElementAccess(parent, name);
+      }
+      return new HtmlElement(name, parent, rules.getRule(name).cm);
+    };
+  });
 
-  /**
-   * Is an enumerated attribute defines whether the element may be checked for
-   * spelling errors.
-   * @method np.HtmlBuilder#lang
-   * @param {boolean} spellcheck - whether to check the element's spelling
-   * @return {np.ElementBuilder} this ElementBuilder instance.
-   * @throws {Error} when the 'spellcheck' argument is not provided.
-   */
-  ElementBuilder.attV_(HtmlBuilder, 'spellcheck');
+  rules.OTHER_ELEMENTS.forEach(function(name) {
+    elementFactories[name] = function(parent) {
+      if(parent) {
+        rules.checkElementAccess(parent, name);
+      }
+      return new HtmlElement(name, parent, rules.getRule(name).cm);
+    };
+  });
 
-  /**
-   * Contains CSS styling declarations to be applied to the element. Note that
-   * it is recommended for styles to be defined in a separate file files.
-   * @method np.HtmlBuilder#style
-   * @param {string} style - the element's style definition.
-   * @return {np.ElementBuilder} this ElementBuilder instance.
-   * @throws {Error} when the 'style' argument is not provided.
-   */
-  ElementBuilder.attV_(HtmlBuilder, 'style');
+  rules.VOID_ELEMENTS.forEach(function(name) {
+    elementFactories[name] = function(parent) {
+      if(parent) {
+        rules.checkElementAccess(parent, name);
+      }
+      return new HtmlElement(name, parent, rules.getRule(name).cm, true);
+    };
+  });
 
-  /**
-   * Is an integer attribute indicates if the element can take input focus (is
-   * focusable), if it should participate to sequential keyboard navigation,
-   * and if so, at what position.
-   * @method np.HtmlBuilder#tabindex
-   * @param {string} tabindex - the element's tab index.
-   * @return {np.ElementBuilder} this ElementBuilder instance.
-   * @throws {Error} when the 'tabindex' argument is not provided.
-   */
-  ElementBuilder.attV_(HtmlBuilder, 'tabindex');
+  rules.FLOW_ELEMENTS.forEach(function(name) {
+    elementFactories[name] = function(parent) {
+      if(parent) {
+        rules.checkFlowElementAccess(parent, name);
+      }
+      return new HtmlElement(name, parent, rules.getRule(name).cm);
+    };
+  });
 
-  /**
-   * Contains a text representing advisory information related to the element it
-   * belongs to.
-   * @method np.HtmlBuilder#title
-   * @param {string} title - the element's title.
-   * @return {np.ElementBuilder} this ElementBuilder instance.
-   * @throws {Error} when the 'title' argument is not provided.
-   */
-  ElementBuilder.attV_(HtmlBuilder, 'title');
+  elementFactories.html = function() {
+    var element = new HtmlElement('html');
+    element.isDocument = true;
+    element.head = elementFactories.head(element);
+    return element;
+  };
+  elementFactories.head = function(parent) {
+    var element;
 
-  /**
-   * Is an enumerated attribute that is used to specify whether an element's
-   * attribute values and its text content are to be translated when the page is
-   * localized, whether to leave them unchanged.
-   * @method np.HtmlBuilder#translate
-   * @param {boolean} translate - whether to translate the element's contents.
-   * @return {np.ElementBuilder} this ElementBuilder instance.
-   * @throws {Error} when the 'title' argument is not provided.
-   */
-  ElementBuilder.attV_(HtmlBuilder, 'translate');
+    if(parent) {
+      if(parent.type === "html" && parent.head) {
+        return parent.head;
+      } else {
+        rules.checkElementAccess(parent, 'head');
+      }
+    }
 
-  /**
-   * Transparent content model (accepting phrasing or prasing and flow content
-   * depending on the parent builder's content model).
-   * @member {string} np.HtmlBuilder.CONTENT_MODEL_TRANSPARENT
-   * @readonly
-   * @private
-   */
-  HtmlBuilder.CONTENT_MODEL_TRANSPARENT = CONTENT_MODEL_TRANSPARENT;
+    element = new HtmlElement('head', parent);
+    element.charset = elementFactories.meta(element);
+    element.charset.attributes().set('charset', 'utf-8');
+    element.title = elementFactories.title(element);
 
-  /**
-   * Phrasing content model (accepting only phrasing content).
-   * @member {string} np.HtmlBuilder.CONTENT_MODEL_PHRASING
-   * @readonly
-   * @private
-   */
-  HtmlBuilder.CONTENT_MODEL_PHRASING = CONTENT_MODEL_PHRASING;
+    return element;
+  };
 
-  /**
-   * Meta data content model (accepting meta data)
-   * @member {string} np.HtmlBuilder.CONTENT_MODEL_METADATA
-   * @readonly
-   * @private
-   */
-  HtmlBuilder.CONTENT_MODEL_METADATA = CONTENT_MODEL_METADATA;
+  elementFactories.title = function(parent) {
+    var element;
 
-  /**
-   * Flow content model (accepting phrasing and flow elements)
-   * @member {string} np.HtmlBuilder.CONTENT_MODEL_FLOW
-   * @readonly
-   * @private
-   */
-  HtmlBuilder.CONTENT_MODEL_FLOW = CONTENT_MODEL_FLOW;
+    if(parent) {
+      if(parent.type === 'head' && parent.title) {
+        return parent.title;
+      } else {
+        rules.checkElementAccess(parent, 'title');
+      }
+    }
+    element = new HtmlElement('title', parent);
+
+    return element;
+  };
+
+
+  [].concat(
+    rules.VOID_ELEMENTS,
+    rules.TEXT_ONLY_ELEMENTS,
+    rules.PHRASING_ELEMENTS,
+    rules.TRANSPARENT_ELEMENTS,
+    rules.FLOW_ELEMENTS,
+    rules.OTHER_ELEMENTS
+  ).forEach(function(name) {
+    var methodName = HtmlBuilder.prototype[name] ? name + 'Element' : name;
+    HtmlBuilder.prototype[methodName] = function(text, attributes) {
+      this.current_ = this.makeElement_(this.current_, name, text, attributes);
+      return this;
+    };
+  });
+
+  HtmlBuilder.prototype.title = function(text, attributes) {
+    var current = this.current_;
+    if(current && current.type === 'html') {
+      current = current.head;
+    }
+
+    this.makeElement_(current, 'title', text, attributes);
+    return this;
+  };
+
 
   np.HtmlBuilder = HtmlBuilder;
+
+  np.html = function(element, text, attributes) {
+    var builder = new np.HtmlBuilder();
+    return builder[element || 'html'](text, attributes);
+  };
+
+  // TODO: methods with special treatment:
+  // HtmlBuilder.html() -> creates <head> and <body>
+
+  // TODO: advanced rules: input@type=submit, etc...
 }(this.np));
