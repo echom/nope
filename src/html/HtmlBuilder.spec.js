@@ -89,7 +89,7 @@ describe('np.HtmlBuilder', function() {
           ];
 
       allElements.forEach(function(element) {
-        it('accepts global attributes', function() {
+        it('<' + element + '> accepts global attributes', function() {
           var builder = this.builder;
 
           builder[element]();

@@ -4,9 +4,13 @@
 			parent: parentBuilder,
 			element: element,
       up: jasmine.createSpy(),
+      current: jasmine.createSpy(),
       root: jasmine.createSpy(),
-			attrib: jasmine.createSpy(),
+      el: jasmine.createSpy(),
+			att: jasmine.createSpy(),
       text: jasmine.createSpy(),
+      save: jasmine.createSpy(),
+      load: jasmine.createSpy(),
       compile: jasmine.createSpy()
     };
   };

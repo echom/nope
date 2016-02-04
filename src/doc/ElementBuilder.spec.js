@@ -7,24 +7,9 @@ describe('np.ElementBuilder', function() {
 
   describe('#ctor', function() {
     it('creates an instance of ElementBuilder', function() {
-      var builder = new np.ElementBuilder(null, mockElement);
+      var builder = new np.ElementBuilder(mockElement);
 
       expect(builder instanceof np.ElementBuilder).toBe(true);
-    });
-    it('sets its parent builder', function() {
-      var builder1 = new np.ElementBuilder(null, mockElement),
-          builder2 = new np.ElementBuilder(builder1, np.mocks.Element());
-
-      expect(builder2.parent).toBe(builder1);
-    });
-    it('sets its element', function() {
-      var builder = new np.ElementBuilder(null, mockElement);
-      expect(builder.element).toBe(mockElement);
-    });
-    it('appends its element to the parent\'s element', function() {
-      var parent = { element: np.mocks.Element() },
-          builder = new np.ElementBuilder(parent, mockElement);
-      expect(parent.element.append).toHaveBeenCalledWith(mockElement);
     });
 
     it('should require an element', function() {
@@ -33,22 +18,28 @@ describe('np.ElementBuilder', function() {
     });
   });
 
-  describe('#root', function() {
-    it('returns the root builder of the tree', function() {
-      var builder1 = new np.ElementBuilder(null, np.mocks.Element()),
-          builder2 = new np.ElementBuilder(builder1, np.mocks.Element()),
-          builder3 = new np.ElementBuilder(builder2, np.mocks.Element());
+  describe('#current', function() {
+    it('returns the root of the tree', function() {
+      var root = np.mocks.Element(),
+          builder = new np.ElementBuilder();
 
-      expect(builder1.root()).toBe(builder1);
-      expect(builder2.root()).toBe(builder1);
-      expect(builder3.root()).toBe(builder1);
+      expect(builder1.root()).toBe(root);
+    });
+  });
+
+  describe('#root', function() {
+    it('returns the root of the tree', function() {
+      var root = np.mocks.Element(),
+          builder = new np.ElementBuilder();
+
+      expect(builder1.root()).toBe(root);
     });
   });
 
   describe('#up', function() {
-    it('returns the parent builder', function() {
-      var builder1 = new np.ElementBuilder(null, np.mocks.Element()),
-          builder2 = new np.ElementBuilder(builder1, np.mocks.Element());
+    it('sets the current element to be the current element\'s parent', function() {
+      var builder = new np.ElementBuilder();
+
 
       expect(builder2.up()).toBe(builder1);
       expect(builder1.up()).toBeUndefined();
@@ -64,120 +55,6 @@ describe('np.ElementBuilder', function() {
       builder.compile(compilerMock);
 
       expect(compilerMock.compile).toHaveBeenCalledWith(element);
-    });
-  });
-
-  describe('.attV_', function() {
-    beforeEach(function() {
-      var fakeElement = np.mocks.Element(),
-          fakeAttributes = np.mocks.AttributeCollection(),
-          FakeBuilder = function() { this.element = fakeElement; },
-          fakeBuilder = new FakeBuilder();
-
-      fakeElement.attributes.and.returnValue(fakeAttributes);
-
-      this.fakeElement = fakeElement;
-      this.fakeAttributes = fakeAttributes;
-      this.FakeBuilder = FakeBuilder;
-      this.fakeBuilder = fakeBuilder;
-    });
-
-    it('adds an attribute setter to the provided constructor', function() {
-      expect(this.FakeBuilder.prototype.hello).toBe(undefined);
-      np.ElementBuilder.attV_(this.FakeBuilder, 'hello');
-
-      expect(this.FakeBuilder.prototype.hello).not.toBe(undefined);
-    });
-    it('adds a function that expects an argument', function() {
-      np.ElementBuilder.attV_(this.FakeBuilder, 'hello');
-      var fakeBuilder = this.fakeBuilder,
-          toFail = function() { fakeBuilder.hello(); };
-
-      expect(toFail).toThrowError(/InvalidArgument/);
-    });
-    it('adds a function which will set the appropriate attribute', function() {
-      np.ElementBuilder.attV_(this.FakeBuilder, 'hello');
-      this.fakeBuilder.hello('world');
-
-      expect(this.fakeAttributes.set).toHaveBeenCalledWith('hello', 'world');
-    });
-  });
-  describe('.attB_', function() {
-    beforeEach(function() {
-      var fakeElement = np.mocks.Element(),
-          fakeAttributes = np.mocks.AttributeCollection(),
-          FakeBuilder = function() { this.element = fakeElement; },
-          fakeBuilder = new FakeBuilder();
-
-      fakeElement.attributes.and.returnValue(fakeAttributes);
-
-      this.fakeElement = fakeElement;
-      this.fakeAttributes = fakeAttributes;
-      this.FakeBuilder = FakeBuilder;
-      this.fakeBuilder = fakeBuilder;
-    });
-
-    it('adds an attribute setter to the provided constructor', function() {
-      expect(this.FakeBuilder.prototype.hello).toBe(undefined);
-      np.ElementBuilder.attB_(this.FakeBuilder, 'hello');
-
-      expect(this.FakeBuilder.prototype.hello).not.toBe(undefined);
-    });
-    it('adds a function that expects an argument', function() {
-      np.ElementBuilder.attB_(this.FakeBuilder, 'hello');
-      var fakeBuilder = this.fakeBuilder,
-          toFail = function() { fakeBuilder.hello(); };
-
-      expect(toFail).toThrowError(/InvalidArgument/);
-    });
-    it('adds a function which will set the appropriate attribute', function() {
-      np.ElementBuilder.attB_(this.FakeBuilder, 'hello');
-      this.fakeBuilder.hello(true);
-
-      expect(this.fakeAttributes.set).toHaveBeenCalledWith('hello', 'hello');
-    });
-    it('adds a function which will remove the appropriate attribute', function() {
-      np.ElementBuilder.attB_(this.FakeBuilder, 'hello');
-
-      this.fakeBuilder.hello(true);
-      this.fakeBuilder.hello(false);
-
-      expect(this.fakeAttributes.remove).toHaveBeenCalledWith('hello');
-    });
-  });
-
-  describe('.chlT_', function() {
-    beforeEach(function() {
-      var fakeElement = np.mocks.Element(),
-          fakeChildren = np.mocks.NodeCollection(),
-          FakeBuilder = function() { this.element = fakeElement; },
-          fakeBuilder = new FakeBuilder();
-
-      fakeElement.children.and.returnValue(fakeChildren);
-
-      this.fakeElement = fakeElement;
-      this.FakeBuilder = FakeBuilder;
-      this.fakeBuilder = fakeBuilder;
-    });
-
-    it('adds a text setter to the provided constructor', function() {
-      expect(this.FakeBuilder.prototype.text).toBe(undefined);
-      np.ElementBuilder.chlT_(this.FakeBuilder);
-
-      expect(this.FakeBuilder.prototype.text).not.toBe(undefined);
-    });
-    it('adds a function which will append a text node', function() {
-      np.ElementBuilder.chlT_(this.FakeBuilder);
-      this.fakeBuilder.text('world');
-
-      expect(this.fakeElement.append).toHaveBeenCalledWith(jasmine.any(np.Text));
-      expect(this.fakeElement.append).toHaveBeenCalledWith(jasmine.objectContaining({
-        content: 'world'
-      }));
-    });
-    it('adds a function which will return the builder', function() {
-      np.ElementBuilder.chlT_(this.FakeBuilder);
-      expect(this.fakeBuilder.text('world')).toBe(this.fakeBuilder);
     });
   });
 });

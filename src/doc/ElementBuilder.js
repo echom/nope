@@ -6,71 +6,95 @@
 	 * @constructor np.ElementBuilder
 	 * @classdesc The ElementBuilder class provides the basic API around an
 	 *   {@link np.Element} allowing to build a HTML document or fragment easily.
-	 * @param {np.ElementBuilder} parentBuilder - this builder's parent
-	 * @param {np.Element} element - the element this builder will apply changes to
 	 */
-	var ElementBuilder = function(parentBuilder, element) {
-		if(!element) {
-			throw new Error(np.msg.argEmpty('element'));
-		}
-
-		/**
-		 * The builder's parent builder.
-		 * @member {np.ElementBuilder} np.ElementBuilder#parent
-		 */
-		this.parent = parentBuilder;
-
-		/**
-		 * The element wrapped by this builder.
-		 * @member {np.Element} np.ElementBuilder#element
-		 */
-		this.element = element;
-
-		if(this.parent) {
-			this.parent.element.append(this.element);
-		}
+	var ElementBuilder = function() {
+		this.root_ = null;
+		this.current_ = null;
+		this.idStore_ = {};
 	};
 
-	/**
-	 * Returns this builder's parent.
-	 * @method np.ElementBuilder#up
-	 * @return {np.ElementBuilder} this builder's parent builder
-	 */
 	ElementBuilder.prototype.up = function() {
-		if(this.parent) return this.parent;
+		this.current_ = this.current_.up();
+		return this;
 	};
-	/**
-	 * Returns the root builder of the tree. If this builder is the root
-	 * builder it will return itself.
-	 * @method np.ElementBuilder#root
-	 * @return {np.ElementBuilder} the root builder of this builder tree
-	 */
-	ElementBuilder.prototype.root = function() {
-		return this.parent ? this.parent.root() : this;
+
+	ElementBuilder.prototype.current = function() { return this.current_; };
+	ElementBuilder.prototype.root = function() { return this.root_; };
+
+	ElementBuilder.prototype.tx_ = function(element, text) {
+		element.append(new np.Text(text));
 	};
+	ElementBuilder.prototype.at_ = function(element, name, value) {
+		element.attributes().set(name, value);
+	};
+	ElementBuilder.prototype.el_ = function(parent, name, text, attributes) {
+		var that = this,
+				el = new np.Element(name);
+		if(text) {
+			this.tx_(el, text);
+		}
+		if(attributes) {
+			Object.keys(attributes).forEach(function(key) {
+				that.at_(el, key, attributes[key]);
+			});
+		}
+
+		if(parent) { parent.append(el); }
+		return el;
+	};
+
+
+	ElementBuilder.prototype.el = function(name, text, attributes) {
+		this.current_ = this.el_(this.current_, name, text, attributes);
+		if(!this.root_) {
+			this.root_ = this.current_;
+		}
+
+		return this;
+	};
+	ElementBuilder.prototype.text = function(text) {
+		this.tx_(this.current_, text);
+		return this;
+	};
+	ElementBuilder.prototype.att = function(name, value) {
+		if(np.isA(name, 'string')) {
+      this.at_(this.current_, name, value);
+    } else if(np.isA(name, 'object')){
+      Object.keys(name).forEach(function(key) {
+        this.at_(this.current_, key, name[key]);
+      });
+    } else {
+      throw new Error(np.msg.argInvalid(
+        'name',
+        '"' + name + '" is neither an object nor an attribute name',
+        element && element.path()
+      ));
+    }
+		return this;
+	};
+
 
 	/**
 	 * Compile's the entire builder tree given the compile target.
 	 * @param {np.Compiler} target - the compile target
 	 */
 	ElementBuilder.prototype.compile = function(target) {
-		return target.compile(this.root().element);
-	};
-
-
-	// JS logic interface
-
-	ElementBuilder.prototype.idStore_ = function() {
-		var root = this.root();
-		return root.idStore_ || (root.idStore_ = {});
+		if(this.root_) {
+			return target.compile(this.root());
+		}
+		throw new Error(np.msg.opInvalid(
+			'compile()',
+			'cannot compile builder without any elements'
+		));
 	};
 
 	ElementBuilder.prototype.save = function(id) {
-		this.idStore_()[id] = this;
+		this.idStore_[id] = this.current_;
 		return this;
 	};
 	ElementBuilder.prototype.load = function(id) {
-		return this.idStore_[id];
+		this.current_ = this.idStore_[id];
+		return this;
 	};
 
 	np.ElementBuilder = ElementBuilder;

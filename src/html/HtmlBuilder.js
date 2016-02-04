@@ -35,63 +35,52 @@
   };
 
   function HtmlBuilder() {
-    this.current_ = null;
+    np.ElementBuilder.call(this);
   }
   np.inherits(HtmlBuilder, np.ElementBuilder);
 
-  HtmlBuilder.prototype.makeText_ = function(element, text) {
-    rules.checkTextAccess(element);
-    element.append(new np.Text(text));
-  };
-  HtmlBuilder.prototype.makeAttribute_ = function(element, name, value) {
-    var that = this,
-        attributes = element.attributes(),
-        factory;
-    if(np.isA(name, 'string') && (factory = attributeFactories[name])) {
+  HtmlBuilder.prototype.at_ = function(element, name, value) {
+    var factory = attributeFactories[name];
+    if(factory) {
       factory(element, name, value);
-    } else if(np.isA(name, 'object')){
-      Object.keys(name).forEach(function(key) {
-        that.makeAttribute_(element, key, name[key]);
-      });
     } else {
       throw new Error(np.msg.argInvalid(
         'name',
-        '"' + name + '" is neither an object nor an allowed attribute name',
+        '"' + name + '" is not an allowed attribute name',
         element && element.path()
       ));
     }
-
   };
-  HtmlBuilder.prototype.makeElement_ = function(parent, name, text, attributes) {
-    var element = elementFactories[name](parent),
-        key;
+  HtmlBuilder.prototype.tx_ = function(element, text) {
+    rules.checkTextAccess(element);
+    np.ElementBuilder.prototype.tx_.call(this, element, text);
+  };
+  HtmlBuilder.prototype.el_ = function(parent, name, text, attributes) {
+    var that = this,
+        factory = elementFactories[name],
+        element;
+    if(factory) {
+      element = factory(parent);
+      if(text) {
+        this.tx_(element, text);
+      }
+      if(attributes) {
+        Object.keys(attributes).forEach(function(key) {
+  				that.at_(element, key, attributes[key]);
+  			});
+      }
 
-    if(parent) {
-      parent.append(element);
+      if(parent) {
+        parent.append(element);
+      }
+    } else {
+      throw new Error(np.msg.argInvalid(
+        'name',
+        '"' + name + '" is not a valid HTML element name',
+        parent && parent.path()
+      ));
     }
-
-    if(text) {
-      this.makeText_(element, text);
-    }
-
-    if(attributes) {
-      this.makeAttribute_(element, attributes);
-    }
-
     return element;
-  };
-
-  HtmlBuilder.prototype.text = function(text) {
-    this.makeText_(this.current_, text);
-    return this;
-  };
-  HtmlBuilder.prototype.att = function(name, value) {
-    this.makeAttribute_(this.current_, name, value);
-    return this;
-  };
-  HtmlBuilder.prototype.up = function() {
-    this.current_ = this.current_.up();
-    return this;
   };
 
   rules.ATTRIBUTES.forEach(function(name) {
@@ -159,6 +148,7 @@
     var element = new HtmlElement('html');
     element.isDocument = true;
     element.head = elementFactories.head(element);
+    element.append(head);
     return element;
   };
   elementFactories.head = function(parent) {
@@ -204,8 +194,7 @@
   ).forEach(function(name) {
     var methodName = HtmlBuilder.prototype[name] ? name + 'Element' : name;
     HtmlBuilder.prototype[methodName] = function(text, attributes) {
-      this.current_ = this.makeElement_(this.current_, name, text, attributes);
-      return this;
+      return this.el(name, text, attributes);
     };
   });
 
@@ -215,7 +204,7 @@
       current = current.head;
     }
 
-    this.makeElement_(current, 'title', text, attributes);
+    this.el_(current, 'title', text, attributes);
     return this;
   };
 
@@ -223,8 +212,8 @@
   np.HtmlBuilder = HtmlBuilder;
 
   np.html = function(element, text, attributes) {
-    var builder = new np.HtmlBuilder();
-    return builder[element || 'html'](text, attributes);
+    var builder = new HtmlBuilder();
+    return builder.el(element || 'html', text, attributes);
   };
 
   // TODO: methods with special treatment:
