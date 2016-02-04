@@ -519,7 +519,7 @@
       ));
     } else if(childRule.ancestors) {
       var match = element.firstParent_(function(e) {
-            return childRule.ancestors.indexOf(e.type) >= 0;
+            return !!childRule.ancestors[e.type];
           });
       if(match) {
         throw new Error(np.msg.opInvalid(

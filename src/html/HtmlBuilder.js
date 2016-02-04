@@ -81,19 +81,18 @@
     return element;
   };
 
-
   HtmlBuilder.prototype.text = function(text) {
     this.makeText_(this.current_, text);
+    return this;
   };
   HtmlBuilder.prototype.att = function(name, value) {
     this.makeAttribute_(this.current_, name, value);
+    return this;
   };
   HtmlBuilder.prototype.up = function() {
     this.current_ = this.current_.up();
     return this;
   };
-
-
 
   rules.ATTRIBUTES.forEach(function(name) {
     attributeFactories[name] = function(element, name, value) {
@@ -180,7 +179,6 @@
 
     return element;
   };
-
   elementFactories.title = function(parent) {
     var element;
 
@@ -195,7 +193,6 @@
 
     return element;
   };
-
 
   [].concat(
     rules.VOID_ELEMENTS,
