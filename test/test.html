@@ -10,7 +10,10 @@
       var yes = true;
 
       var html = np.html()
-                  .title('Hello World')
+                  .head()
+                    .meta({'charset': 'utf-8'}).up()
+                    .title('Hello World').up()
+                  .up()
                   .body()
                     .h1('Hello World').up()
                     .p('So, is this better than what we had before?').up()

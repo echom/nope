@@ -1,23 +1,10 @@
 <DOCTYPE html>
 <html>
   <meta charset="utf-8" />
+  <title>nope.js - tutorial</title>
   <script src="../dist/nope.js"></script>
+  <script src="tutorial.js"></script>
   <script>
-    np.html()
-      .title('nope.js - tutorial')
-      .head()
-        .link(
-          'stylesheet',
-          'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css'
-        ).up()
-      .up()
-      .body()
-        .h(1, 'nope.js - tutorial').up()
-        .div()
-          .h(2, 'Getting started').up()
-          .p('').up()
-        .up()
-      .up()
-      .compile(np.dom());
+    tutorial.compile(np.dom());
   </script>
 </html>

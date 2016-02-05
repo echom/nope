@@ -144,46 +144,6 @@
     };
   });
 
-  elementFactories.html = function() {
-    var element = new HtmlElement('html');
-    element.isDocument = true;
-    element.head = elementFactories.head(element);
-    element.append(head);
-    return element;
-  };
-  elementFactories.head = function(parent) {
-    var element;
-
-    if(parent) {
-      if(parent.type === "html" && parent.head) {
-        return parent.head;
-      } else {
-        rules.checkElementAccess(parent, 'head');
-      }
-    }
-
-    element = new HtmlElement('head', parent);
-    element.charset = elementFactories.meta(element);
-    element.charset.attributes().set('charset', 'utf-8');
-    element.title = elementFactories.title(element);
-
-    return element;
-  };
-  elementFactories.title = function(parent) {
-    var element;
-
-    if(parent) {
-      if(parent.type === 'head' && parent.title) {
-        return parent.title;
-      } else {
-        rules.checkElementAccess(parent, 'title');
-      }
-    }
-    element = new HtmlElement('title', parent);
-
-    return element;
-  };
-
   [].concat(
     rules.VOID_ELEMENTS,
     rules.TEXT_ONLY_ELEMENTS,
@@ -197,17 +157,6 @@
       return this.el(name, text, attributes);
     };
   });
-
-  HtmlBuilder.prototype.title = function(text, attributes) {
-    var current = this.current_;
-    if(current && current.type === 'html') {
-      current = current.head;
-    }
-
-    this.el_(current, 'title', text, attributes);
-    return this;
-  };
-
 
   np.HtmlBuilder = HtmlBuilder;
 
