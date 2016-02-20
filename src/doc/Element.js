@@ -7,6 +7,7 @@
    * @classdesc The Element class represents a HTML element. It provides methods for
    * navigating and modifying the HTML tree.
    * @param {string} type - the element's type
+   * @param {np.Element} [parent] - the element's optional parent
    * @throws {Error} when the type argument is not defined
    * @augments np.Node
    */

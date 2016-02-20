@@ -66,8 +66,8 @@
       }
       if(attributes) {
         Object.keys(attributes).forEach(function(key) {
-  				that.at_(element, key, attributes[key]);
-  			});
+          that.at_(element, key, attributes[key]);
+        });
       }
 
       if(parent) {

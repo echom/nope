@@ -6,88 +6,104 @@
 
   exports.publish = publish;
 
-  var doc;
+  var title,
+      header,
+      index,
+      parent;
 
   function publish(data, opts) {
     var conf = env.conf.templates;
 
     // PREPARE DOCUMENT
-    doc = nope.html()
-          .link()
-            .rel('stylesheet')
-            .href('https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css')
-          .up()
-          .script().text('\nfunction toggleSymbol(id) {' +
-            'var target = document.getElementById(id);\n' +
-            'target.classList.toggle("expanded");\n' +
-          '}\n').up()
-          .style().text('\n' +
-            'html, body { height: 100%; }\n' +
-            '.symbol { transition: all 0.3s; }\n' +
-            '.symbol:hover { background: #f5f5f5; } \n' +
-            //'.symbol-dsc { transition: max-height 0.5s; overflow: hidden; }\n' +
-            '.symbol > .symbol-dsc { display: none; }\n' +
-            '.symbol.expanded > .symbol-dsc { display: block; }\n' +
-            '.symbol p.expansion { margin-top: 10px; }\n' +
-            '.symbol .glyphicon-chevron-down { display: inline-block; }\n' +
-            '.symbol.expanded .glyphicon-chevron-down { display: none; }\n' +
-            '.symbol .glyphicon-chevron-up { display: none; }\n' +
-            '.symbol.expanded .glyphicon-chevron-up { display: inline-block; }\n' +
-            '.symbol[onclick] { cursor: pointer; }\n' +
-            '.bottom-padding { height: 100px; }\n' +
-            '.hbox { display: flex; flex-direction: row; align-items: stretch; }\n' +
-            '.vbox { display: flex; flex-direction: column; align-items: stretch; }\n' +
-            '.vbox > *, .hbox > * { padding: 0 10px; }\n' +
-          '\n').up()
-          .body()
-            .div().class('vbox').style('height: 100%')
-              .div().save('header').style('flex:0').up()
-              .div().class('hbox').style('flex:1; min-height:0;')
-                .div().save('left').style('flex: 0 1 350px; overflow-y: auto; min-height: 0;')
-                  h(3).text('Contents').up()
-                  div().save('index').class('list-group').up()
-                .up()
-                .div().save('right').style('flex: 1 1 800px; overflow-y: auto;').up()
-              .up()
-            .up()
-          .up();
+    var doc = xmlbuilder.create('html').dec().dtd().root(),
+        head,
+        body,
+        left,
+        right;
+
+    head = doc.ele('head');
+    title = head.ele('title');
+    head.ele('meta').att('charset', 'utf-8');
+    head.ele('link')
+      .att('rel', 'stylesheet')
+      .att('href', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css');
+    head.ele('script')
+      .raw('\nfunction toggleSymbol(id) {' +
+              'var target = document.getElementById(id);\n' +
+              'target.classList.toggle("expanded");\n' +
+           '}\n');
+
+    head.ele('style').raw('\n' +
+    'html, body { height: 100%; }\n' +
+    '.symbol { transition: all 0.3s; }\n' +
+    '.symbol:hover { background: #f5f5f5; } \n' +
+    //'.symbol-dsc { transition: max-height 0.5s; overflow: hidden; }\n' +
+    '.symbol > .symbol-dsc { display: none; }\n' +
+    '.symbol.expanded > .symbol-dsc { display: block; }\n' +
+    '.symbol p.expansion { margin-top: 10px; }\n' +
+    '.symbol .glyphicon-chevron-down { display: inline-block; }\n' +
+    '.symbol.expanded .glyphicon-chevron-down { display: none; }\n' +
+    '.symbol .glyphicon-chevron-up { display: none; }\n' +
+    '.symbol.expanded .glyphicon-chevron-up { display: inline-block; }\n' +
+    '.symbol[onclick] { cursor: pointer; }\n' +
+    '.bottom-padding { height: 100px; }\n' +
+    '.hbox { display: flex; flex-direction: row; align-items: stretch; }\n' +
+    '.vbox { display: flex; flex-direction: column; align-items: stretch; }\n' +
+    '.vbox > *, .hbox > * { padding: 0 10px; }\n' +
+    '\n');
+
+    body = doc.ele('body');
+    header = body
+              .ele('div').att('class', 'vbox').att('style', 'height: 100%;')
+              .ele('div').att('style', 'flex: 0')
+    left = header.up()
+              .ele('div').att('class', 'hbox').att('style', 'flex: 1; min-height: 0;')
+              .ele('div').att('style', 'flex: 0 1 350px; overflow-y: auto; min-height: 0;');
+
+    right = left.up()
+              .ele('div').att('style', 'flex: 1 1 800px; overflow-y: auto; ');
+
+
+
+    index = left.ele('h3').txt('Contents').up()
+                .ele('div').att('class', 'list-group')
+    parent = right;
 
     traverse(data, processSymbol, { private: opts.private });
 
-    doc.load('right').div().class('bottom-padding');
+    right.ele('div').att('class', 'bottom-padding');
 
     write(doc, opts.destination);
   }
 
   function processSymbol(symbol) {
     if(symbol.kind === 'package') {
-      doc.title(symbol.name + ' - ' + symbol.description);
-      doc.load('header')
-            .h(1).text(symbol.name).style('margin-left: 10px;')
-            .small(symbol.description).class('lead');
+      title.txt(symbol.name).txt(' - ').txt(symbol.description);
+      header.ele('h1').txt(symbol.name).att('style', 'margin-left: 10px;')
+            .ele('small').att('class', 'lead').txt(symbol.description).up();
     } else {
       symbol.toplevel && indexSymbol(symbol);
 
-      var symbolHtml = doc.load('right').section()
-                    .class('symbol container-fluid' + (symbol.inherited ? ' inherited' : ''))
-                    .id('sym-' + symbol.id);
+      parent = parent.ele('section')
+          .att('class', 'symbol container-fluid' + (symbol.inherited ? ' inherited' : ''))
+          .att('id', 'sym-' + symbol.id);
       if(hasDetails(symbol)) {
-        //symbolHtml.attrib('onclick', 'toggleSymbol("sym-' + symbol.id + '")');
+        parent.att('onclick', 'toggleSymbol("sym-' + symbol.id + '")');
       }
 
-      summarizeSymbol(symbol, symbolHtml);
-      describeSymbol(symbol, symbolHtml);
+      summarizeSymbol(symbol);
+      describeSymbol(symbol);
 
       parent = parent.up();
     }
   }
 
-  function summarizeSymbol(symbol, symbolHtml) {
+  function summarizeSymbol(symbol) {
     if(symbol.toplevel) {
-      symbolHtml.a().id('sum-' + symbol.id).up();
+      parent.ele('a').att('id', 'sum-' + symbol.id).txt(' ').up();
 
       if(hasDetails(symbol)) {
-        symbol.ele('button')
+        parent.ele('button')
                 .att('class', 'expansion btn btn-link pull-right')
                 .ele('i').att('class', 'glyphicon glyphicon-chevron-down').txt(' ').up()
                 .ele('i').att('class', 'glyphicon glyphicon-chevron-up').txt(' ').up()

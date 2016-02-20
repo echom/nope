@@ -4,10 +4,22 @@
   var CONTENT_MODEL_FLOW = 'flow',
       CONTENT_MODEL_PHRASING = 'phrasing',
       CONTENT_MODEL_TRANSPARENT = 'transparent',
+      GLOBAL_EVENTS = [
+        'abort', 'blur', 'cancel', 'canplay', 'canplaythrough', 'change',
+        'click', 'cuechange', 'dblclick', 'durationchange', 'emptied',
+        'ended', 'onerror', 'focus', 'input', 'invalid', 'keydown', 'keypress',
+        'keyup', 'load', 'loadeddata', 'loadedmetadata', 'loadstart', 'mousedown',
+        'mouseenter', 'mouseleave', 'mousemove', 'mouseout', 'mouseover',
+        'mouseup', 'mousewheel', 'pause', 'play', 'playing', 'progress',
+        'ratechange', 'reset', 'resize', 'scroll', 'seeked', 'seeking',
+        'select', 'show', 'stalled', 'submit', 'suspend', 'timeupdate',
+        'toggle', 'volumechange', 'waiting'
+      ].map(function(evt) { return 'on' + evt; }),
       GLOBAL_ATTRIBUTES = augment({}, [
         'accesskey', 'class', 'contenteditable', 'dir', 'hidden', 'id',
-        'lang', 'spellcheck', 'style'
-      ]),
+        'lang', 'spellcheck', 'style', 'tabindex', 'title', 'translate'
+      ].concat(GLOBAL_EVENTS)),
+
       ALL_ATTRIBUTES = augment(GLOBAL_ATTRIBUTES, [
         'action', 'method', 'enctype', 'name', 'accept-charset', 'novalidate',
         'autocomplete', 'target', 'cite', 'open', 'disabled', 'form', 'value',
@@ -454,6 +466,7 @@
     augment(GLOBAL_ATTRIBUTES,
       'type', 'language', 'src', 'defer', 'async', 'charset'
     ),
+    null,
     true
   );
   defineElementRule('source',
@@ -508,14 +521,12 @@
     if(!parentRule.elements) {
       throw new Error(np.msg.opInvalid(
         childName + '()',
-        '<' + element.type + '> cannot have child elements.',
-        element.path()
+        '<' + element.type + '> cannot have child elements.'
       ));
     } else if(!parentRule.elements[childName]) {
       throw new Error(np.msg.opInvalid(
         childName + '()',
-        '<' + element.type + '> cannot have <' + childName + '> child elements.',
-        element.path()
+        '<' + element.type + '> cannot have <' + childName + '> child elements.'
       ));
     } else if(childRule.ancestors) {
       var match = element.firstParent_(function(e) {
@@ -524,8 +535,7 @@
       if(match) {
         throw new Error(np.msg.opInvalid(
           childName + '()',
-          '<' + childName + '> cannot have an ancestor <' + match.type + '>',
-          element.path()
+          '<' + childName + '> cannot have an ancestor <' + match.type + '>'
         ));
       }
     }
@@ -537,8 +547,7 @@
       throw new Error(np.msg.opInvalid(
         name + '()',
         '<' + element.type + '> cannot have <' + childName + '> child elements ' +
-        '(<' + element.type + '> is nested in an element that expects phrasing content only).',
-        element.path()
+        '(<' + element.type + '> is nested in an element that expects phrasing content only).'
       ));
     }
   }
@@ -546,8 +555,7 @@
     if(!elementRules[element.type].text) {
       throw new Error(np.msg.opInvalid(
         'text()',
-        '<' + element.type + '> cannot have text content.',
-        element.path()
+        '<' + element.type + '> cannot have text content.'
       ));
     }
   }
@@ -556,8 +564,7 @@
     if(!attributes || !attributes[name]) {
       throw new Error(np.msg.opInvalid(
         name + '()',
-        '<' + element.type + '> cannot have attribute "' + name + '".',
-        element.path()
+        '<' + element.type + '> cannot have attribute "' + name + '".'
       ));
     }
   }

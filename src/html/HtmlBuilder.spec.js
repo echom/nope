@@ -1,4 +1,4 @@
-describe('np.HtmlBuilder', function() {
+xdescribe('np.HtmlBuilder', function() {
 
   var allElements = [
         'a|abbr|address|area|article|aside|audio|b|base|bdi|bdo|blockquote|body',

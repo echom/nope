@@ -1,4 +1,4 @@
-describe('np.ElementBuilder', function() {
+xdescribe('np.ElementBuilder', function() {
   var mockElement;
 
   beforeEach(function() {

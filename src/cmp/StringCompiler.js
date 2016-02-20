@@ -3,7 +3,6 @@
 
   var indent = " ";
   for(i = 0; i < 10; i++) { indent += indent; }
-  console.log(indent.length);
 
   var StringCompiler = function() {};
 
@@ -20,11 +19,15 @@
         indentString = indent.substr(0, indentCount);
 
     element.attributes().each(function(name, value) {
+      value = value.replace(/"/g, '&quot;');
       str += ' ' + name + '="' + value + '"';
     }, this);
 
-    if(childCount > 0) {
+    if(!element.selfClosing) {
       buffer.push('\n' + indentString + str + '>');
+    }
+
+    if(childCount > 0) {
       children.each(function(e) {
         if(np.Element.nodeIsElement_(e)) {
           this.element(e, buffer, indentCount + 1);
@@ -32,9 +35,11 @@
           this.text(e, buffer, indentCount + 1);
         }
       }, this);
+    }
+    if(childCount === 0 && element.selfClosing) {
+      buffer.push('\n' + str + ' />');
+    } else {
       buffer.push('\n' + indentString + '</' + type + '>');
-    } else if(element.selfClosing) {
-      buffer.push(str + ' />');
     }
   };
 

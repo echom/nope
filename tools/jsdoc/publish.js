@@ -1,224 +1,239 @@
 (function() {
-  var fs = require('fs-extra'),
-      path = require('path'),
-      xmlbuilder = require('xmlbuilder'),
-      traverse = require('./traverse.js');
+	var fs = require('fs-extra'),
+		path = require('path'),
+		np = require('../../dist/nope.commonjs.min.js'),
+		traverse = require('./traverse.js');
 
-  exports.publish = publish;
+	exports.publish = publish;
 
-  var title,
-      header,
-      index,
-      parent;
+	var html = np.html(),
+		title,
+		header,
+		index,
+		parent,
+    left,
+    right;
 
-  function publish(data, opts) {
-    var conf = env.conf.templates;
+	function publish(data, opts) {
+		var conf = env.conf.templates;
 
-    // PREPARE DOCUMENT
-    var doc = xmlbuilder.create('html').dec().dtd().root(),
-        head,
-        body,
-        left,
-        right;
+		// PREPARE DOCUMENT
+		var doc = html.html([
+			html.head([
+				title = html.title(),
+				html.meta({
+					charset: 'utf-8'
+				}),
+				html.link({
+					rel: 'stylesheet',
+					href: 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css'
+				}),
+				html.script(['\n',
+					'function toggleSymbol(id) {',
+					'var target = document.getElementById(id);\n',
+					'target.classList.toggle("expanded");\n',
+					'}\n'
+				]),
+				html.style([
+					'html, body { height: 100%; }\n',
+					'.symbol { transition: all 0.3s; }\n',
+					'.symbol:hover { background: #f5f5f5; } \n',
+					//'.symbol-dsc { transition: max-height 0.5s; overflow: hidden; }\n',
+					'.symbol > .symbol-dsc { display: none; }\n',
+					'.symbol.expanded > .symbol-dsc { display: block; }\n',
+					'.symbol p.expansion { margin-top: 10px; }\n',
+					'.symbol .glyphicon-chevron-down { display: inline-block; }\n',
+					'.symbol.expanded .glyphicon-chevron-down { display: none; }\n',
+					'.symbol .glyphicon-chevron-up { display: none; }\n',
+					'.symbol.expanded .glyphicon-chevron-up { display: inline-block; }\n',
+					'.symbol[onclick] { cursor: pointer; }\n',
+					'.bottom-padding { height: 100px; }\n',
+					'.hbox { display: flex; flex-direction: row; align-items: stretch; }\n',
+					'.vbox { display: flex; flex-direction: column; align-items: stretch; }\n',
+					'.vbox > *, .hbox > * { padding: 0 10px; }\n',
+					'\n'
+				])
+			]),
+			html.body([
+				html.div({ class: 'vbox', style: 'height: 100%;' }, [
+				  header = html.div({ style: 'flex: 0;' }),
+				  html.div({ class: 'hbox', style: 'flex: 1; min-height: 0;' }, [
+					  left = html.div({ style: 'flex: 0 1 350px; overflow-y: auto; min-height: 0;' }, [
+						  html.h3('Contents'),
+						  index = html.div({ class: 'list-group' })
+					  ]),
+					  right = html.div({ style: 'flex: 1 1 800px; overflow-y: auto; ' })
+					])
+				])
+			])
+		]);
 
-    head = doc.ele('head');
-    title = head.ele('title');
-    head.ele('meta').att('charset', 'utf-8');
-    head.ele('link')
-      .att('rel', 'stylesheet')
-      .att('href', 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css');
-    head.ele('script')
-      .raw('\nfunction toggleSymbol(id) {' +
-              'var target = document.getElementById(id);\n' +
-              'target.classList.toggle("expanded");\n' +
-           '}\n');
+		parent = right;
 
-    head.ele('style').raw('\n' +
-    'html, body { height: 100%; }\n' +
-    '.symbol { transition: all 0.3s; }\n' +
-    '.symbol:hover { background: #f5f5f5; } \n' +
-    //'.symbol-dsc { transition: max-height 0.5s; overflow: hidden; }\n' +
-    '.symbol > .symbol-dsc { display: none; }\n' +
-    '.symbol.expanded > .symbol-dsc { display: block; }\n' +
-    '.symbol p.expansion { margin-top: 10px; }\n' +
-    '.symbol .glyphicon-chevron-down { display: inline-block; }\n' +
-    '.symbol.expanded .glyphicon-chevron-down { display: none; }\n' +
-    '.symbol .glyphicon-chevron-up { display: none; }\n' +
-    '.symbol.expanded .glyphicon-chevron-up { display: inline-block; }\n' +
-    '.symbol[onclick] { cursor: pointer; }\n' +
-    '.bottom-padding { height: 100px; }\n' +
-    '.hbox { display: flex; flex-direction: row; align-items: stretch; }\n' +
-    '.vbox { display: flex; flex-direction: column; align-items: stretch; }\n' +
-    '.vbox > *, .hbox > * { padding: 0 10px; }\n' +
-    '\n');
+		traverse(data, processSymbol, {
+			private: opts.private
+		});
 
-    body = doc.ele('body');
-    header = body
-              .ele('div').att('class', 'vbox').att('style', 'height: 100%;')
-              .ele('div').att('style', 'flex: 0')
-    left = header.up()
-              .ele('div').att('class', 'hbox').att('style', 'flex: 1; min-height: 0;')
-              .ele('div').att('style', 'flex: 0 1 350px; overflow-y: auto; min-height: 0;');
+		right.el(np.html(html => html.div({
+			class: 'bottom.padding'
+		})))
 
-    right = left.up()
-              .ele('div').att('style', 'flex: 1 1 800px; overflow-y: auto; ');
+		write(doc, opts.destination);
+	}
 
+	function processSymbol(symbol) {
+		if (symbol.kind === 'package') {
+			title.tx([symbol.name, ' - ', symbol.description]);
+			header.el([
+        html.h1({ style: 'margin-left: 10px;' }, [
+				  symbol.name,
+				  html.small({ class: 'lead' }, symbol.description)
+			  ]),
+        html.hr()
+      ]);
+		} else {
+			symbol.toplevel && indexSymbol(symbol);
 
+      right.el([
+        parent = html.section({
+  				class: 'symbol container-fluid' + (symbol.inherited ? ' inherited' : ''),
+  				id: 'sym-' + symbol.id
+  			})
+      ]);
 
-    index = left.ele('h3').txt('Contents').up()
-                .ele('div').att('class', 'list-group')
-    parent = right;
+			if (hasDetails(symbol)) {
+				parent.at('onclick', 'toggleSymbol("sym-' + symbol.id + '")');
+			}
 
-    traverse(data, processSymbol, { private: opts.private });
+			summarizeSymbol(symbol);
+			describeSymbol(symbol);
+		}
+	}
 
-    right.ele('div').att('class', 'bottom-padding');
+	function summarizeSymbol(symbol) {
+		if (symbol.toplevel) {
+			parent.el(html.a({ id: 'sum-' + symbol.id }));
 
-    write(doc, opts.destination);
-  }
+			if (hasDetails(symbol)) {
+				parent.el(html.button({ class: 'expansion btn btn-link pull-right' }, [
+					html.i({ class: 'glyphicon glyphicon-chevron-down' }),
+					html.i({ class: 'glyphicon glyphicon-chevron-up' })
+				]));
+			}
 
-  function processSymbol(symbol) {
-    if(symbol.kind === 'package') {
-      title.txt(symbol.name).txt(' - ').txt(symbol.description);
-      header.ele('h1').txt(symbol.name).att('style', 'margin-left: 10px;')
-            .ele('small').att('class', 'lead').txt(symbol.description).up();
-    } else {
-      symbol.toplevel && indexSymbol(symbol);
+			parent.el([
+				html.h3([symbol.name, symbol.signature]),
+				html.small({ style: 'margin: -0.5em 0 1em;' }, [
+					html.span({ style: 'color: #777' }, symbol.modifiers),
+					symbol.longname,
+					symbol.longsignature
+				]),
+				html.p(symbol.kind === 'class' ? symbol.classdesc : symbol.description)
+			]);
 
-      parent = parent.ele('section')
-          .att('class', 'symbol container-fluid' + (symbol.inherited ? ' inherited' : ''))
-          .att('id', 'sym-' + symbol.id);
-      if(hasDetails(symbol)) {
-        parent.att('onclick', 'toggleSymbol("sym-' + symbol.id + '")');
-      }
+		} else {
+			parent.el(html.a({ id: 'sum-' + symbol.id }));
 
-      summarizeSymbol(symbol);
-      describeSymbol(symbol);
+			if (hasDetails(symbol)) {
+				parent.el(html.button({ class: 'expansion btn btn-link pull-right'
+				}, [
+					html.i({ class: 'glyphicon glyphicon-chevron-down' }),
+					html.i({ class: 'glyphicon glyphicon-chevron-up' })
+				]));
+			}
 
-      parent = parent.up();
-    }
-  }
+			parent.el([
+				html.h4([symbol.name, symbol.signature]),
+				html.small({ style: 'margin: -0.5em 0 1em;' }, [
+					html.span({ style: 'color: #777' }, symbol.modifiers),
+					symbol.longname,
+					symbol.longsignature
+				]),
+				html.p(symbol.description)
+			]);
+		}
+	}
 
-  function summarizeSymbol(symbol) {
-    if(symbol.toplevel) {
-      parent.ele('a').att('id', 'sum-' + symbol.id).txt(' ').up();
+	function describeSymbol(symbol) {
+		parent.el(html.div({ class: 'symbol-dsc row'}, [
+			html.div({ id: 'dsc-' + symbol.id, class: 'col-xs-12' }, [
+  			symbol.params && html.h5('Parameters:'),
+  			symbol.params && html.p(symbol.params.reduce((acc, param) => acc.concat([
+  				html.code(param.name),
+  				html.span(['- ', param.description]),
+  				html.span({
+  					style: 'color: #777'
+  				}, ['(', fuseTypes(param), ')']),
+  				html.br()
+  			]), [])),
+  			symbol.returns && html.h5('Returns:'),
+  			symbol.returns && html.p([
+  				html.span(symbol.returns[0].description),
+  				html.span({ style: 'color: #777' }, ['(', fuseTypes(symbol.returns[0]), ')']),
+  				html.br()
+  			]),
+  			symbol.exceptions && html.h5('Throws errors:'),
+  			symbol.exceptions && html.p(symbol.exceptions.reduce((acc, exc) => acc.concat([
+  				html.span(['- ', exc.description]),
+  				html.span({
+  					style: 'color: #777'
+  				}, ['(', fuseTypes(exc), ')']),
+  				html.br()
+  			]), []))
+      ]),
+  		symbol.toplevel && html.hr()
+		]));
+	}
 
-      if(hasDetails(symbol)) {
-        parent.ele('button')
-                .att('class', 'expansion btn btn-link pull-right')
-                .ele('i').att('class', 'glyphicon glyphicon-chevron-down').txt(' ').up()
-                .ele('i').att('class', 'glyphicon glyphicon-chevron-up').txt(' ').up()
-              .up()
-      }
+	function indexSymbol(symbol) {
+		var icon, title;
+		switch (symbol.kind) {
+			case 'class':
+				icon = '&nbsp;f*';
+				title = 'Constructor';
+				break;
+			case 'enum':
+				icon = '&nbsp;e';
+				title = 'Enumeration';
+				break;
+			case 'namespace':
+				icon = '{ }';
+				title = 'Namespace';
+				break;
+			default:
+				icon = '&nbsp;??';
+				title = 'Unknown Symbol';
+				break;
+		}
 
-      parent.ele('h3').txt(symbol.name).txt(symbol.signature).up()
-            .ele('small')
-              .att('style', 'margin: -0.5em 0 1em;')
-              .ele('span', symbol.modifiers).att('style', 'color: #777').up()
-              .txt(symbol.longname)
-              .txt(symbol.longsignature).up()
-            .ele('p').txt((symbol.kind === 'class' ? symbol.classdesc : symbol.description) || ' ');
-    } else {
-      parent.ele('a').att('id', 'sum-' + symbol.id).txt(' ').up();
+		index.el(html.a({
+			class: 'list-group-item',
+			href: '#sum-' + symbol.id
+		}, [
+			html.span({
+				title: title
+			}, icon),
+			html.span(['&nbsp; ', symbol.longname])
+		]));
+	}
 
-      if(hasDetails(symbol)) {
-        parent.ele('button')
-                .att('class', 'expansion btn btn-link pull-right')
-                .ele('i').att('class', 'glyphicon glyphicon-chevron-down').txt(' ').up()
-                .ele('i').att('class', 'glyphicon glyphicon-chevron-up').txt(' ').up()
-              .up()
-      }
+	function hasDetails(symbol) {
+		if (symbol.kind == 'function') return true;
+		if (symbol.kind == 'class' && (symbol.params || symbol.exceptions)) return true;
+		return false;
+	};
 
-      parent.ele('h4').txt(symbol.name).txt(symbol.signature).up()
-            .ele('small')
-              .att('style', 'margin: -0.5em 0 1em;')
-              .ele('span', symbol.modifiers).att('style', 'color: #777').up()
-              .txt(symbol.longname)
-              .txt(symbol.longsignature).up()
-            .ele('p').txt(symbol.description || ' ');
-    }
-  }
+	function fuseTypes(part) {
+		return part.type && part.type.names ? part.type.names.join('|') : '*';
+	};
 
-  function describeSymbol(symbol) {
-    var desc = parent
-          .ele('div').att('class', 'symbol-dsc row')
-          .ele('div')
-            .att('class', 'col-xs-11 col-xs-offset-1')
-            .att('id', 'dsc-' + symbol.id),
-        para,
-        err;
-
-    if(symbol.params) {
-      desc.ele('h5').txt('Parameters:');
-      para = desc.ele('p');
-      symbol.params.forEach(function(param) {
-        para.ele('code').txt(param.name).up()
-            .ele('span').txt('- ' + param.description).up()
-            .ele('span').att('style', 'color: #777').txt('(' + fuseTypes(param) + ')').up()
-            .ele('br');
-      });
-    }
-
-    if(symbol.returns) {
-      desc.ele('h5').txt('Returns:');
-      desc.ele('p')
-          .ele('span')
-            .txt(symbol.returns[0].description).up()
-          .ele('span')
-            .att('style', 'color: #777')
-            .txt('(' + fuseTypes(symbol.returns[0]) + ')').up()
-          .ele('br');
-    }
-    if(symbol.exceptions) {
-      desc.ele('h5').txt('Throws errors:');
-      err = desc.ele('p');
-      symbol.exceptions.forEach(function(exc) {
-        err.ele('span').txt(exc.description).up()
-           .ele('span').att('style', 'color: #777').txt('(' + fuseTypes(exc) + ')').up()
-           .ele('br');
-      });
-    }
-
-    if(symbol.toplevel){
-      desc.up().up().ele('hr');
-    }
-  }
-
-  function indexSymbol(symbol) {
-    var icon, title;
-    switch(symbol.kind) {
-      case 'class': icon = '&nbspf*'; title = 'Constructor'; break;
-      case 'enum': icon = '&nbsp;e'; title = 'Enumeration'; break;
-      case 'namespace': icon = '{ }'; title = 'Namespace'; break;
-      default: icon = '&nbsp;??'; title = 'Unknown Symbol'; break;
-    }
-
-    index
-      .ele('a')
-        .att('class', 'list-group-item')
-        .att('href', '#sum-' + symbol.id)
-        .ele('span').raw(icon).att('title', title).up()
-        .ele('span').raw('&nbsp;').txt(symbol.longname).up();
-  }
-
-  function hasDetails(symbol) {
-    if(symbol.kind == 'function') return true;
-    if(symbol.kind == 'class' && (symbol.params || symbol.exceptions)) return true;
-    return false;
-  };
-
-  function fuseTypes(part) {
-    return part.type && part.type.names ? part.type.names.join('|') : '*';
-  };
-
-  function write(doc, destination) {
-    var contents = doc
-          .end({ pretty: true, indent: '  ', newline: '\n' })
-          .replace('<?xml version="1.0"?>\n','');
-    fs.outputFile(path.join(destination, 'index.html'), contents, function(err) {
-      if(err) {
-        throw err;
-      }
-    });
-  }
+	function write(doc, destination) {
+		var contents = doc.compile(np.str());
+		fs.outputFile(path.join(destination, 'index.html'), contents, function(err) {
+			if (err) {
+				throw err;
+			}
+		});
+	}
 
 }());

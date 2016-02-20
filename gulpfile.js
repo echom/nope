@@ -20,9 +20,10 @@ var paths = {
     'src/doc/Node.js',
     'src/doc/Text.js',
     'src/doc/Element.js',
-    'src/doc/ElementBuilder.js',
+    'src/doc/ElementBuilder2.js',
     'src/html/HtmlRules.js',
-    'src/html/HtmlBuilder.js',
+    'src/html/HtmlElement.js',
+    'src/html/HtmlBuilder2.js',
     'src/cmp/DomCompiler.js',
     'src/cmp/StringCompiler.js',
     'src/cmp/StreamCompiler.js'
