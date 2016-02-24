@@ -20,13 +20,13 @@
         str = '<' + type,
         indentString = indent.substr(0, indentCount);
 
-    element.attributes().each(function(name, value) {
+    element.attributes().forEach(function(name, value) {
       str += ' ' + name + '="' + value + '"';
     }, this);
 
     if(childCount > 0) {
       stream.write('\n' + indentString + str + '>');
-      children.each(function(e) {
+      children.forEach(function(e) {
         if(np.Element.nodeIsElement_(e)) {
           this.element(e, stream, indentCount + 1);
         } else if(np.Text.nodeIsText_(e)) {

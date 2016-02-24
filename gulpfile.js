@@ -15,15 +15,17 @@ var fs = require('fs');
 var paths = {
   src: [
     'src/nope.js',
+    'src/doc/Invalidation.js',
+    'src/doc/Attribute.js',
     'src/doc/AttributeCollection.js',
     'src/doc/NodeCollection.js',
     'src/doc/Node.js',
     'src/doc/Text.js',
     'src/doc/Element.js',
-    'src/doc/ElementBuilder2.js',
+    'src/doc/ElementBuilder.js',
     'src/html/HtmlRules.js',
     'src/html/HtmlElement.js',
-    'src/html/HtmlBuilder2.js',
+    'src/html/HtmlBuilder.js',
     'src/cmp/DomCompiler.js',
     'src/cmp/StringCompiler.js',
     'src/cmp/StreamCompiler.js'

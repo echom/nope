@@ -7,12 +7,12 @@
 	exports.publish = publish;
 
 	var html = np.html(),
-		title,
-		header,
-		index,
-		parent,
-    left,
-    right;
+			title,
+			header,
+			index,
+			parent,
+	    left,
+	    right;
 
 	function publish(data, opts) {
 		var conf = env.conf.templates;
@@ -21,15 +21,13 @@
 		var doc = html.html([
 			html.head([
 				title = html.title(),
-				html.meta({
-					charset: 'utf-8'
-				}),
+				html.meta({ charset: 'utf-8' }),
 				html.link({
 					rel: 'stylesheet',
 					href: 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css'
 				}),
 				html.script(['\n',
-					'function toggleSymbol(id) {',
+					'function toggleSymbol(id) {\n',
 					'var target = document.getElementById(id);\n',
 					'target.classList.toggle("expanded");\n',
 					'}\n'
@@ -62,7 +60,7 @@
 						  html.h3('Contents'),
 						  index = html.div({ class: 'list-group' })
 					  ]),
-					  right = html.div({ style: 'flex: 1 1 800px; overflow-y: auto; ' })
+					  right = html.div({ style: 'flex: 1 1 800px; overflow-y: auto;' })
 					])
 				])
 			])

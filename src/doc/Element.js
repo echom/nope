@@ -27,17 +27,20 @@
      * @member {np.NodeCollection} np.Element#children_
      * @private
      */
-    this.children_ = new np.NodeCollection();
+    this.children_ = new np.NodeCollection(null, this);
 
     /**
      * This element's attributes
      * @member {np.NodeCollection} np.Element#attributes_
      * @private
      */
-    this.attributes_ = new np.AttributeCollection();
+    this.attributes_ = new np.AttributeCollection(this);
 
     this.selfClosing = true;
   }, np.Node);
+
+  Element.prototype.nodeType_ = 'element';
+  Element.isElement = function(node) { return node.nodeType_ === 'element'; };
 
   /**
    * Returns this element's attribute collection.
@@ -56,15 +59,6 @@
   Element.prototype.children = function() {
     return this.children_;
   };
-
-  // /**
-  //  * Returns this element's child elements collection (read only).
-  //  * @method np.Element#elements
-  //  * @return {np.NodeCollection} this element's child elements
-  //  */
-  // Element.prototype.elements = function() {
-  //   return this.children_.where(Element.childElement_);
-  // };
 
   Element.prototype.path = function() {
     var path = '',
@@ -102,12 +96,21 @@
     }
 
     this.children_.remove(node).add(node);
-    node.parent = this;
     return this;
   };
 
-  Element.prototype.nodeType_ = 'element';
-  Element.nodeIsElement_ = function(node) { return node.nodeType_ === 'element'; };
+  Element.prototype.remove = function(node) {
+    if(!node) {
+      throw new Error(np.msg.argEmpty('node', this.path()));
+    } else if(node === this) {
+      throw new Error(np.msg.opInvalid('remove', 'trying to remove from self', this.path()));
+    } else if(!np.isA(node, np.Node)) {
+      throw new TypeError(np.msg.argType('node', 'np.Node', this.path()));
+    }
+
+    this.children_.remove(node);
+    return this;
+  };
 
   np.Element = Element;
 }(this.np));

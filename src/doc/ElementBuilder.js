@@ -1,68 +1,34 @@
 (function(np) {
-	'use strict';
+  var ElementBuilder = function(element, attributes, children) {
+    this.element_ = element;
 
-	/**
-	 * Creates a new ElementBuilder instance wrapping the provided element.
-	 * @constructor np.ElementBuilder
-	 * @classdesc The ElementBuilder class provides the basic API around an
-	 *   {@link np.Element} allowing to build a HTML document or fragment easily.
-	 */
-	var ElementBuilder = function() {
-		this.root_ = null;
-		this.current_ = null;
-		this.idStore_ = {};
-	};
+    if(attributes) {
+      this.at(attributes);
+    }
+    if(children) {
+      this.el(children);
+    }
+  };
 
-	ElementBuilder.prototype.up = function() {
-		this.current_ = this.current_.up();
-		return this;
-	};
+  ElementBuilder.prototype.at_ = function(name, value) {
+    this.element_.attributes().set(name, value);
+  };
+  ElementBuilder.prototype.tx_ = function(text) {
+    this.element_.children().add(new np.Text(text));
+  };
+  ElementBuilder.prototype.el_ = function(element) {
+    this.element_.append(element);
+  };
 
-	ElementBuilder.prototype.current = function() { return this.current_; };
-	ElementBuilder.prototype.root = function() { return this.root_; };
-
-	ElementBuilder.prototype.tx_ = function(element, text) {
-		element.append(new np.Text(text));
-	};
-	ElementBuilder.prototype.at_ = function(element, name, value) {
-		element.attributes().set(name, value);
-	};
-	ElementBuilder.prototype.el_ = function(parent, name, text, attributes) {
-		var that = this,
-				el = new np.Element(name);
-		if(text) {
-			this.tx_(el, text);
-		}
-		if(attributes) {
-			Object.keys(attributes).forEach(function(key) {
-				that.at_(el, key, attributes[key]);
-			});
-		}
-
-		if(parent) { parent.append(el); }
-		return el;
-	};
-
-
-	ElementBuilder.prototype.el = function(name, text, attributes) {
-		this.current_ = this.el_(this.current_, name, text, attributes);
-		if(!this.root_) {
-			this.root_ = this.current_;
-		}
-
-		return this;
-	};
-	ElementBuilder.prototype.text = function(text) {
-		this.tx_(this.current_, text);
-		return this;
-	};
-	ElementBuilder.prototype.att = function(name, value) {
-		if(np.isA(name, 'string')) {
-      this.at_(this.current_, name, value);
+  ElementBuilder.prototype.at = function(name, value) {
+    if(np.isA(name, 'string')) {
+      //console.log('at(name, value): ', name, value);
+      this.at_(name, value);
     } else if(np.isA(name, 'object')){
+      //console.log('at(obj): ');
       Object.keys(name).forEach(function(key) {
-        this.at_(this.current_, key, name[key]);
-      });
+        this.at_(key, name[key]);
+      }, this);
     } else {
       throw new Error(np.msg.argInvalid(
         'name',
@@ -70,32 +36,66 @@
         element && element.path()
       ));
     }
+    return this;
+  };
+  ElementBuilder.prototype.tx = function(text) {
+    [].concat(text).forEach(function(tx) {
+      if(!tx) return;
+
+      this.tx_(tx);
+    }, this);
 		return this;
-	};
+  };
+  ElementBuilder.prototype.el = function(element) {
+    [].concat(element).forEach(function(el) {
+      if(!el) return;
+
+      if(np.isA(el, 'string')) {
+        this.tx_(el);
+      } else {
+        this.el_(np.isA(el, ElementBuilder) ? el.element_ : el);
+      }
+    }, this);
+    return this;
+  };
+  ElementBuilder.prototype.each = function(collection, fn) {
+    var k, v, n, e;
+
+    if(np.isA(collection, 'array')) {
+      n = collection.length;
+      for(k = 0; k < n; k++) {
+        this.el(fn(collection[k], k, collection));
+      }
+    } else {
+      for(k in collection) {
+        this.el(fn(collection[k], k, collection));
+      }
+    }
+
+    return this;
+  };
 
 
-	/**
-	 * Compile's the entire builder tree given the compile target.
-	 * @param {np.Compiler} target - the compile target
-	 */
-	ElementBuilder.prototype.compile = function(target) {
-		if(this.root_) {
-			return target.compile(this.root());
-		}
-		throw new Error(np.msg.opInvalid(
-			'compile()',
-			'cannot compile builder without any elements'
-		));
-	};
+  var DocumentBuilder = function() {};
+  DocumentBuilder.prototype.el_ = function(name, attributes, children) {
+    return new ElementBuilder(new np.Element(name), attributes, children);
+  };
+  DocumentBuilder.prototype.el = function(name, attributes, children) {
+    //TODO: tighten + meaningful error messages
+    if(!np.isA(attributes, 'object') && !children) {
+      children = attributes;
+      attributes = undefined;
+    }
 
-	ElementBuilder.prototype.save = function(id) {
-		this.idStore_[id] = this.current_;
-		return this;
-	};
-	ElementBuilder.prototype.load = function(id) {
-		this.current_ = this.idStore_[id];
-		return this;
-	};
+    return this.el_(name, attributes, children);
+  };
 
-	np.ElementBuilder = ElementBuilder;
+  np.DocumentBuilder = DocumentBuilder;
+  np.ElementBuilder = ElementBuilder;
+
+  np.doc = function(createFn) {
+    var doc = new DocumentBuilder(),
+        element = createFn && createFn(doc);
+    return element || doc;
+  };
 }(this.np));

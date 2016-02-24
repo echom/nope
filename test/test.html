@@ -7,27 +7,21 @@
   </head>
   <body>
     <script>
-      var yes = true;
+      var title = 'nope.js - Introduction'
+          chapters = ["Quick start", "Tutorial"];
 
-      var html = np.html()
-                  .head()
-                    .meta({'charset': 'utf-8'}).up()
-                    .title('Hello World').up()
-                  .up()
-                  .body()
-                    .h1('Hello World').up()
-                    .p('So, is this better than what we had before?').up()
-                    .p().b('I don\'t know... ').up().text('Maybe...').up()
-                    .p().text(function(p) { yes = !yes; return yes ? 'yes' : 'no';}).save('p').up()
-                    .p().text(function(p) { yes = !yes; return yes ? 'yes' : 'no';}).up()
-                    .p().text(function(p) { yes = !yes; return yes ? 'yes' : 'no';}).up()
-                    .a('', {href: '#hello'}).p('Click me!').up().up()
-                  .up();
-
-      function compile() {
-        html.compile(np.dom());
-      }
-
+      var html = np.html((h) => h.html([
+        h.head([
+          h.meta({'charset': 'utf-8'}),
+          h.title(title)
+        ]),
+        h.body([
+          h.h1(title)
+        ]).each(chapters, chapter => h.section([
+          h.h2(chapter),
+          h.p('chapter description goes here')
+        ]))
+      ])).compile(np.dom());
     </script>
   </body>
 </html>

@@ -42,6 +42,10 @@
         ((typeof(type) == 'function') ? (obj instanceof type) : false);
   };
 
+  np.now = Date.now ?
+            function() { return Date.now(); } :
+            function() { return new Date().getTime(); };
+
 
   /**
    * This namespace contains functions for formatting messages.

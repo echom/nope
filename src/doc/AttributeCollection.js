@@ -8,30 +8,14 @@
    * document attributes.
 	 * It provides methods for retrieving, modifying and deleting attributes.
    */
-  var AttributeCollection = function() {
+  var AttributeCollection = function(owner) {
     this.attributes_ = {};
+    this.inv_ = new np.Invalidation(owner && owner.inv());
   };
 
-	// /**
-	//  * Returns the raw attributes collection as name-value pairs.
-	//  * @method np.AttributeCollection#raw
-	//  * @private
-	//  * @return {Object} the attributes as name-value pairs.
-	//  */
-	// AttributeCollection.prototype.raw = function() {
-	// 	return this.attributes_;
-	// };
-
-	/**
-	 * Determines whether this attributes collection has an attribute
-	 * with the given name.
-	 * @method np.AttributeCollection#has
-	 * @param {string} name - the attribute's name
-	 * @return {boolean} true if the attribute exist, otherwise false
-	 */
-	AttributeCollection.prototype.has = function(name) {
-		return !!name && name in this.attributes_;
-	};
+  AttributeCollection.prototype.has = function(name) {
+    return (name in this.attributes_);
+  };
 
 	/**
 	 * Retrieves an attribute value from the attributes collection.
@@ -44,7 +28,9 @@
 			throw new Error(np.msg.argEmpty('name'));
 		}
 
-		return this.attributes_[name];
+    var attribute = this.attributes_[name];
+
+		return attribute && attribute.get();
 	};
 
 	/**
@@ -53,7 +39,7 @@
 	 * @method np.AttributeCollection#set
 	 * @param {string} name - the attribute's name
    * @param {*} value - the attribute's value (will be converted to string)
-	 * @return {string} the attribute's new value
+	 * @return {*} the attribute's new value
 	 */
 	AttributeCollection.prototype.set = function(name, value) {
 		if(!name) {
@@ -63,7 +49,15 @@
 			throw new Error(np.msg.argEmpty('value'));
 		}
 
-		return (this.attributes_[name] = '' + value);
+    var attribute = this.attributes_[name];
+    if(!attribute) {
+      attribute = new np.Attribute(name, value, this);
+      this.attributes_[name] = attribute;
+    }
+
+    attribute.set(value);
+
+    return value;
 	};
 
 	/**
@@ -73,19 +67,21 @@
 	 */
 	AttributeCollection.prototype.remove = function(name) {
 		delete this.attributes_[name];
+    this.inv().set();
 	};
 
-  AttributeCollection.prototype.each = function(fn, ctx) {
+  AttributeCollection.prototype.forEach = function(fn, ctx) {
     if(!fn) {
       throw new Error(np.msg.argEmpty('fn'));
     }
     ctx = ctx || this;
 
     for(var key in this.attributes_) {
-      fn.call(ctx, key, this.attributes_[key]);
+      fn.call(ctx, key, this.attributes_[key], this);
     }
   };
 
+  AttributeCollection.prototype.inv = function() { return this.inv_; };
 
   np.AttributeCollection = AttributeCollection;
 }(this.np));

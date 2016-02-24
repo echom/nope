@@ -56,8 +56,8 @@ xdescribe('np.HtmlBuilder', function() {
 
         var children = this.builder.current_.children();
         expect(children.count()).toBe(1);
-        expect(children.first()).toEqual(jasmine.any(np.Text));
-        expect(children.first().content).toEqual('text to append');
+        expect(children.find()).toEqual(jasmine.any(np.Text));
+        expect(children.find().content).toEqual('text to append');
       });
       it('should set the provided attributes to the created element', function() {
         this.builder.p(0, { style: 'style', class: 'cssClass'});

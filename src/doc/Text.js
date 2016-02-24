@@ -21,6 +21,7 @@
    */
   Text.prototype.text = function(text) {
     this.content = '' + text;
+    this.inv_.set();
     return this;
   };
 
@@ -37,7 +38,7 @@
   };
 
   Text.prototype.nodeType_ = 'text';
-  Text.nodeIsText_ = function(node) { return node.nodeType_ === 'text'; };
+  Text.isText = function(node) { return node.nodeType_ === 'text'; };
 
   np.Text = Text;
 }(this.np));

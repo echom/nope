@@ -87,33 +87,33 @@ describe('np.AttributeCollection', function() {
 			this.att.set('name1', 'value1');
 			this.att.set('name2', 'value2');
 
-			this.att.each(this.cb);
+			this.att.forEach(this.cb);
 
 			expect(this.cb).toHaveBeenCalledWith('name0', 'value0');
 			expect(this.cb).toHaveBeenCalledWith('name1', 'value1');
 			expect(this.cb).toHaveBeenCalledWith('name2', 'value2');
 		});
 		it('does not call the callback function if attributes are empty', function() {
-			this.att.each(this.cb);
+			this.att.forEach(this.cb);
 			expect(this.cb).not.toHaveBeenCalled();
 		});
 
 		it('calls the callback with itself as the context by default', function() {
 			this.att.set('name0', 'value0');
-			this.att.each(this.cb);
+			this.att.forEach(this.cb);
 			expect(this.cb.calls.mostRecent().object).toBe(this.att);
 		});
 
 		it('calls the callback with in the provided context', function() {
 			var ctx = {};
 			this.att.set('name0', 'value0');
-			this.att.each(this.cb, ctx);
+			this.att.forEach(this.cb, ctx);
 			expect(this.cb.calls.mostRecent().object).toBe(ctx);
 		});
 
 		it('throws if no callback is provided', function() {
 			var att = this.att,
-          toFail = function() { att.each(); };
+          toFail = function() { att.forEach(); };
 			expect(toFail).toThrowError(/InvalidArgument/);
 		});
 	});

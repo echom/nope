@@ -6,15 +6,20 @@
    * @constructor np.NodeCollection
    * @param {np.Node[]} [array] - an optional array of nodes with which to
    * initialize this NodeCollection
-   * @param {boolean} [readonly=false] - a boolean value indicating whether this
-   * collection can be modified
+   * @param {boolean} [owner] - the owner element of this node collection
    * @classdesc The NodeCollection class represents a collection of document
    * nodes.
 	 * It provides methods for retrieving, modifying and deleting nodes.
    */
-  var NodeCollection = function(array, readonly) {
+  var NodeCollection = function(array, owner) {
     this.children_ = array || [];
-    this.readonly_ = !!readonly;
+
+    this.owner = owner;
+    this.inv_ = new np.Invalidation(owner && owner.inv());
+  };
+
+  NodeCollection.prototype.inv = function() {
+    return this.inv_;
   };
 
   /**
@@ -29,9 +34,7 @@
   NodeCollection.prototype.add = function(node) {
     var children = this.children_;
 
-    if(this.readonly_) {
-      throw new Error(np.msg.opInvalid('add', 'the collection was marked readonly'));
-    } else if(!node) {
+    if(!node) {
       throw new Error(np.msg.argEmpty('node'));
     } else if(!np.isA(node, np.Node)) {
       throw new TypeError(np.msg.argType('node', 'np.Node'));
@@ -39,6 +42,9 @@
 
     if((children.indexOf(node)) < 0) {
       children.push(node);
+      node.parent = this.owner;
+      node.inv().parent = this.owner.inv();
+      this.inv().set();
     }
 
     return this;
@@ -56,15 +62,16 @@
     var children = this.children_,
         index;
 
-    if(this.readonly_) {
-      throw new Error(np.msg.opInvalid('remove', 'the collection was marked readonly'));
-    } else if(!node) {
+    if(!node) {
       throw new Error(np.msg.argEmpty('node'));
     } else if(!np.isA(node, np.Node)) {
       throw new TypeError(np.msg.argType('node', 'np.Node'));
     }
     if((index = children.indexOf(node)) >= 0) {
       children.splice(index, 1);
+      node.parent = null;
+      node.inv().parent = null;
+      this.inv().set();
     }
 
     return this;
@@ -78,7 +85,7 @@
    * Returns the first node within the collection which matches the given
    * predicate. The predicate function receives a node and is expected to
    * return a boolean value indicating whether the node matches.
-   * @method np.NodeCollection#first
+   * @method np.NodeCollection#find
    * @param {function(np.Node):boolean} predicate - the predicate function to
    * be applied to elements
    * @param {*} [ctx] - an optional context for the predicate (otherwise 'this'
@@ -89,9 +96,10 @@
    * @example
    * var collection = new np.NodeCollection(),
    *     predicate = function(node) { return node.count() == 0; };
-   * collection.first(predicate);
+   * collection.find(predicate);
    */
-  NodeCollection.prototype.first = function(predicate, ctx) {
+  NodeCollection.prototype.find = function(predicate, ctx) {
+    // TODO: use this.children_.find()???
     ctx = ctx || this;
 
     var children = this.children_,
@@ -114,19 +122,20 @@
    * predicate. The predicate function receives a node and is expected to
    * return a boolean value indicating whether the node matches.
    * @method np.NodeCollection#where
-   * @param {function(np.Node):boolean} predicate - the predicate function to
+   * @param {function(np.Node, index, np.NodeCollection):boolean} predicate - the predicate function to
    * be applied to elements
    * @param {*} [ctx] - an optional context for the predicate (otherwise 'this'
    * will be the NodeCollection)
-   * @return {np.NodeCollection} all nodes matching the predicate or an empty
+   * @return {np.Node[]} all nodes matching the predicate or an empty
    * collection if no node matches
    * @throws {Error} when the 'predicate' argument is not provided.
    * @example
    * var collection = new np.NodeCollection(),
    *     predicate = function(node) { return node.count() == 0; };
-   * collection.all(predicate);
+   * collection.when(predicate);
    */
-  NodeCollection.prototype.where = function(predicate, ctx) {
+  NodeCollection.prototype.filter = function(predicate, ctx) {
+    // TODO: use this.children_.filter()???
     if(!predicate) {
       throw new Error(np.msg.argEmpty('predicate'));
     }
@@ -143,10 +152,12 @@
         result.push(children[i]);
       }
     }
-    return new NodeCollection(result, true);
+    return result;
   };
 
-  NodeCollection.prototype.each = function(fn, ctx) {
+  NodeCollection.prototype.forEach = function(fn, ctx) {
+    // TODO: use this.children_.forEach()???
+
     if(!fn) {
       throw new Error(np.msg.argEmpty('fn'));
     }
@@ -158,7 +169,7 @@
         l = children.length;
 
     for(; i < l; i++) {
-      fn.call(ctx, children[i]);
+      fn.call(ctx, children[i], i, this);
     }
   };
   /**

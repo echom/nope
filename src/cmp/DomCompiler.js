@@ -1,77 +1,161 @@
 (function(np) {
 	'use strict';
 
-  var DomNodeLink = function(doc, parent) {
+	var DomInvalidation = np.inherits(function(link, frequency) {
+		var that = this;
+
+		this.link = link;
+		this.delay = Math.round(1000 / (frequency || 30));
+
+		this.nextSyncHandle_ = 0;
+
+		this.syncCallback_ = function() { that.sync(); };
+	}, np.Invalidation);
+	DomInvalidation.prototype.set = function() {
+		np.Invalidation.prototype.set.call(this);
+		if(!this.nextSyncHandle_) {
+			this.sync();
+		}
+		this.scheduleNextSync_();
+	};
+	DomInvalidation.prototype.sync = function() {
+		this.link.sync();
+		this.nextSyncHandle_ = 0;
+
+		var dt = np.now();
+		console.log(dt - this.dt);
+		this.dt = dt;
+	};
+	DomInvalidation.prototype.scheduleNextSync_ = function() {
+		if(!this.nextSyncHandle_) {
+			this.nextSyncHandle_ = setTimeout(this.syncCallback_, this.delay);
+		}
+	};
+
+
+  var DomLink = function(doc, parent) {
     this.doc = doc;
     this.parent = parent;
   };
-  DomNodeLink.prototype.up = function() { return this.parent; };
-  DomNodeLink.prototype.root = function() { return this.parent ? this.parent.root() : this; };
-  DomNodeLink.prototype.sync = function() {};
+  DomLink.prototype.up = function() { return this.parent; };
+  DomLink.prototype.root = function() { return this.parent ? this.parent.root() : this; };
+  DomLink.prototype.sync_ = function(syncTimestamp) {};
+	DomLink.prototype.sync = function(syncTimestamp) {
+		syncTimestamp = syncTimestamp || np.now();
+		this.sync_(syncTimestamp);
+	};
 
   var DomAttributeLink = np.inherits(function(doc, parent, name) {
-    DomNodeLink.call(this, doc, parent);
+    DomLink.call(this, doc, parent);
     this.name = name;
     this.attributes = parent.shadow.attributes();
-  }, DomNodeLink);
-  DomAttributeLink.prototype.sync = function() {
+  }, DomLink);
+  DomAttributeLink.prototype.sync_ = function(syncTimestamp) {
     if(this.attributes.has(this.name)) {
       this.parent.dom.setAttribute(this.name, this.attributes.get(this.name));
+			return true;
     } else if(parent.dom.hasAttribute(this.name)) {
       this.parent.dom.removeAttribute(this.name);
+			return false;
     }
   };
 
   var DomTextLink = np.inherits(function(doc, parent, shadow, dom) {
-    DomNodeLink.call(this, doc, parent);
+    DomLink.call(this, doc, parent);
     this.shadow = shadow;
     this.dom = dom;
-  }, DomNodeLink);
-  DomTextLink.prototype.sync = function() {
-    var dom = this.dom;
+  }, DomLink);
+  DomTextLink.prototype.sync_ = function(syncTimestamp) {
+    var shadow = this.shadow,
+				dom = this.dom;
 
+		if(!shadow.parent) {
+			if(dom && dom.parentNode) {
+				dom.parentNode.removeChild(dom);
+			}
+			return false;
+		}
     if(!this.dom) {
       this.dom = this.doc.createTextNode(this.shadow.content);
       this.parent.dom.appendChild(this.dom);
-    } else {
+			this.lastSynced_ = syncTimestamp;
+    } else if(shadow.inv().check(this.lastSynced_)) {
       this.dom.textContent = this.shadow.content;
+			this.lastSynced_ = syncTimestamp;
     }
+		return false;
   };
 
   var DomElementLink = np.inherits(function(doc, parent, shadow, dom) {
-    DomNodeLink.call(this, doc, parent);
+    DomLink.call(this, doc, parent);
     this.shadow = shadow;
     this.dom = dom;
+		this.lastSynced_ = undefined;
 
     this.attributeLinks = {};
     this.childLinks = {};
-  }, DomNodeLink);
-  DomElementLink.prototype.sync = function() {
+  }, DomLink);
+	DomElementLink.prototype.sync_ = function(syncTimestamp) {
     var shadow = this.shadow,
-        attributeLinks = this.attributeLinks,
-        childLinks = this.childLinks;
+				attributeLinks = this.attributeLinks,
+				childLinks = this.childLinks,
+				dom = this.dom,
+				synced = false;
+
+		//TODO: root element parent is NULL (or undefined)
+		// if(this.shadow.parent === null) {
+		// 	if(dom && dom.parentNode) {
+		// 		dom.parentNode.remove(this.dom);
+		// 	}
+		// 	return false;
+		// }
+
     if(!this.dom) {
       this.dom = this.doc.createElement(shadow.type);
-      this.parent.dom.appendChild(this.dom);
+			if(this.parent) {
+      	this.parent.dom.appendChild(this.dom);
+			}
+
+			synced = true;
     }
-    shadow.attributes().each(function(key, val) {
-      var attributeLink = attributeLinks[key];
-      if(!attributeLink) {
-        attributeLink = new DomAttributeLink(this.doc, this, key);
-        attributeLinks[key] = attributeLink;
-      }
-      attributeLink.sync();
-    }, this);
-    shadow.children().each(function(node) {
-      var childLink = childLinks[node.id];
-      if(!childLink) {
-        childLink = node.nodeType_ === 'text' ?
-          new DomTextLink(this.doc, this, node) :
-          new DomElementLink(this.doc, this, node);
-        childLinks[node.id] = childLink;
-      }
-      childLink.sync();
-    }, this);
+
+		if(this.shadow.inv().check(this.lastSynced_)) {
+			//TODO: what about removing children & child links ???
+			if(shadow.attributes().inv().check(this.lastSynced_)) {
+				shadow.attributes().forEach(function(key, val) {
+					if(val.inv().check(this.lastSynced_)) {
+						var attributeLink = attributeLinks[key];
+						if(!attributeLink) {
+							attributeLink = new DomAttributeLink(this.doc, this, key);
+							attributeLinks[key] = attributeLink;
+						}
+						attributeLink.sync_(syncTimestamp);
+					}
+				}, this);
+			}
+
+			//if(shadow.children().inv().check(this.lastSynced_)) {
+				//TODO: what about removing children & child links ???
+				shadow.children().forEach(function(node) {
+					var childLink = childLinks[node.id];
+					if(!childLink) {
+						childLink = node.nodeType_ === 'text' ?
+							new DomTextLink(this.doc, this, node) :
+							new DomElementLink(this.doc, this, node);
+						childLinks[node.id] = childLink;
+					}
+					childLink.sync_(syncTimestamp);
+				}, this);
+			//}
+
+			synced = true;
+		}
+
+		if(synced) {
+			this.lastSynced_ = syncTimestamp;
+		}
+
+		return true;
   };
 
 	/**
@@ -94,21 +178,27 @@
 	 * @private
 	 */
   DomCompiler.prototype.compile = function(root) {
+		var rootLink;
     if(root.type == 'html') {
-      var htmlLink = new DomElementLink(document, null, root, document);
+      rootLink = new DomElementLink(this.doc, null, root, document);
       this.applyElement_(
-        htmlLink,
+        rootLink,
         this.doc.getElementsByTagName('head')[0],
-        root.children().first(function(node) { return node.type === 'head'; })
+        root.children().find(function(node) { return node.type === 'head'; })
       );
       this.applyElement_(
-        htmlLink,
+        rootLink,
         this.doc.getElementsByTagName('body')[0],
-        root.children().first(function(node) { return node.type === 'body'; })
+        root.children().find(function(node) { return node.type === 'body'; })
       );
+    } else {
+			rootLink = new DomElementLink(this.doc, null, root, null);
+		}
 
-      htmlLink.sync();
-    }
+		rootLink.sync(Number.NEGATIVE_INFITY);
+		rootLink.invalidation = new DomInvalidation(rootLink);
+		rootLink.shadow.inv().parent = rootLink.invalidation;
+		return rootLink;
   };
 
   DomCompiler.prototype.applyElement_ = function(parentLink, dom, shadow) {

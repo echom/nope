@@ -18,7 +18,7 @@
         str = '<' + type,
         indentString = indent.substr(0, indentCount);
 
-    element.attributes().each(function(name, value) {
+    element.attributes().forEach(function(name, value) {
       value = value.replace(/"/g, '&quot;');
       str += ' ' + name + '="' + value + '"';
     }, this);
@@ -28,7 +28,7 @@
     }
 
     if(childCount > 0) {
-      children.each(function(e) {
+      children.forEach(function(e) {
         if(np.Element.nodeIsElement_(e)) {
           this.element(e, buffer, indentCount + 1);
         } else if(np.Text.nodeIsText_(e)) {

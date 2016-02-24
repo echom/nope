@@ -2,7 +2,7 @@
   'use strict';
 
   /**
-   * Creates a new Node instance with the given type.
+   * Creates a new Node instance with the given parent.
    * @constructor np.Node
    * @classdesc The Node represents a document node. It provides methods for
    * navigating and modifying the document tree.
@@ -18,7 +18,12 @@
      * @member {np.Node} np.Node#parent
      */
     this.parent = parent;
+    this.inv_ = new np.Invalidation(parent && parent.inv());
     this.id = Node.idCounter_++;
+  };
+
+  Node.prototype.inv = function() {
+    return this.inv_;
   };
 
   /**
@@ -38,15 +43,6 @@
    */
   Node.prototype.root = function() {
     return this.parent ? this.parent.root() : this;
-  };
-
-  Node.prototype.traceAncestors_ = function() {
-    var current = this,
-        result = [current];
-
-    while((current = current.parent)) {
-      result.unshift(current);
-    }
   };
 
   Node.idCounter_ = 0;
