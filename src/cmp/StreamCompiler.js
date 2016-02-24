@@ -27,9 +27,9 @@
     if(childCount > 0) {
       stream.write('\n' + indentString + str + '>');
       children.forEach(function(e) {
-        if(np.Element.nodeIsElement_(e)) {
+        if(np.Element.isElement(e)) {
           this.element(e, stream, indentCount + 1);
-        } else if(np.Text.nodeIsText_(e)) {
+        } else if(np.Text.isText(e)) {
           this.text(e, stream, indentCount + 1);
         }
       }, this);

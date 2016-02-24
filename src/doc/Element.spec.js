@@ -97,13 +97,13 @@ describe('np.Element', function() {
       expect(el.nodeType_).toBe('element');
     });
   });
-  describe('#nodeIsElement_', function() {
+  describe('#isElement', function() {
     it('matches only elements', function() {
       var el = new np.Element('x'),
           nd = new np.Node();
 
-      expect(np.Element.nodeIsElement_(el)).toBe(true);
-      expect(np.Element.nodeIsElement_(nd)).toBe(false);
+      expect(np.Element.isElement(el)).toBe(true);
+      expect(np.Element.isElement(nd)).toBe(false);
     });
   });
 });

@@ -19,7 +19,7 @@
         indentString = indent.substr(0, indentCount);
 
     element.attributes().forEach(function(name, value) {
-      value = value.replace(/"/g, '&quot;');
+      value = value.get().replace(/"/g, '&quot;');
       str += ' ' + name + '="' + value + '"';
     }, this);
 
@@ -29,9 +29,9 @@
 
     if(childCount > 0) {
       children.forEach(function(e) {
-        if(np.Element.nodeIsElement_(e)) {
+        if(np.Element.isElement(e)) {
           this.element(e, buffer, indentCount + 1);
-        } else if(np.Text.nodeIsText_(e)) {
+        } else if(np.Text.isText(e)) {
           this.text(e, buffer, indentCount + 1);
         }
       }, this);

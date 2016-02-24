@@ -42,8 +42,8 @@ describe('np.Text', function() {
       var tx = new np.Text();
           nd = new np.Node();
 
-      expect(np.Text.nodeIsText_(tx)).toBe(true);
-      expect(np.Text.nodeIsText_(nd)).toBe(false);
+      expect(np.Text.isText(tx)).toBe(true);
+      expect(np.Text.isText(nd)).toBe(false);
     });
   });
 });

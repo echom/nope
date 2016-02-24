@@ -31,7 +31,7 @@
         index = -1;
     if(parent) {
       path += parent.path();
-      index = parent.children().toArray().filter(Text.nodeIsText_).indexOf(this);
+      index = parent.children().toArray().filter(Text.isText).indexOf(this);
     }
     path += '#text' + (index >= 0 ? '[' + index + ']' : '');
     return path;

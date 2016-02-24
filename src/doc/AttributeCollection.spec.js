@@ -89,9 +89,9 @@ describe('np.AttributeCollection', function() {
 
 			this.att.forEach(this.cb);
 
-			expect(this.cb).toHaveBeenCalledWith('name0', 'value0');
-			expect(this.cb).toHaveBeenCalledWith('name1', 'value1');
-			expect(this.cb).toHaveBeenCalledWith('name2', 'value2');
+			expect(this.cb).toHaveBeenCalledWith('name0', jasmine.any(Object));
+			expect(this.cb).toHaveBeenCalledWith('name1', jasmine.any(Object));
+			expect(this.cb).toHaveBeenCalledWith('name2', jasmine.any(Object));
 		});
 		it('does not call the callback function if attributes are empty', function() {
 			this.att.forEach(this.cb);

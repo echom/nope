@@ -1,7 +1,6 @@
 (function(np) {
   var Invalidation = function(parent) {
     this.time = np.now();
-    this.name = name;
     this.parent = parent || null;
   };
 
