@@ -11,17 +11,9 @@
    * nodes.
 	 * It provides methods for retrieving, modifying and deleting nodes.
    */
-  var NodeCollection = function(array, owner) {
+  var NodeCollection = function(array) {
     this.children_ = array || [];
-
-    this.owner = owner;
-    this.inv_ = new np.Invalidation(owner && owner.inv());
   };
-
-  NodeCollection.prototype.inv = function() {
-    return this.inv_;
-  };
-
   /**
    * Adds a node to this collection. If the node is already in this collection
    * it is ignored.
@@ -42,9 +34,6 @@
 
     if((children.indexOf(node)) < 0) {
       children.push(node);
-      node.parent = this.owner;
-      node.inv().parent = this.owner.inv();
-      this.inv().set();
     }
 
     return this;
@@ -69,9 +58,6 @@
     }
     if((index = children.indexOf(node)) >= 0) {
       children.splice(index, 1);
-      node.parent = null;
-      node.inv().parent = null;
-      this.inv().set();
     }
 
     return this;

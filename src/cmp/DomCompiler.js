@@ -76,11 +76,11 @@
 			return false;
 		}
     if(!this.dom) {
-      this.dom = this.doc.createTextNode(this.shadow.content);
+      this.dom = this.doc.createTextNode(this.shadow.get());
       this.parent.dom.appendChild(this.dom);
 			this.lastSynced_ = syncTimestamp;
-    } else if(shadow.inv().check(this.lastSynced_)) {
-      this.dom.textContent = this.shadow.content;
+    } else if(shadow.invalid(this.lastSynced_)) {
+      this.dom.textContent = this.shadow.get();
 			this.lastSynced_ = syncTimestamp;
     }
 		return false;
@@ -100,7 +100,8 @@
 				attributeLinks = this.attributeLinks,
 				childLinks = this.childLinks,
 				dom = this.dom,
-				synced = false;
+				synced = false,
+				invalidation;
 
 		//TODO: root element parent is NULL (or undefined)
 		// if(this.shadow.parent === null) {
@@ -111,7 +112,7 @@
 		// }
 
     if(!this.dom) {
-      this.dom = this.doc.createElement(shadow.type);
+      this.dom = this.doc.createElement(shadow.name);
 			if(this.parent) {
       	this.parent.dom.appendChild(this.dom);
 			}
@@ -119,11 +120,10 @@
 			synced = true;
     }
 
-		if(this.shadow.inv().check(this.lastSynced_)) {
-			//TODO: what about removing children & child links ???
-			if(shadow.attributes().inv().check(this.lastSynced_)) {
-				shadow.attributes().forEach(function(key, val) {
-					if(val.inv().check(this.lastSynced_)) {
+		if((invalidation = this.shadow.invalid(this.lastSynced_))) {
+			if(invalidation & np.Element.ATTRIBUTES_INVALID) {
+				shadow.attributes().forEach(function(val, key) {
+					if(val.invalid(this.lastSynced_)) {
 						var attributeLink = attributeLinks[key];
 						if(!attributeLink) {
 							attributeLink = new DomAttributeLink(this.doc, this, key);
@@ -134,18 +134,18 @@
 				}, this);
 			}
 
-			//if(shadow.children().inv().check(this.lastSynced_)) {
-				//TODO: what about removing children & child links ???
-				shadow.children().forEach(function(node) {
-					var childLink = childLinks[node.id];
-					if(!childLink) {
-						childLink = node.nodeType_ === 'text' ?
-							new DomTextLink(this.doc, this, node) :
-							new DomElementLink(this.doc, this, node);
-						childLinks[node.id] = childLink;
-					}
-					childLink.sync_(syncTimestamp);
-				}, this);
+			//if(shadow.children().invalid().check(this.lastSynced_)) {
+			//TODO: what about removing children & child links ???
+			shadow.children().forEach(function(node) {
+				var childLink = childLinks[node.id];
+				if(!childLink) {
+					childLink = node.nodeType_ === 'text' ?
+						new DomTextLink(this.doc, this, node) :
+						new DomElementLink(this.doc, this, node);
+					childLinks[node.id] = childLink;
+				}
+				childLink.sync_(syncTimestamp);
+			}, this);
 			//}
 
 			synced = true;
@@ -179,17 +179,17 @@
 	 */
   DomCompiler.prototype.compile = function(root) {
 		var rootLink;
-    if(root.type == 'html') {
+    if(root.name == 'html') {
       rootLink = new DomElementLink(this.doc, null, root, document);
       this.applyElement_(
         rootLink,
         this.doc.getElementsByTagName('head')[0],
-        root.children().find(function(node) { return node.type === 'head'; })
+        root.children().find(function(node) { return node.name === 'head'; })
       );
       this.applyElement_(
         rootLink,
         this.doc.getElementsByTagName('body')[0],
-        root.children().find(function(node) { return node.type === 'body'; })
+        root.children().find(function(node) { return node.name === 'body'; })
       );
     } else {
 			rootLink = new DomElementLink(this.doc, null, root, null);
@@ -197,7 +197,7 @@
 
 		rootLink.sync(Number.NEGATIVE_INFITY);
 		rootLink.invalidation = new DomInvalidation(rootLink);
-		rootLink.shadow.inv().parent = rootLink.invalidation;
+		rootLink.shadow.invalidation().parent = rootLink.invalidation;
 		return rootLink;
   };
 

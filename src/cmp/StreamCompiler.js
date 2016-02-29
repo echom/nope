@@ -14,13 +14,13 @@
   };
 
   StreamCompiler.prototype.element = function(element, stream, indentCount) {
-    var type = element.type,
+    var name = element.name,
         children = element.children(),
         childCount = children.count(),
-        str = '<' + type,
+        str = '<' + name,
         indentString = indent.substr(0, indentCount);
 
-    element.attributes().forEach(function(name, value) {
+    element.attributes().forEach(function(value, name) {
       str += ' ' + name + '="' + value + '"';
     }, this);
 
@@ -33,7 +33,7 @@
           this.text(e, stream, indentCount + 1);
         }
       }, this);
-      stream.write('\n' + indentString + '</' + type + '>');
+      stream.write('\n' + indentString + '</' + name + '>');
     } else if(element.selfClosing) {
       stream.write('\n' + indentString + str + ' />');
     }

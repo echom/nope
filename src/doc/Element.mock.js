@@ -1,8 +1,8 @@
 (function(mocks) {
-  mocks.Element = function(type) {
+  mocks.Element = function(name) {
     var el = np.mocks.Node();
 
-    el.type = type;
+    el.name = name;
     el.append = jasmine.createSpy('append');
     el.attributes = jasmine.createSpy('attributes');
     el.children = jasmine.createSpy('attributes');

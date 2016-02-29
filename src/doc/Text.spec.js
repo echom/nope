@@ -10,7 +10,7 @@ describe('np.Text', function() {
     it('has the text passed in as first argument', function() {
       var parent = new np.Node();
       var text = new np.Text('Hello world');
-      expect(text.content).toBe('Hello world');
+      expect(text.get()).toBe('Hello world');
     });
 
     it('has the parent passed in as second argument', function() {
@@ -21,13 +21,13 @@ describe('np.Text', function() {
 
   });
 
-  describe('#text', function() {
+  describe('#set', function() {
     it('sets the text content of the text node', function() {
       var text = new np.Text('Hello world');
 
-      text.text('Goodbye world');
+      text.set('Goodbye world');
 
-      expect(text.content).toBe('Goodbye world');
+      expect(text.get()).toBe('Goodbye world');
     });
   });
 
@@ -37,7 +37,7 @@ describe('np.Text', function() {
       expect(tx.nodeType_).toBe('text');
     });
   });
-  describe('#nodeIsElement_', function() {
+  describe('#isText', function() {
     it('matches only elements', function() {
       var tx = new np.Text();
           nd = new np.Node();

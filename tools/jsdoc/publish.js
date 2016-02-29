@@ -72,7 +72,7 @@
 			private: opts.private
 		});
 
-		right.el(np.html(html => html.div({
+		right.add(np.html(html => html.div({
 			class: 'bottom.padding'
 		})))
 
@@ -81,8 +81,8 @@
 
 	function processSymbol(symbol) {
 		if (symbol.kind === 'package') {
-			title.tx([symbol.name, ' - ', symbol.description]);
-			header.el([
+			title.add([symbol.name, ' - ', symbol.description]);
+			header.add([
         html.h1({ style: 'margin-left: 10px;' }, [
 				  symbol.name,
 				  html.small({ class: 'lead' }, symbol.description)
@@ -92,7 +92,7 @@
 		} else {
 			symbol.toplevel && indexSymbol(symbol);
 
-      right.el([
+      right.add([
         parent = html.section({
   				class: 'symbol container-fluid' + (symbol.inherited ? ' inherited' : ''),
   				id: 'sym-' + symbol.id
@@ -100,7 +100,7 @@
       ]);
 
 			if (hasDetails(symbol)) {
-				parent.at('onclick', 'toggleSymbol("sym-' + symbol.id + '")');
+				parent.set('onclick', 'toggleSymbol("sym-' + symbol.id + '")');
 			}
 
 			summarizeSymbol(symbol);
@@ -110,16 +110,16 @@
 
 	function summarizeSymbol(symbol) {
 		if (symbol.toplevel) {
-			parent.el(html.a({ id: 'sum-' + symbol.id }));
+			parent.add(html.a({ id: 'sum-' + symbol.id }));
 
 			if (hasDetails(symbol)) {
-				parent.el(html.button({ class: 'expansion btn btn-link pull-right' }, [
+				parent.add(html.button({ class: 'expansion btn btn-link pull-right' }, [
 					html.i({ class: 'glyphicon glyphicon-chevron-down' }),
 					html.i({ class: 'glyphicon glyphicon-chevron-up' })
 				]));
 			}
 
-			parent.el([
+			parent.add([
 				html.h3([symbol.name, symbol.signature]),
 				html.small({ style: 'margin: -0.5em 0 1em;' }, [
 					html.span({ style: 'color: #777' }, symbol.modifiers),
@@ -130,17 +130,17 @@
 			]);
 
 		} else {
-			parent.el(html.a({ id: 'sum-' + symbol.id }));
+			parent.add(html.a({ id: 'sum-' + symbol.id }));
 
 			if (hasDetails(symbol)) {
-				parent.el(html.button({ class: 'expansion btn btn-link pull-right'
+				parent.add(html.button({ class: 'expansion btn btn-link pull-right'
 				}, [
 					html.i({ class: 'glyphicon glyphicon-chevron-down' }),
 					html.i({ class: 'glyphicon glyphicon-chevron-up' })
 				]));
 			}
 
-			parent.el([
+			parent.add([
 				html.h4([symbol.name, symbol.signature]),
 				html.small({ style: 'margin: -0.5em 0 1em;' }, [
 					html.span({ style: 'color: #777' }, symbol.modifiers),
@@ -153,7 +153,7 @@
 	}
 
 	function describeSymbol(symbol) {
-		parent.el(html.div({ class: 'symbol-dsc row'}, [
+		parent.add(html.div({ class: 'symbol-dsc row'}, [
 			html.div({ id: 'dsc-' + symbol.id, class: 'col-xs-12' }, [
   			symbol.params && html.h5('Parameters:'),
   			symbol.params && html.p(symbol.params.reduce((acc, param) => acc.concat([
@@ -204,7 +204,7 @@
 				break;
 		}
 
-		index.el(html.a({
+		index.add(html.a({
 			class: 'list-group-item',
 			href: '#sum-' + symbol.id
 		}, [

@@ -8,9 +8,8 @@
    * document attributes.
 	 * It provides methods for retrieving, modifying and deleting attributes.
    */
-  var AttributeCollection = function(owner) {
+  var AttributeCollection = function() {
     this.attributes_ = {};
-    this.inv_ = new np.Invalidation(owner && owner.inv());
   };
 
   AttributeCollection.prototype.has = function(name) {
@@ -51,7 +50,8 @@
 
     var attribute = this.attributes_[name];
     if(!attribute) {
-      attribute = new np.Attribute(name, value, this);
+      attribute = new np.Attribute(name, value);
+      attribute.inv_.parent = this.inv_;
       this.attributes_[name] = attribute;
     }
 
@@ -67,7 +67,6 @@
 	 */
 	AttributeCollection.prototype.remove = function(name) {
 		delete this.attributes_[name];
-    this.inv().set();
 	};
 
   AttributeCollection.prototype.forEach = function(fn, ctx) {
@@ -77,11 +76,9 @@
     ctx = ctx || this;
 
     for(var key in this.attributes_) {
-      fn.call(ctx, key, this.attributes_[key], this);
+      fn.call(ctx, this.attributes_[key], key, this);
     }
   };
-
-  AttributeCollection.prototype.inv = function() { return this.inv_; };
 
   np.AttributeCollection = AttributeCollection;
 }(this.np));

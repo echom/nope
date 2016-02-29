@@ -77,7 +77,7 @@ describe('np.AttributeCollection', function() {
     });
 	});
 
-	describe('#each', function() {
+	describe('#forEach', function() {
 		beforeEach(function() {
 			this.att = new np.AttributeCollection();
 			this.cb = jasmine.createSpy();
@@ -89,9 +89,9 @@ describe('np.AttributeCollection', function() {
 
 			this.att.forEach(this.cb);
 
-			expect(this.cb).toHaveBeenCalledWith('name0', jasmine.any(Object));
-			expect(this.cb).toHaveBeenCalledWith('name1', jasmine.any(Object));
-			expect(this.cb).toHaveBeenCalledWith('name2', jasmine.any(Object));
+			expect(this.cb).toHaveBeenCalledWith(jasmine.any(Object), 'name0', this.att);
+			expect(this.cb).toHaveBeenCalledWith(jasmine.any(Object), 'name1', this.att);
+			expect(this.cb).toHaveBeenCalledWith(jasmine.any(Object), 'name2', this.att);
 		});
 		it('does not call the callback function if attributes are empty', function() {
 			this.att.forEach(this.cb);

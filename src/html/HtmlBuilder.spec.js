@@ -40,7 +40,7 @@ xdescribe('np.HtmlBuilder', function() {
         var element = this.builder.current_;
 
         expect(element).toEqual(jasmine.any(np.Element));
-        expect(element.type).toBe('div');
+        expect(element.name).toBe('div');
       });
       it('produces a new element that is a child of the current one', function() {
         this.builder.div();

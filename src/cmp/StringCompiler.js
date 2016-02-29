@@ -12,13 +12,13 @@
   };
 
   StringCompiler.prototype.element = function(element, buffer, indentCount) {
-    var type = element.type,
+    var name = element.name,
         children = element.children(),
         childCount = children.count(),
-        str = '<' + type,
+        str = '<' + name,
         indentString = indent.substr(0, indentCount);
 
-    element.attributes().forEach(function(name, value) {
+    element.attributes().forEach(function(value, name) {
       value = value.get().replace(/"/g, '&quot;');
       str += ' ' + name + '="' + value + '"';
     }, this);
@@ -39,7 +39,7 @@
     if(childCount === 0 && element.selfClosing) {
       buffer.push('\n' + str + ' />');
     } else {
-      buffer.push('\n' + indentString + '</' + type + '>');
+      buffer.push('\n' + indentString + '</' + name + '>');
     }
   };
 

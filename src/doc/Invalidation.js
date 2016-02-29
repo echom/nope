@@ -1,22 +1,22 @@
 (function(np) {
   var Invalidation = function(parent) {
-    this.time = np.now();
+    this.timestamp = np.now();
     this.parent = parent || null;
   };
 
   Invalidation.prototype.get = function() {
-    return this.time;
+    return this.timestamp;
   };
 
-  Invalidation.prototype.set = function() {
-    this.time = np.now();
+  Invalidation.prototype.set = function(timestamp) {
+    this.timestamp = timestamp || np.now();
     if(this.parent) {
-      this.parent.set();
+      this.parent.set(this.timestamp);
     }
   };
 
   Invalidation.prototype.check = function(timestamp) {
-    return !timestamp || this.time > timestamp;
+    return !timestamp || this.timestamp > timestamp;
   };
 
   np.Invalidation = Invalidation;

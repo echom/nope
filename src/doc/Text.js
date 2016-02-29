@@ -10,8 +10,7 @@
    */
   var Text = np.inherits(function(text, parent) {
     np.Node.call(this, parent);
-
-    this.text(text || '');
+    this.set(text || '');
   }, np.Node);
 
   /**
@@ -19,12 +18,17 @@
    * @method np.Text.text
    * @param {string} text the content of this text node
    */
-  Text.prototype.text = function(text) {
-    this.content = '' + text;
-    this.inv_.set();
+  Text.prototype.set = function(text) {
+    this.text_ = '' + text;
+    this.inv_.set(np.now());
     return this;
   };
-
+  Text.prototype.get = function() {
+    return this.text_;
+  };
+  Text.prototype.empty = function() {
+    return !!this.text_;
+  };
   Text.prototype.path = function() {
     var path = '',
         parent = this.parent,

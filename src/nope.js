@@ -46,7 +46,6 @@
             function() { return Date.now(); } :
             function() { return new Date().getTime(); };
 
-
   /**
    * This namespace contains functions for formatting messages.
    * @namespace np.msg

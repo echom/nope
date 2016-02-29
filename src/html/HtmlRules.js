@@ -516,26 +516,26 @@
   }
 
   function checkElementAccess(element, childName) {
-    var parentRule = elementRules[element.type],
+    var parentRule = elementRules[element.name],
         childRule = elementRules[childName];
     if(!parentRule.elements) {
       throw new Error(np.msg.opInvalid(
         childName + '()',
-        '<' + element.type + '> cannot have child elements.'
+        '<' + element.name + '> cannot have child elements.'
       ));
     } else if(!parentRule.elements[childName]) {
       throw new Error(np.msg.opInvalid(
         childName + '()',
-        '<' + element.type + '> cannot have <' + childName + '> child elements.'
+        '<' + element.name + '> cannot have <' + childName + '> child elements.'
       ));
     } else if(childRule.ancestors) {
       var match = element.firstParent_(function(e) {
-            return !!childRule.ancestors[e.type];
+            return !!childRule.ancestors[e.name];
           });
       if(match) {
         throw new Error(np.msg.opInvalid(
           childName + '()',
-          '<' + childName + '> cannot have an ancestor <' + match.type + '>'
+          '<' + childName + '> cannot have an ancestor <' + match.name + '>'
         ));
       }
     }
@@ -546,25 +546,25 @@
     if(element.getContentModel() === CONTENT_MODEL_PHRASING) {
       throw new Error(np.msg.opInvalid(
         name + '()',
-        '<' + element.type + '> cannot have <' + childName + '> child elements ' +
-        '(<' + element.type + '> is nested in an element that expects phrasing content only).'
+        '<' + element.name + '> cannot have <' + childName + '> child elements ' +
+        '(<' + element.name + '> is nested in an element that expects phrasing content only).'
       ));
     }
   }
   function checkTextAccess(element) {
-    if(!elementRules[element.type].text) {
+    if(!elementRules[element.name].text) {
       throw new Error(np.msg.opInvalid(
         'text()',
-        '<' + element.type + '> cannot have text content.'
+        '<' + element.name + '> cannot have text content.'
       ));
     }
   }
   function checkAttributeAccess(element, name) {
-    var attributes = elementRules[element.type].attributes;
+    var attributes = elementRules[element.name].attributes;
     if(!attributes || !attributes[name]) {
       throw new Error(np.msg.opInvalid(
         name + '()',
-        '<' + element.type + '> cannot have attribute "' + name + '".'
+        '<' + element.name + '> cannot have attribute "' + name + '".'
       ));
     }
   }

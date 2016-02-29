@@ -10,14 +10,6 @@ describe('np.NodeCollection', function() {
 
       expect(coll.toArray()).toEqual(nodes);
     });
-    it('initializes a readonly collection', function() {
-      var coll = new np.NodeCollection(null, true),
-          toFailAdd = function() { coll.add(np.mocks.Node()); },
-          toFailRem = function() { coll.remove(np.mocks.Node()); }
-
-      expect(toFailAdd).toThrowError(/InvalidOperation/);
-      expect(toFailRem).toThrowError(/InvalidOperation/);
-    });
   });
 
   describe('#add', function() {
@@ -116,7 +108,7 @@ describe('np.NodeCollection', function() {
       expect(node).toBe(this.nodeA);
     });
   });
-  describe('#where', function() {
+  describe('#filter', function() {
     beforeEach(function() {
       this.nodeA = new np.Node();
       this.nodeB = new np.Text();
@@ -128,15 +120,7 @@ describe('np.NodeCollection', function() {
             return (node instanceof np.Text) || (node instanceof np.Element);
           });
 
-      expect(nodes.toArray()).toEqual([this.nodeB, this.nodeC]);
-    });
-    it('returns a readonly collection', function() {
-      var nodes = this.coll.filter(function(node) {
-          return (node instanceof np.Text) || (node instanceof np.Element);
-        }),
-        toFail = function() { nodes.add(new np.Node())};
-
-      expect(toFail).toThrowError(/InvalidOperation/);
+      expect(nodes).toEqual([this.nodeB, this.nodeC]);
     });
 
     it('returns an empty collection if the predicate does not match any node', function() {
@@ -144,7 +128,7 @@ describe('np.NodeCollection', function() {
         return (typeof node === 'string');
       });
 
-      expect(nodes.toArray()).toEqual([]);
+      expect(nodes).toEqual([]);
     });
     it('call the predicate in the optional context or itself', function() {
       var coll = this.coll,
@@ -181,9 +165,9 @@ describe('np.NodeCollection', function() {
 
 			this.nodes.forEach(this.cb);
 
-			expect(this.cb).toHaveBeenCalledWith(this.el1);
-			expect(this.cb).toHaveBeenCalledWith(this.el2);
-			expect(this.cb).toHaveBeenCalledWith(this.el3);
+			expect(this.cb).toHaveBeenCalledWith(this.el1, 0, this.nodes);
+			expect(this.cb).toHaveBeenCalledWith(this.el2, 1, this.nodes);
+			expect(this.cb).toHaveBeenCalledWith(this.el3, 2, this.nodes);
 		});
 		it('does not call the callback function if attributes are empty', function() {
       this.nodes = new np.NodeCollection();

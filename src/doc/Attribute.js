@@ -1,6 +1,6 @@
 (function(np) {
   var Attribute = function(name, value, owner) {
-    this.inv_ = new np.Invalidation(owner && owner.inv());
+    this.inv_ = new np.Invalidation();
     this.name = name;
     this.set(value);
   };
@@ -14,8 +14,8 @@
     return this.value_;
   };
 
-  Attribute.prototype.inv = function() {
-    return this.inv_;
+  Attribute.prototype.invalid = function(timestamp) {
+    return this.inv_.check(timestamp);
   };
 
   np.Attribute = Attribute;
