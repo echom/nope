@@ -39,7 +39,7 @@
 					//'.symbol-dsc { transition: max-height 0.5s; overflow: hidden; }\n',
 					'.symbol > .symbol-dsc { display: none; }\n',
 					'.symbol.expanded > .symbol-dsc { display: block; }\n',
-					'.symbol p.expansion { margin-top: 10px; }\n',
+					'.symbol .expansion { margin-top: 10px; }\n',
 					'.symbol .glyphicon-chevron-down { display: inline-block; }\n',
 					'.symbol.expanded .glyphicon-chevron-down { display: none; }\n',
 					'.symbol .glyphicon-chevron-up { display: none; }\n',
@@ -75,6 +75,7 @@
 		right.add(np.html(html => html.div({
 			class: 'bottom.padding'
 		})))
+
 
 		write(doc, opts.destination);
 	}
@@ -226,12 +227,8 @@
 	};
 
 	function write(doc, destination) {
-		var contents = doc.compile(np.str());
-		fs.outputFile(path.join(destination, 'index.html'), contents, function(err) {
-			if (err) {
-				throw err;
-			}
-		});
+		var fileStream = fs.createOutputStream(path.join(destination, 'index.html'));
+		doc.compile(np.stream(fileStream));
 	}
 
 }());

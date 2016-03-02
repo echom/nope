@@ -10,7 +10,7 @@
 
   StreamCompiler.prototype.text = function(text, stream, indentCount) {
     var indentString = indent.substr(0, indentCount);
-    stream.write('\n' + indentString + text.content);
+    stream.write('\n' + indentString + text.get());
   };
 
   StreamCompiler.prototype.element = function(element, stream, indentCount) {
@@ -21,11 +21,15 @@
         indentString = indent.substr(0, indentCount);
 
     element.attributes().forEach(function(value, name) {
+      value = value.get().replace(/"/g, '&quot;');
       str += ' ' + name + '="' + value + '"';
     }, this);
 
-    if(childCount > 0) {
+    if(!element.selfClosing) {
       stream.write('\n' + indentString + str + '>');
+    }
+
+    if(childCount > 0) {
       children.forEach(function(e) {
         if(np.Element.isElement(e)) {
           this.element(e, stream, indentCount + 1);
@@ -33,9 +37,11 @@
           this.text(e, stream, indentCount + 1);
         }
       }, this);
+    }
+    if(childCount === 0 && element.selfClosing) {
+      stream.write('\n' + str + ' />');
+    } else {
       stream.write('\n' + indentString + '</' + name + '>');
-    } else if(element.selfClosing) {
-      stream.write('\n' + indentString + str + ' />');
     }
   };
 

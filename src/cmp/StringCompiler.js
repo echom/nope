@@ -8,7 +8,7 @@
 
   StringCompiler.prototype.text = function(text, buffer, indentCount) {
     var indentString = indent.substr(0, indentCount);
-    buffer.push('\n' + indentString + text.content);
+    buffer.push('\n' + indentString + text.get());
   };
 
   StringCompiler.prototype.element = function(element, buffer, indentCount) {

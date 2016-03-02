@@ -185,7 +185,7 @@
   };
 
   Element.prototype.compile = function(compiler) {
-    compiler.compile(this.root());
+    return compiler.compile(this.root());
   };
 
   np.Element = Element;

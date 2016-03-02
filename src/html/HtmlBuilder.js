@@ -20,8 +20,8 @@
   np.HtmlBuilder = HtmlBuilder;
 
   np.html = function(createFn) {
-    var doc = new HtmlBuilder(),
-        element = createFn && createFn(doc);
-    return element || doc;
+    var builder = new HtmlBuilder(),
+        element = createFn && createFn(builder);
+    return element || builder;
   };
 }(this.np));
