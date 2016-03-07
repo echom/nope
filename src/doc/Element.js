@@ -119,7 +119,7 @@
   };
   Element.prototype.el_ = function(node) {
     if(node === this) {
-      throw new Error(np.msg.opInvalid('append', 'trying to append to self'));
+      throw new Error(np.msg.opInvalid('el_', 'trying to add to self'));
     }
     this.children_.remove(node).add(node);
     node.parent = this;
